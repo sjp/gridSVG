@@ -11,7 +11,8 @@
   later manipulation.
 }
 \usage{
-viewportCreate(vpname, newname = NULL)
+viewportCreate(vpname, newname = NULL,
+               vpPath.sep = getSVGoption("vpPath.sep"))
 }
 \arguments{
 
@@ -24,6 +25,9 @@ viewportCreate(vpname, newname = NULL)
     re-created. If this parameter is \code{NULL}, then the name is taken
     to be the last viewport in listed in \code{vpname} (because it is
     usually a viewport path).
+  }
+  \item{vpPath.sep}{
+    The viewport path separator that was used for \code{vpname}.
   }
 
 }

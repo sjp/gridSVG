@@ -4,13 +4,19 @@
 # Initial settings
 assign("gridSVGoptions",
        list(
-           id.sep="."
+           id.sep=".",
+           gPath.sep="::",
+           vpPath.sep="::"
            ),
        .gridSVGEnv)
 
 checkOptions <- function(options) {
-    if (!is.character(options[["id.sep"]]))
-        stop("Invalid option")
+    optionNames <- names(options)
+    validOption <- sapply(options, is.character)
+    if (any(! validOption))
+        stop(paste("Invalid option for: ",
+                   paste(dQuote(optionNames[! validOption]), collapse = ", "),
+                   sep = ""))
 }
 
 # Get/set options

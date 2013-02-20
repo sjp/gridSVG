@@ -481,7 +481,7 @@ devGrob.circle <- function(x, dev) {
 # time we push we start a group, we need a *unique* id for that
 # group, otherwise clipping paths don't work correctly
 getvpID <- function(vpname) {
-  # Finding out how many times a VP has been pushed to so fara
+  # Finding out how many times a VP has been pushed to so far
   vput <- get("vpUsageTable", envir = .gridSVGEnv)
   vpcount <- vput[vput$vpname == vpname, "count"]
 
@@ -503,7 +503,7 @@ getvpID <- function(vpname) {
 
   vpID <- paste(vpname,
                 vpcount,
-                sep=".")
+                sep=getSVGoption("id.sep"))
 
   # Returning the vpID
   vpID
@@ -529,6 +529,10 @@ getCoordsInfo <- function(vp, tm, dev) {
 devGrob.viewport <- function(x, dev) {
   vp <- x
   vpname <- as.character(current.vpPath())
+  # Modify the path so that we can use a different separator
+  defaultSep <- "::"
+  splitPath <- strsplit(vpname, defaultSep)[[1]]
+  vpname <- paste(splitPath, collapse = getSVGoption("vpPath.sep"))
   coords <- getCoordsInfo(vp, current.transform(), dev)
 
   if (is.null(vp$clip)) {
@@ -1198,45 +1202,45 @@ primToDev.points <- function(x, dev) {
 }
   
 primToDev.xaxis <- function(x, dev) {
-    devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
+  devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
   # If the at is NULL then the axis will have no
   # children;  need to be calculated on-the-fly
   if (is.null(x$at)) {
     at <- grid.pretty(current.viewport()$xscale)
     major <- grid:::make.xaxis.major(at, x$main) 
-    major$name <- paste(x$name, major$name, sep = ".")
+    major$name <- paste(x$name, major$name, sep = getSVGoption("gPath.sep"))
     ticks <- grid:::make.xaxis.ticks(at, x$main)
-    ticks$name <- paste(x$name, ticks$name, sep = ".")
+    ticks$name <- paste(x$name, ticks$name, sep = getSVGoption("gPath.sep"))
     grobToDev(major, dev)
     grobToDev(ticks, dev)
     if (x$label) {
       label <- grid:::make.xaxis.labels(at, x$label, x$main)
-      label$name <- paste(x$name, label$name, sep = ".")
+      label$name <- paste(x$name, label$name, sep = getSVGoption("gPath.sep"))
       grobToDev(label, dev)
     }
   } 
-    devEndGroup(x$name, dev)
+  devEndGroup(x$name, dev)
 }
 
 primToDev.yaxis <- function(x, dev) {
-    devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
+  devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
   # If the at is NULL then the axis will have no
   # children;  need to be calculated on-the-fly
   if (is.null(x$at)) {
     at <- grid.pretty(current.viewport()$yscale)
     major <- grid:::make.yaxis.major(at, x$main) 
-    major$name <- paste(x$name, major$name, sep = ".")
+    major$name <- paste(x$name, major$name, sep = getSVGoption("gPath.sep"))
     ticks <- grid:::make.yaxis.ticks(at, x$main)
-    ticks$name <- paste(x$name, ticks$name, sep = ".")
+    ticks$name <- paste(x$name, ticks$name, sep = getSVGoption("gPath.sep"))
     grobToDev(major, dev)
     grobToDev(ticks, dev)
     if (x$label) {
       label <- grid:::make.yaxis.labels(at, x$label, x$main)
-      label$name <- paste(x$name, label$name, sep = ".")
+      label$name <- paste(x$name, label$name, sep = getSVGoption("gPath.sep"))
       grobToDev(label, dev)
     }
   } 
-    devEndGroup(x$name, dev)
+  devEndGroup(x$name, dev)
 }
 
 grobToDev.frame <- function(x, dev) {
@@ -1247,7 +1251,10 @@ grobToDev.frame <- function(x, dev) {
     } 
     
     devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
-    lapply(x$children, grobToDev, dev)
+    lapply(x$children, function(child) {
+        child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
+        grobToDev(child, dev)
+    })
     devEndGroup(x$name, dev)
     
     if (!is.null(x$framevp)) {
@@ -1265,7 +1272,10 @@ grobToDev.cellGrob <- function(x, dev) {
     }
 
     devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
-    lapply(x$children, grobToDev, dev)
+    lapply(x$children, function(child) {
+        child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
+        grobToDev(child, dev)
+    })
     devEndGroup(x$name, dev)
   
     if (!is.null(x$cellvp)) {
@@ -1287,7 +1297,14 @@ grobToDev.gTree <- function(x, dev) {
 
 primToDev.gTree <- function(x, dev) {
     devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
-    lapply(x$children, grobToDev, dev)
+    lapply(x$children, function(child) {
+        # 'gridSVG' is a special case because it is just a wrapping gTree.
+        # It is not useful for us to track the entire gPath as a result,
+        # only the path *after* 'gridSVG'
+        if (x$name != "gridSVG")
+            child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
+        grobToDev(child, dev)
+    })
     devEndGroup(x$name, dev)
 }
 

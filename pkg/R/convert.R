@@ -1,4 +1,5 @@
-viewportCreate <- function(vpname, newname = NULL) {
+viewportCreate <- function(vpname, newname = NULL,
+                           vpPath.sep = getSVGoption("vpPath.sep")) {
     coords <- gridSVGCoords()
     if (is.null(coords))
         stop("gridSVGCoords() must be initialised")
@@ -10,7 +11,7 @@ viewportCreate <- function(vpname, newname = NULL) {
         stop(paste("the viewport", sQuote(vpname), "must have coords info set, see", sQuote("gridSVGCoords")))
     # Avoid having a vpPath as a viewport name
     if (is.null(newname)) {
-        splitname <- strsplit(vpname, "::")[[1]]
+        splitname <- strsplit(vpname, vpPath.sep)[[1]]
         vpname <- tail(splitname, 1)
     } else {
         vpname <- newname
