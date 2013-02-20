@@ -1,0 +1,11 @@
+Package: gridSVG
+Title: Export grid graphics as SVG
+Version: 1.0-0
+Authors@R: c(person("Paul", "Murrell", role = c("cre", "aut"),
+                    email = "paul@stat.auckland.ac.nz"),
+             person("Simon", "Potter", role = "aut",
+                    email = "simon.potter@auckland.ac.nz"))
+Description: Export grid graphics as SVG
+Depends: R (>= 2.15.0), methods, grid, RJSONIO, XML
+Suggests: lattice
+License: GPL

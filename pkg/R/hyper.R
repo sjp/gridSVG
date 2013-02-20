@@ -1,0 +1,101 @@
+
+# FIXME:  What should happen if a grob has BOTH group and individual hrefs?
+#         Is that an error?
+
+hyperlinkGrob <- function(x, href, show=NULL, group=TRUE) {
+    if (group) 
+        x$groupLinks <- href
+    else
+        x$links <- href
+
+    # Determines which window the link is going to open in
+    x$show <- show
+
+    class(x) <- unique(c("linked.grob", class(x)))
+    x
+}
+
+grid.hyperlink <- function(path, href, show=NULL, group=TRUE, grep=FALSE) {
+    x <- grid.get(path, grep=grep)
+    x <- hyperlinkGrob(x, href, show, group)
+    grid.set(path, x, grep=grep, redraw=FALSE)
+}
+
+link <- function(x) {
+    UseMethod("link")
+}
+
+link.grob <- function(x) {
+    href <- x$links
+    if (!is.null(href)) {
+        n <- length(href)
+        if (is.null(names(href)))
+            names(href) <- subGrobName(x$name, 1:n)
+    }
+    groupHref <- x$groupLinks
+    if (!is.null(groupHref))
+        names(groupHref) <- x$name
+    c(href, groupHref)
+}
+
+# A hopefully useful default for gTrees
+link.gTree <- function(x, ...) {
+    href <- x$links
+    if (!is.null(href)) {
+        n <- length(href)
+        if (is.null(names(href)))
+            names(href) <- (x$childrenOrder)[1:n]
+    }
+    groupHref <- x$groupLinks
+    if (!is.null(groupHref))
+        names(groupHref) <- x$name
+    c(href, groupHref)
+}
+
+linkShow <- function(x) {
+    UseMethod("linkShow")
+}
+
+linkShow.grob <- function(x, ...) {
+    show <- x$show
+    if (is.null(show))
+        return("")
+    if (!is.null(x$links)) {
+        n <- length(show)
+        if (is.null(names(show)))
+            names(show) <- subGrobName(x$name, 1:n)
+    }
+    if (!is.null(x$groupLinks))
+        names(show) <- x$name
+    show
+}
+
+linkShow.gTree <- function(x, ...) {
+    show <- x$show
+    if (is.null(show))
+        return("")
+    if (!is.null(x$links)) {
+        n <- length(show)
+        if (is.null(names(show)))
+            names(show) <- (x$childrenOrder)[1:n]
+    }
+    if (!is.null(x$groupLinks))
+        names(show) <- x$name
+    show
+}
+
+# Set the 'links' slot in the device
+# The catsvg() function in svg.R picks this up
+# and matches links to element names
+primToDev.linked.grob <- function(x, dev) {
+    dev@links <- link(x)
+    dev@show <- linkShow(x)
+    NextMethod()
+}
+
+# gridToDev method for linked.grob objects
+# grobToDev.linked.grob <- function(x, dev) {
+#   svgStartLink(x$href, dev@dev)
+#   NextMethod()
+#   svgEndLink(dev@dev)
+# }

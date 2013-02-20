@@ -1,0 +1,467 @@
+\documentclass[a4paper]{article}
+%\VignetteIndexEntry{extensibility}
+\newcommand{\grid}{{\bf grid}}
+\newcommand{\gridSVG}{{\sf gridSVG}}
+\newcommand{\lattice}{{\bf lattice}}
+\newcommand{\R}{{\sf R}}
+\newcommand{\js}{{\sf javascript}}
+\newcommand{\svg}{{\sf SVG}}
+\newcommand{\code}[1]{{\tt #1}}
+\setlength{\parindent}{0in}
+\setlength{\parskip}{.1in}
+
+\title{Extending the gridSVG package}
+\author{Paul Murrell}
+\begin{document}
+
+\maketitle
+
+@
+\section*{Introduction}
+
+It is sometimes useful or necessary for the user/developer to define a
+new grob 
+(or gTree) class.  The \gridSVG{} package only knows about the 
+classes in the \grid{} package (basic graphical primitives,
+gTrees, plus a few others like frames and cell grobs).
+This means that \gridSVG{} cannot export,
+or animate, or garnish new grob classes without additional information.
+This document describes how to write methods for a new grob
+class to work with \gridSVG{}.
+
+<<>>=
+library(gridSVG)
+@ 
+
+The assumption in this document is that a new class has been made
+because there is a need to have a special \code{drawDetails()}
+method (because what the class draws has to be determined at drawing
+time rather than at grob creation time).
+
+There should not be any need
+for the information in this document if you have grobs or gTrees
+that are entirely defined at time of creation (so do not need any
+\code{drawDetails()} methods).  Those cases should be handled by the
+\gridSVG{} package already.  Users wanting to garnish or animate
+pieces of your scene should be able to get at whatever components 
+of the scene that they need using gPaths
+(assuming that you have named all your grobs properly).
+
+\subsection*{Simple class example}
+
+A simple case is one where the grob being created (at drawing time)
+is just a simple graphical primitive.  For example, 
+the following (contrived) 
+code defines a new class of (text) grob, a \code{timegrob} class,
+ that writes out the time
+that its text is generated (see Figure \ref{figure:simplegrob}).
+
+<<>>=
+tg <- grob(name="tg", cl="timegrob")
+@ 
+
+Because we will be able to reuse it later, we will write a function
+to create the grob at drawing time.
+
+<<>>=
+timegrob <- function(x) {
+    textGrob(paste("text generated at", Sys.time(), sep="\n"),
+             gp=x$gp, name=x$name)
+}
+@ 
+The \code{drawDetails()} method for this new class just
+calls the \code{timegrob()} function to create a text grob and then 
+draws that grob.
+
+<<>>=
+drawDetails.timegrob <- function(x, ...) {
+    grid.draw(timegrob(x))
+}
+@ 
+
+Drawing the \code{timegrob} object calls the \code{drawDetails()} method above.
+
+<<simplegrob, fig=TRUE, include=FALSE, width=2, height=.5>>=
+grid.draw(tg)
+@
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=2in]{extensibility-simplegrob}
+\caption{\label{figure:simplegrob}A simple new grob class that draws the
+time that its text was generated.}
+\end{center}
+\end{figure}
+
+The important thing about this class is that the grob that is being
+generated in the \code{drawDetails()} method is just a simple \code{text} grob.
+
+\subsection*{Not simple class example}
+
+A slightly more complex case is when a new grob class actually generates
+a gTree in its \code{drawDetails()} method.  For example, the
+following code defines a new class,
+called \code{boxedtext},  that creates a gTree
+containing text and a bounding box (at drawing time so that the 
+box can be created from the current size of the text, in case
+the text has been edited; see Figure \ref{figure:notsimplegrob}).
+
+<<>>=
+bt <- grob(x=unit(.5, "npc"), y=unit(.5, "npc"), 
+                  label="hi", name="bt", cl="boxedtext")
+@ 
+
+Again, it will be useful to have a function that creates the gTree.
+
+<<>>=
+boxedtext <- function(x) {
+    tg <- textGrob(x$label, x$x, x$y,
+                   name=paste(x$name, "text", sep=".")) 
+    rg <- rectGrob(x$x, x$y, 
+                   width=grobWidth(tg) + unit(2, "mm"),
+                   height=grobHeight(tg) + unit(2, "mm"),
+                   name=paste(x$name, "rect", sep="."))
+    gTree(children=gList(tg, rg), gp=x$gp, name=x$name)
+}
+@ 
+The \code{drawDetails()} method is again very simple.
+
+<<>>=
+drawDetails.boxedtext <- function(x, ...) {
+    grid.draw(boxedtext(x))
+}
+@ 
+Drawing the \code{boxedtext} grob call the \code{drawDetails()} method
+whch creates a gTree, containing a text and bounding rectangle, and draws it.
+
+<<notsimplegrob, fig=TRUE, include=FALSE, width=2, height=.5>>=
+grid.draw(bt)
+@ 
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=2in]{extensibility-notsimplegrob}
+\caption{\label{figure:notsimplegrob}A not simple new grob class that draws 
+text with a bounding box.}
+\end{center}
+\end{figure}
+
+The important thing about this example is that it creates a gTree
+at drawing time.
+
+\section*{Exporting a new grob class to \svg{}}
+
+If \gridSVG{} knows nothing about a grob class then it will not export
+any SVG elements via \code{gridToSVG()}.  The technique for telling
+\gridSVG{} about a new class varies depending on how complex the new class
+is.
+
+\subsection*{Exporting a simple class}
+
+The \code{primToDev()} generic function is the function that
+converts a simple grob into \svg{}.  There are \code{primToDev()} 
+methods for all of the standard \grid{} graphical primitives, but 
+for grob classes that \gridSVG{} does not recognise, no \svg{} code
+will be generated.
+
+If the new class only creates a simple grob at drawing time
+then all that is required
+is to define a new method for the \code{primToDev()} generic
+that generates a standard grob and calls \code{primToDev()} on that.
+For example, the following code creates a method for the simple \code{timegrob}
+class.
+This method simply creates the required text grob and then calls
+\code{primToDev()} on that, which exports the normal
+\svg{} code for a text grob.
+
+<<>>=
+primToDev.timegrob <- function(x, dev) {
+    primToDev(timegrob(x), dev)
+}
+@ 
+
+The \code{gridToSVG()} function will call this method 
+to produce the appropriate \svg{} code.
+
+<<>>=
+grid.newpage()
+grid.draw(tg)
+gridToSVG("simpleclass.svg")
+@ 
+
+The \svg{} code is shown below.  One important
+feature is that the \code{id} attributes of the \svg{} elements
+are sensible.  This has happened because the \code{timegrob()} function
+that we wrote sets the name of the text grob that it creates from
+the name of the \code{textgrob} object.
+
+<<echo=FALSE>>=
+library(XML)
+@ 
+
+<<echo=FALSE>>=
+simpleclasssvg <- xmlParse("simpleclass.svg")
+cat(saveXML(simpleclasssvg))
+@ 
+
+Another feature os the \code{timegrob()} function is that it 
+sets the \code{gp} slot of the text grob from the \code{gp} slot
+of the \code{textgrob} object.  This is important to make 
+sure that any graphical parameter settings on the \code{textgrob}
+are exported properly to \svg{}.
+
+\subsection*{Exporting a not simple class}
+
+The solution for exporting a new class that creates a gTree at drawing time 
+is very similar to the simple solution.  We need to write
+a \code{primToDev()} method for the new class, the only difference
+being that this method should create a gTree (rather than just a 
+standard graphical primitive grob).
+
+For example, the following code creates a method for the \code{boxedtext}
+class.  This just calls \code{boxedtext()} to create a gTree containing
+the appropriate text and bounding rectangle and then calls 
+\code{primToDev()} on that gTree.
+
+<<>>=
+primToDev.boxedtext <- function(x, dev) {
+    primToDev(boxedtext(x), dev)
+}
+@ 
+
+The \code{gridToSVG()} function will now generate \svg{} output
+from a \code{boxedtext} object.
+
+<<>>=
+grid.newpage()
+grid.draw(bt)
+gridToSVG("notsimpleclass.svg")
+@ 
+
+The \svg{} output is shown below.
+
+<<echo=FALSE>>=
+notsimpleclasssvg <- xmlParse("notsimpleclass.svg")
+cat(saveXML(notsimpleclasssvg))
+@ 
+
+
+\section*{Animating a new grob class}
+
+In addition to converting a \grid{} scene to \svg{} code, the 
+\gridSVG{} package also provides a way to animate components of a 
+\grid{} scene.  The \code{grid.animate()} function
+allows the user to select a grob by name and provide animated values
+for features of the grob (e.g., a set of x-values for a circle grob).
+
+The \code{grid.animate()} function actually only attaches the animation
+information to a grob.  The real action happens when \code{gridToSVG()}
+is called and that calls the \code{animate()} 
+generic function.  The purpose of that function is to generate 
+\code{<animate>} elements in the \svg{} code.  As with \code{primToDev()},
+there are \code{animate()} methods that generate \code{<animate>} elements
+for all standard graphical
+primitives, but nothing will happen for a grob class that
+\gridSVG{} is unaware of.
+
+If we want a new (simple) grob class to be able to be animated, we need
+to write an \code{animate()} method for that grob class.
+For example, the following code defines an \code{animate()} method 
+for  the \code{timegrob} class.  This is similar to the 
+\code{primToDev()} method in that it creates a text grob and then
+calls \code{animate()} on that (to take advantage of the 
+existing \code{animate()} method for text grobs).  The only
+complication is that the animation information on the \code{timegrob}
+object must be transferred over to the new text grob 
+(this is done in a brute force manner here;  perhaps a nicer
+encapsulation will be provided in the future).
+
+<<>>=
+animate.timegrob <- function(x, ...) {
+    tg <- timegrob(x)
+    tg$animationSets <- x$animationSets
+    tg$groupAnimationSets <- x$groupAnimationSets
+    animate(tg, ...)
+}
+@ 
+
+With this \code{animate()} method in place, the following code
+draws a \code{timegrob} object and then animates it so that it
+will move left-to-right across the screen.
+
+<<>>=
+grid.newpage()
+grid.draw(tg)
+grid.animate("tg", x=c(.3, .7))
+gridToSVG("animsimpleclass.svg")
+@ 
+
+The \svg{} code that is generated from this scene is shown below
+to show that the animation has been recorded in the \svg{} output
+(it's actually an \code{<animateTransform>} element rather than
+an \code{<animate>} element for text grobs).
+
+<<echo=FALSE>>=
+animsimpleclasssvg <- xmlParse("animsimpleclass.svg")
+cat(saveXML(animsimpleclasssvg))
+@ 
+
+For the case of a new gTree class, things are a little more complicated.
+Again, we need to write a new \code{animate()} method, but this function
+can be a bit more complicated because there may be animation information
+to apply to the gTree as a whole \emph{and} animation information to 
+apply to just the children of the gTree.
+
+For example, the code below defines an \code{animate()} method for the
+\code{boexedtext} class.  This creates a gTree containing a text grob
+and a bounding rect grob.  The \code{groupAnimationSets} information
+is added to the gTree and then \code{animate()} is called on that
+to output an \code{<animate>} element for the entire gTree,
+\emph{plus} each child of the gTree is extracted, \code{animationSets}
+information added, and then \code{animate()} called to output
+\code{<animate>} elements for each child of the gTree.
+
+<<>>=
+animate.boxedtext <- function(x, ...) {
+    bt <- boxedtext(x)
+    bt$groupAnimationSets <- x$groupAnimationSets
+    animate(bt, ...)
+    # Animate the children of bt 
+    btrect <- getGrob(bt, "bt.rect")
+    btrect$animationSets <- x$animationSets
+    animate(btrect, ...)
+    bttext <- getGrob(bt, "bt.text")
+    bttext$animationSets <- x$animationSets
+    animate(bttext, ...)
+}
+@ 
+
+The following code makes use of this method to animate a 
+\code{boxedtext} grob.  The first call to \code{grid.animate()}
+makes both text and bounding rect move left-to-right across the
+screen. The  second call to \code{grid.animate()} 
+makes the whole gTree disappear after 1 second (once the text and
+rect have moved to the right of the screen).
+
+<<>>=
+grid.newpage()
+grid.draw(bt)
+grid.animate("bt", x=c(.3, .7))
+grid.animate("bt", visibility=c("visible", "hidden"),
+             begin=1, duration=0.1, group=TRUE)
+gridToSVG("animnotsimpleclass.svg")
+@ 
+
+The resulting \svg{} code is shown below.
+
+<<echo=FALSE>>=
+animnotsimpleclasssvg <- xmlParse("animnotsimpleclass.svg")
+cat(saveXML(animnotsimpleclasssvg))
+@ 
+
+\section*{Garnishing a new grob class}
+
+The \code{grid.garnish()} function provides a way for users to
+add interactivity to a \grid{} scene, by specifying 
+(\js{}) event handlers
+for components of the scene.  More generally, the function
+allows \grid{} grobs to be garnished with
+arbitrary \svg{} attributes.
+
+Like \code{grid.animate()}, all \code{grid.garnish()} does is 
+attach the garnishing information to a grob.  The appropriate 
+\svg{} code is only generated when \code{gridToSVG()} is called.
+The crucial action happens in the generic function \code{garnish()},
+which transfers the garnishing information to the \svg{} device
+that is writing out \svg{} code.
+
+As should be familiar by now, there are \code{garnish()} methods for
+standard \grid{} graphical primitives, but no svg{} attributes 
+will be exported for grob classes that \gridSVG{} does not know about.
+
+Fortunately, \code{garnish()} methods are once again pretty easy
+to write.  For example, the following code defines a method for the
+\code{timegrob} class.  This is very much like an \code{animate()}
+method:  a text grob is created, the garnishing information is
+added to the text grob, then \code{garnish()} is called on the
+text grob so that the method for text grobs takes care of
+transferring the \svg{} attributes to the \svg{} device.
+
+<<>>=
+garnish.timegrob <- function(x, ...) {
+    tg <- timegrob(x)
+    tg$attributes <- x$attributes
+    tg$groupAttributes <- x$groupAttributes 
+    garnish(tg, ...)
+}
+@ 
+
+The following code shows the new method in action.
+A \code{timegrob} is drawn, then \code{grid.garnish()} is 
+called to specify that a mouse click on the text should pop
+an alert dialog.
+
+<<>>=
+grid.newpage()
+grid.draw(tg)
+grid.garnish("tg", onmousedown="alert('ouch')")
+gridToSVG("garnishsimpleclass.svg")
+@ 
+
+The resulting \svg{} code is shown below.
+
+<<echo=FALSE>>=
+garnishsimpleclasssvg <- xmlParse("garnishsimpleclass.svg")
+cat(saveXML(garnishsimpleclasssvg))
+@ 
+
+The method is just as simple for a custom gTree class as well,
+as shown by the \code{garnish()} method for the 
+\code{boxedtext} class below.
+
+<<>>=
+garnish.boxedtext <- function(x, ...) {
+    bt <- boxedtext(x)
+    bt$attributes <- x$attributes
+    bt$groupAttributes <- x$groupAttributes 
+    garnish(bt, ...)
+}
+@
+
+The following code shows this method in action, with an additional
+demonstration of the difference between garnishing individual
+components of a \grid{} scene and garnishing the overall parent 
+component.
+A \code{boxedtext} grob is drawn, then the first call to
+\code{grid.garnish()} ensures that a mouse click on any part
+of the text or bounding box will produce an alert dialog.
+The second call to \code{grid.garnish()} sets up a different 
+interaction on just the text so that moving the
+mouse over the text pops up a different dialog.
+
+<<>>=
+grid.newpage()
+grid.draw(bt)
+grid.garnish("bt", onmousedown="alert('ouch')")
+grid.garnish("bt", onmouseover=c(bt.text="alert('watch it!')"),
+             group=FALSE)
+gridToSVG("garnishnotsimpleclass.svg")
+@ 
+
+The resulting \svg{} code is shown below.
+
+<<echo=FALSE>>=
+garnishnotsimpleclasssvg <- xmlParse("garnishnotsimpleclass.svg")
+cat(saveXML(garnishnotsimpleclasssvg))
+@ 
+
+\section*{Extending complex classes}
+
+A more complex case is one where a new grob class defines its own 
+\code{preDrawDetails()} or \code{postDrawDetials()} methods.
+If that is the case, then it will be necessary to write a 
+\code{grobToDev()} method for the class, just to get \svg{} exported
+correctly.  See the existing methods for \code{grobToDev()} 
+in the \gridSVG{} source for some examples.
+
+\end{document}
