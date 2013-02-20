@@ -78,16 +78,20 @@ gridToSVG <- function(name="Rplots.svg",
     if (! is.null(xmldecl))
         doctxt <- paste0(xmldecl, doctxt)
 
+    result <- list(svg = svgroot,
+                   coords = coords,
+                   utils = jsutils)
     # Return SVG vector when an inadequate filename is supplied
     if (is.null(name) || ! nzchar(name))
-        return(list(svg = svgroot,
-                    coords = coords,
-                    utils = jsutils))
+        return(result)
 
     # Save SVG
     cat(doctxt, file = name)
     # Write an HTML wrapper for this
     htmlFile(name, svgdev@dev)
+
+    # Return result invisibly
+    invisible(result)
 }
 
 old.gridToSVG <- function(name="Rplots.svg") {
