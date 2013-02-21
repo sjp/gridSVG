@@ -10,6 +10,7 @@ gridToSVG(name = "Rplots.svg",
           export.js = c("file", "inline", "none"),
           res = NULL,
           indent = TRUE,
+          htmlWrapper = FALSE,
           xmldecl = xmlDecl())
 }
 \arguments{
@@ -51,6 +52,10 @@ gridToSVG(name = "Rplots.svg",
     is set to \code{FALSE}, parsing the SVG in JavaScript is easier
     because there are no empty text nodes.
   }
+  \item{htmlWrapper}{
+    If \code{TRUE}, saves a wrapping HTML file. This file contains a
+    snippet of HTML which links to the exported SVG file.
+  }
   \item{xmldecl}{
     This parameter sets the XML declaraction that will be applied to the
     SVG document.
@@ -70,9 +75,8 @@ gridToSVG(name = "Rplots.svg",
   for limitations.
 }
 \value{
-  When \code{name} has a valid filename, nothing is returned.
-  The side effect is to produce an SVG file of the specified name,
-  AND a very rudimentary HTML file with the SVG document embedded.
+  When \code{name} has a valid filename the side effect is to produce an
+  SVG file of the specified name.
 
   Optionally a JavaScript file containing coordinate transformation
   information is also exported.
@@ -86,6 +90,9 @@ gridToSVG(name = "Rplots.svg",
   this. \code{coords} contains the list of coordinate information for
   exported viewports. \code{utils} is a character vector containing
   JavaScript code to manipulate gridSVG plots in the browser.
+
+  This list is always returned but when a valid filename is given, it is
+  returned invisibly.
 }
 \author{ Paul Murrell }
 \seealso{ \code{\link{grid.hyperlink}}, \code{\link{grid.animate}} }

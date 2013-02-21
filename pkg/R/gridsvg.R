@@ -9,6 +9,7 @@ gridToSVG <- function(name="Rplots.svg",
                       export.js=c("file", "inline", "none"),
                       res = NULL,
                       indent = TRUE,
+                      htmlWrapper = FALSE,
                       xmldecl = xmlDecl()) {
     # Saving we know how to export
     export.coords <- match.arg(export.coords)
@@ -88,7 +89,8 @@ gridToSVG <- function(name="Rplots.svg",
     # Save SVG
     cat(doctxt, file = name)
     # Write an HTML wrapper for this
-    htmlFile(name, svgdev@dev)
+    if (htmlWrapper)
+        htmlFile(name, svgdev@dev)
 
     # Return result invisibly
     invisible(result)

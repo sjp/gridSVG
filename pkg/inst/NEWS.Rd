@@ -91,6 +91,17 @@
 
     \item Added 'grep' argument to grid.hyperlink()
     (suggestion by Oscar Perpignan Lamigueiro).
+
+    \item Added options for 'vpPath' and 'gPath' separators. This allows
+    for easier manipulation in JavaScript as the separators no longer
+    need to be the troublesome '::' (which require escaping with CSS
+    selectors). (Simon)
+
+    \item Exporting HTML files is now optional. (Simon)
+
+    \item Always return a named list with the output of
+    'gridToSVG()'. This is invisibly returned when an SVG file is saved
+    to disk. (Simon)
   }
 }
 
@@ -433,4 +444,3 @@
 
   }
 }
-
