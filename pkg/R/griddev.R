@@ -546,8 +546,7 @@ devGrob.viewport <- function(x, dev) {
   # Modify the path so that we can use a different separator
   if (get("use.vpPaths", envir = .gridSVGEnv)) {
     vpname <- as.character(current.vpPath())
-    defaultSep <- "::"
-    splitPath <- strsplit(vpname, defaultSep)[[1]]
+    splitPath <- strsplit(vpname, grid:::.grid.pathSep)[[1]]
     vpname <- paste(splitPath, collapse = getSVGoption("vpPath.sep"))
   } else {
     vpname <- vp$name
