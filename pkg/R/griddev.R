@@ -682,14 +682,12 @@ primToDev.move.to <- function(x, dev) {
 }
 
 primToDev.line.to <- function(x, dev) {
-    # NOTE:  MUST NOT evaluate devGrob() more than once
-    #        because it has side-effects (within its closure)
-    dgrob <- devGrob(x, dev)
+  # NOTE:  MUST NOT evaluate devGrob() more than once
+  #        because it has side-effects (within its closure)
+  dgrob <- devGrob(x, dev)
 
-  if (get("uniqueNames", envir = .gridSVGEnv)) {
-      dgrob$name <- getID(dgrob$name, "grob")
-      x$name <- getID(x$name, "grob")
-  }
+  dgrob$name <- getID(dgrob$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping the grob
   devStartGroup(dgrob, NULL, dev)
@@ -708,8 +706,7 @@ primToDev.line.to <- function(x, dev) {
 }
 
 primToDev.lines <- function(x, dev) {
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping the grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -730,8 +727,7 @@ primToDev.lines <- function(x, dev) {
 }
 
 primToDev.polyline <- function(x, dev) {
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # If we only have one line
   if (is.null(x$id) && is.null(x$id.lengths)) {
@@ -789,8 +785,7 @@ primToDev.segments <- function(x, dev) {
   gp <- expandGpar(x$gp, n)
   arrows <- expandArrow(x$arrow, n)
 
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -835,8 +830,7 @@ primToDev.polygon <- function(x, dev) {
   # Gp needs to be defined for each sub-grob
   gp <- expandGpar(x$gp, n)
 
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -913,8 +907,7 @@ primToDev.xspline <- function(x, dev) {
   gp <- expandGpar(x$gp, n)
   arrows <- expandArrow(x$arrow, n)
 
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -946,8 +939,7 @@ primToDev.xspline <- function(x, dev) {
 }
 
 primToDev.pathgrob <- function(x, dev) {
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping the grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -1005,8 +997,7 @@ primToDev.rastergrob <- function(x, dev) {
   # Expand the gp such that it fully defines all sub-grobs
   gp <- expandGpar(x$gp, n)
 
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -1043,8 +1034,7 @@ primToDev.rect <- function(x, dev) {
   # Expand the gp such that it fully defines all sub-grobs
   gp <- expandGpar(x$gp, n)
 
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -1096,8 +1086,7 @@ primToDev.text <- function(x, dev) {
   # Expand the gp such that it fully defines all sub-grobs
   gp <- expandGpar(x$gp, n)
 
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -1131,8 +1120,7 @@ primToDev.circle <- function(x, dev) {
   # Expand the gp such that it fully defines all sub-grobs
   gp <- expandGpar(x$gp, n)
 
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -1162,8 +1150,7 @@ primToDev.points <- function(x, dev) {
     # Expand the gp such that it fully defines all sub-grobs
     gp <- expandGpar(x$gp, n)
 
-    if (get("uniqueNames", envir = .gridSVGEnv))
-        x$name <- getID(x$name, "grob")
+    x$name <- getID(x$name, "grob")
 
     # Grouping each sub-grob
     devStartGroup(devGrob(x, dev), NULL, dev) 
@@ -1260,8 +1247,7 @@ primToDev.points <- function(x, dev) {
 }
   
 primToDev.xaxis <- function(x, dev) {
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
   devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
   # If the at is NULL then the axis will have no
   # children;  need to be calculated on-the-fly
@@ -1283,8 +1269,7 @@ primToDev.xaxis <- function(x, dev) {
 }
 
 primToDev.yaxis <- function(x, dev) {
-  if (get("uniqueNames", envir = .gridSVGEnv))
-      x$name <- getID(x$name, "grob")
+  x$name <- getID(x$name, "grob")
   devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
   # If the at is NULL then the axis will have no
   # children;  need to be calculated on-the-fly
@@ -1360,7 +1345,7 @@ grobToDev.gTree <- function(x, dev) {
 }
 
 primToDev.gTree <- function(x, dev) {
-    if (x$name != "gridSVG" && get("uniqueNames", envir = .gridSVGEnv))
+    if (x$name != "gridSVG")
         x$name <- getID(x$name, "grob")
     devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
     lapply(x$children, function(child) {
