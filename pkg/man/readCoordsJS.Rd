@@ -1,4 +1,4 @@
-\name{Import JS as JSON}
+\name{Import Coordinate JS as JSON}
 \alias{readCoordsJS}
 \title{
   Importing JavaScript coordinate information as JSON.

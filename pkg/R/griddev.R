@@ -480,7 +480,10 @@ devGrob.circle <- function(x, dev) {
 # Because viewports and grobs can be used many times, and each
 # time we use one we start a group, we need a *unique* id for that
 # group, otherwise things like clipping paths don't work correctly
-getID <- function(name, type) {
+#
+# 'append' determines whether we add our ID to the usageTable. Useful
+# not to in cases like animated grobs
+getID <- function(name, type, append = TRUE) {
   # If this is a grob, only modify if we're trying to ensure uniqueness.
   # We *really* need to do this for viewports though, so viewports are a
   # special case.
@@ -508,13 +511,14 @@ getID <- function(name, type) {
     candidateName <- paste(name, suffix, sep = getSVGoption("id.sep"))
   }
 
-  assign("usageTable",
-         rbind(ut,
-               data.frame(name = name,
-                          suffix = suffix,
-                          type = type,
-                          stringsAsFactors = FALSE)),
-         envir = .gridSVGEnv)
+  if (append)
+    assign("usageTable",
+           rbind(ut,
+                 data.frame(name = name,
+                            suffix = suffix,
+                            type = type,
+                            stringsAsFactors = FALSE)),
+           envir = .gridSVGEnv)
 
   # Returning the new ID
   paste(name, suffix, sep = getSVGoption("id.sep"))

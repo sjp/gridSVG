@@ -53,6 +53,7 @@ garnish <- function(x, ...) {
 
 # This is intended to handle all basic graphical primitives
 garnish.grob <- function(x, ...) {
+    x$name <- getID(x$name, "grob", FALSE)
     c(lapply(x$attributes,
              function(attr) {
                  n <- length(attr)
@@ -69,11 +70,13 @@ garnish.grob <- function(x, ...) {
 
 # A hopefully useful default for gTrees
 garnish.gTree <- function(x, ...) {
+    x$name <- getID(x$name, "grob", FALSE)
     c(lapply(x$attributes,
              function(attr) {
                  n <- length(attr)
                  if (is.null(names(attr)))
-                     names(attr) <- (x$childrenOrder)[1:n]
+                     names(attr) <- sapply((x$childrenOrder)[1:n],
+                                           function(x) getID(x, "grob", FALSE))
                  attr
              }),
       lapply(x$groupAttributes,

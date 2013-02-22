@@ -1296,6 +1296,7 @@ applyAnimation.gTree <- function(x, animSet, animation, group, dev) {
 }
 
 applyAnimationSet <- function(x, animationSet, group, dev) {
+    x$name <- getID(x$name, "grob", FALSE)
     animations <- animationSet$animations
     for (i in names(animations)) 
         applyAnimation(x, animationSet, i, group, dev)
