@@ -102,6 +102,23 @@
     \item Always return a named list with the output of
     'gridToSVG()'. This is invisibly returned when an SVG file is saved
     to disk. (Simon)
+
+    \item Added 'usePaths' option for determining whether to use vpPaths
+    and gPaths SVG IDs. (Simon)
+
+    \item Added 'uniqueNames' option for generating unique names for SVG
+    IDs from grob and viewport names. This further distances ourselves
+    from the original grid names. (Simon)
+
+    \item Added 'export.mappings' option for exporting name mapping
+    information. This allows us to keep track of names and how they have
+    been modified by gridSVG. (Simon)
+
+    \item Added 'gridSVGMappings' function to import mapping
+    information. (Simon)
+
+    \item Added 'getSVGMappings' function to retrieve IDs generated for
+    an image from a grob or a viewport name. (Simon)
   }
 }
 

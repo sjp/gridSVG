@@ -49,6 +49,9 @@ export("getSVGoption",
        "getSVGoptions",
        "setSVGoptions")
 
+export("gridSVGMappings",
+       "getSVGMappings")
+
 export("gridSVGCoords",
        "readCoordsJS",
        "viewportCreate",

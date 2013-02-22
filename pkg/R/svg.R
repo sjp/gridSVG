@@ -70,8 +70,8 @@ svgCoords <- function(export.coords, svgfile, svgroot) {
     cat(coordsJSON, "\n", file = coordsFile, sep = "")
     close(coordsFile)
     newXMLNode("script", parent = svgroot,
-                      attrs = list(type = "application/ecmascript",
-                                   "xlink:href" = coordsFn))
+               attrs = list(type = "application/ecmascript",
+                            "xlink:href" = coordsFn))
   }
 
   if (export.coords == "inline") {
@@ -83,6 +83,30 @@ svgCoords <- function(export.coords, svgfile, svgroot) {
   # When we don't want to write to a file we might want to retain some
   # info, thus return coords info quietly
   invisible(get("vpCoords", envir = .gridSVGEnv))
+}
+
+svgMappings <- function(export.mappings, svgfile, svgroot) {
+  usageTable <- get("usageTable", envir = .gridSVGEnv)
+
+  if (export.mappings == "file") {
+    mappingsFn <- paste0(svgfile, ".mappings.js")
+    mappingsFile <- file(mappingsFn, "w")
+    cat(exportMappings(usageTable), file = mappingsFile)
+    close(mappingsFile)
+    newXMLNode("script", parent = svgroot,
+               attrs = list(type = "application/ecmascript",
+                            "xlink:href" = mappingsFn))
+  }
+
+  if (export.mappings == "inline") {
+    newXMLNode("script", parent = svgroot,
+               attrs = list(type = "application/ecmascript"),
+               newXMLCDataNode(exportMappings(usageTable)))
+  }
+
+  # When we don't want to write to a file we might want to retain some
+  # info, thus return coords info quietly
+  invisible(formatMappings(usageTable))
 }
 
 svgComment <- function(comment, svgdev=svgDevice()) {

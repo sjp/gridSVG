@@ -364,3 +364,64 @@ var queryBuilder = function(loc, params) {
 
    return loc + "?" + queryText;
 }
+
+/**
+ * Returns the mapping from a known grob/viewport name to an SVG ID.
+ * Assumes the variable 'gridSVGMappings' is in scope.
+ *
+ * @param {string} name The name of the object whose ID we are getting.
+ * @param {string} type One of 'vp' or 'grob'. Determines whether the name refers to a viewport or a grob.
+ * @param {number} index Optional. If specified, returns the mapped ID itself, rather than an array of IDs. The index is the (zero-based) index of the matching names.
+ * @returns {Array|string} If 'number' is specified, gives the ID as a string. Otherwise we receive an array of IDs.
+ *
+ */
+var getSVGMappings = function(name, type, index) {
+    if (type !== "vp" && type !== "grob") {
+        throw new Error("Invalid type specified. Must be one of 'vp', 'grob'.");
+    }
+
+    var obj;
+    if (type === "vp") {
+        obj = gridSVGMappings.vps[name];
+    }
+    if (type === "grob") {
+        obj = gridSVGMappings.grobs[name];
+    }
+
+    if (! obj) {
+        throw new Error("Name not found in mapping table.");
+    }
+
+    // If we have specified an index number
+    if (typeof index === "number") {
+        // If we only have one mapping for our name the index must be 0
+        if (typeof obj === "number") {
+            if (index === 0) {
+                return name + gridSVGMappings["id.sep"] + obj;
+            } else {
+                throw new Error("Invalid index specified (> 0), only one matching name found");
+            }
+        }
+
+        // Check we're not OOB, but because we also have more than one match,
+        // construct the result using the matching array
+        if (index > (obj.length - 1)) {
+            throw new Error("Index out of bounds for matching name.");
+        } else {
+            return name + gridSVGMappings["id.sep"] + obj[index];
+        }
+    } else {
+        // Force suffix to be an array of suffixes
+        if (typeof obj === "number") {
+            suffix = [obj];
+        } else {
+            suffix = obj;
+        }
+        var ids = [];
+        for (var i = 0; i < suffix.length; i++) {
+            ids.push(name + gridSVGMappings["id.sep"] + suffix[i]);
+        }
+        return ids;
+    }
+};
+

@@ -6,13 +6,32 @@
 # User function
 gridToSVG <- function(name="Rplots.svg",
                       export.coords=c("file", "inline", "none"),
+                      export.mappings=c("file", "inline", "none"),
                       export.js=c("file", "inline", "none"),
                       res = NULL,
                       indent = TRUE,
                       htmlWrapper = FALSE,
+                      usePaths = c("vpPaths", "gPaths", "none", "both"),
+                      uniqueNames = TRUE,
                       xmldecl = xmlDecl()) {
-    # Saving we know how to export
+    # Important to know if we need to modify vpPaths/gPaths at all
+    usePaths <- match.arg(usePaths)
+    paths <-
+        if (usePaths == "vpPaths")
+            c(TRUE, FALSE)
+        else if (usePaths == "gPaths")
+            c(FALSE, TRUE)
+        else if (usePaths == "both")
+            rep(TRUE, 2)
+        else # Assume "none"
+            rep(FALSE, 2)
+    assign("use.vpPaths", paths[1], envir = .gridSVGEnv)
+    assign("use.gPaths", paths[2], envir = .gridSVGEnv)
+    assign("uniqueNames", uniqueNames, envir = .gridSVGEnv)
+
+    # Saving how to export
     export.coords <- match.arg(export.coords)
+    export.mappings <- match.arg(export.mappings)
     export.js <- match.arg(export.js)
     # If we are exporting js but returning a character
     # vector we need to save the contents inline, because
@@ -22,12 +41,17 @@ gridToSVG <- function(name="Rplots.svg",
             export.coords <- "inline"
             warning('export.coords changed from "file" to "inline"')
         }
+        if (export.mappings == "file") {
+            export.mappings <- "inline"
+            warning('export.mappings changed from "file" to "inline"')
+        }
         if (export.js == "file") {
             export.js <- "inline"
             warning('export.js changed from "file" to "inline"')
         }
     }
     assign("export.coords", export.coords, envir = .gridSVGEnv)
+    assign("export.mappings", export.mappings, envir = .gridSVGEnv)
     assign("export.js", export.js, envir = .gridSVGEnv)
 
     # Ensure we're at the top level
@@ -42,11 +66,12 @@ gridToSVG <- function(name="Rplots.svg",
     # based on ROOT vp
     # Use 'wrap=TRUE' to ensure correct capture of all types of 'grid' output
     gTree <- grid.grab(name="gridSVG", wrap=TRUE, gp=rootgp)
-    # Emptying the VP usage table
-    vpUsageTable <- data.frame(vpname = character(0),
-                               count = integer(0),
-                               stringsAsFactors=FALSE)
-    assign("vpUsageTable", vpUsageTable, envir = .gridSVGEnv)
+    # Emptying the usage table
+    usageTable <- data.frame(name = character(0),
+                             suffix = integer(0),
+                             type = character(0),
+                             stringsAsFactors = FALSE)
+    assign("usageTable", usageTable, envir = .gridSVGEnv)
     # Emptying point usage table
     pchUsageTable <- matrix(c(0:127, logical(128)), ncol = 2,
                             dimnames = list(NULL, c("pch", "used")))
@@ -60,9 +85,10 @@ gridToSVG <- function(name="Rplots.svg",
     # Convert gTree to SVG
     gridToDev(gTree, svgdev)
     svgroot <- devClose(svgdev)
-    # Adding in JS if necessary, always write coords *first*
-    # Not strictly necessary but may avoid potential issues
+    # Adding in JS if necessary, always write utils *last*.
+    # Not strictly necessary but may avoid potential issues in JS.
     coords <- svgCoords(export.coords, name, svgroot)
+    mappings <- svgMappings(export.mappings, name, svgroot)
     jsutils <- svgJSUtils(export.js, name, svgroot)
     doctxt <- saveXML(svgroot, indent = indent)
 
@@ -81,7 +107,12 @@ gridToSVG <- function(name="Rplots.svg",
 
     result <- list(svg = svgroot,
                    coords = coords,
+                   mappings = mappings,
                    utils = jsutils)
+
+    if (! testUniqueMappings(svgroot))
+        warning("Not all element IDs are unique. Consider running gridToSVG() with 'uniqueNames = TRUE'.")
+
     # Return SVG vector when an inadequate filename is supplied
     if (is.null(name) || ! nzchar(name))
         return(result)

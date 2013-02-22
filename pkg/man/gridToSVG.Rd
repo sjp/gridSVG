@@ -7,10 +7,13 @@
 \usage{
 gridToSVG(name = "Rplots.svg",
           export.coords = c("file", "inline", "none"),
+          export.mappings = c("file", "inline", "none"),
           export.js = c("file", "inline", "none"),
           res = NULL,
           indent = TRUE,
           htmlWrapper = FALSE,
+          usePaths = c("vpPaths", "gPaths", "none", "both"),
+          uniqueNames = TRUE,
           xmldecl = xmlDecl())
 }
 \arguments{
@@ -27,6 +30,13 @@ gridToSVG(name = "Rplots.svg",
     If this parameter is \code{file}, the coordinates information is
     written to a file, while \code{inline} will include the contents
     within the SVG document.
+  }
+  \item{export.mappings}{
+    If this parameter is not \code{none} a mapping file is exported.
+
+    If this parameter is \code{file}, the mapping information is written
+    to a file, while \code{inline} will include the contents within the
+    SVG document.
   }
   \item{export.js}{
     If this parameter is not \code{none} a JavaScript file is written out.
@@ -56,6 +66,25 @@ gridToSVG(name = "Rplots.svg",
     If \code{TRUE}, saves a wrapping HTML file. This file contains a
     snippet of HTML which links to the exported SVG file.
   }
+  \item{usePaths}{
+    If this parameter is set to \code{vpPaths}, then when writing out
+    viewports gridSVG will set the name to the current \code{vpPath}
+    instead of the current viewport.
+
+    If this parameter is set to \code{gPaths}, gridSVG will set the
+    names of grobs to be the current \code{gPath} instead of the current
+    grob name.
+
+    When \code{none}, viewports and grobs will not incorporate paths.
+
+    When \code{both}, viewports and grobs will both use paths.
+  }
+  \item{uniqueNames}{
+    If \code{TRUE}, gridSVG will make an attempt to produce unique
+    names. Unique names are required for valid SVG. It is highly
+    recommended that mapping information is used when this parameter is
+    \code{TRUE}.
+  }
   \item{xmldecl}{
     This parameter sets the XML declaraction that will be applied to the
     SVG document.
@@ -81,15 +110,20 @@ gridToSVG(name = "Rplots.svg",
   Optionally a JavaScript file containing coordinate transformation
   information is also exported.
 
+  Optionally a JavaScript file containing name mapping information is
+  also exported.
+
   Optionally a JavaScript file containing utility JavaScript functions
   is also exported.
 
   When \code{name} has a filename with zero characters, a named list is
-  returned with three elements. \code{svg} is the SVG root node (and all
+  returned with four elements. \code{svg} is the SVG root node (and all
   its children, see the XML package for more information on how to use
   this. \code{coords} contains the list of coordinate information for
-  exported viewports. \code{utils} is a character vector containing
-  JavaScript code to manipulate gridSVG plots in the browser.
+  exported viewports. \code{mappings} is a list containing information
+  on how names have been modified during the exporting process.
+  \code{utils} is a character vector containing JavaScript code to
+  manipulate gridSVG plots in the browser.
 
   This list is always returned but when a valid filename is given, it is
   returned invisibly.

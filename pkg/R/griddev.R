@@ -477,36 +477,47 @@ devGrob.circle <- function(x, dev) {
        name=x$name)
 }
 
-# Because viewports can be pushed into many times, and each
-# time we push we start a group, we need a *unique* id for that
-# group, otherwise clipping paths don't work correctly
-getvpID <- function(vpname) {
-  # Finding out how many times a VP has been pushed to so far
-  vput <- get("vpUsageTable", envir = .gridSVGEnv)
-  vpcount <- vput[vput$vpname == vpname, "count"]
+# Because viewports and grobs can be used many times, and each
+# time we use one we start a group, we need a *unique* id for that
+# group, otherwise things like clipping paths don't work correctly
+getID <- function(name, type) {
+  # If this is a grob, only modify if we're trying to ensure uniqueness.
+  # We *really* need to do this for viewports though, so viewports are a
+  # special case.
+  if (type == "grob" && ! get("uniqueNames", envir = .gridSVGEnv))
+      return(name)
 
-  # If the VP name is not in the usage table, add it
-  if (length(vpcount) == 0) {
-    vpcount <- 0
-    assign("vpUsageTable", rbind(vput,
-                                 data.frame(vpname = vpname,
-                                            count = vpcount,
-                                            stringsAsFactors = FALSE)),
-           envir = .gridSVGEnv)
-    vput <- get("vpUsageTable", envir = .gridSVGEnv)
+  # Finding out how many times a VP or grob has been used so far
+  ut <- get("usageTable", envir = .gridSVGEnv)
+  suffix <- ut[ut$name == name, "suffix"]
+
+  suffix <-
+    if (length(suffix) == 0)
+      1
+    else
+      max(suffix) + 1
+
+  # Test if there are any existing names that might clash.
+  # For example rect.1 has rect.1.1 children, test whether
+  # these child names might clash.
+  candidateName <- paste(name, suffix, sep = getSVGoption("id.sep"))
+  while (length(ut[ut$name == candidateName, "suffix"])) {
+    # Just increment the suffix number by 1 each time, should (eventually)
+    # give us a unique number
+    suffix <- suffix + 1
+    candidateName <- paste(name, suffix, sep = getSVGoption("id.sep"))
   }
 
-  # Incrementing the vp appearance counter and storing it
-  vpcount <- vpcount + 1
-  vput[vput$vpname == vpname, "count"] <- vpcount
-  assign("vpUsageTable", vput, envir = .gridSVGEnv)
+  assign("usageTable",
+         rbind(ut,
+               data.frame(name = name,
+                          suffix = suffix,
+                          type = type,
+                          stringsAsFactors = FALSE)),
+         envir = .gridSVGEnv)
 
-  vpID <- paste(vpname,
-                vpcount,
-                sep=getSVGoption("id.sep"))
-
-  # Returning the vpID
-  vpID
+  # Returning the new ID
+  paste(name, suffix, sep = getSVGoption("id.sep"))
 }
 
 getCoordsInfo <- function(vp, tm, dev) {
@@ -528,31 +539,35 @@ getCoordsInfo <- function(vp, tm, dev) {
 
 devGrob.viewport <- function(x, dev) {
   vp <- x
-  vpname <- as.character(current.vpPath())
   # Modify the path so that we can use a different separator
-  defaultSep <- "::"
-  splitPath <- strsplit(vpname, defaultSep)[[1]]
-  vpname <- paste(splitPath, collapse = getSVGoption("vpPath.sep"))
+  if (get("use.vpPaths", envir = .gridSVGEnv)) {
+    vpname <- as.character(current.vpPath())
+    defaultSep <- "::"
+    splitPath <- strsplit(vpname, defaultSep)[[1]]
+    vpname <- paste(splitPath, collapse = getSVGoption("vpPath.sep"))
+  } else {
+    vpname <- vp$name
+  }
   coords <- getCoordsInfo(vp, current.transform(), dev)
 
   if (is.null(vp$clip)) {
       clip <- FALSE
-      list(name=getvpID(vpname), clip=clip, coords=coords)
+      list(name=getID(vpname, "vp"), clip=clip, coords=coords)
   } else if (is.na(vp$clip)) {
       # Clipping has been turned OFF
       # FIXME:  CANNOT do this in SVG (enlarge the clip path)
       clip <- FALSE
-      list(name=getvpID(vpname), clip=clip, coords=coords)
+      list(name=getID(vpname, "vp"), clip=clip, coords=coords)
   } else if (! vp$clip) {
       clip <- FALSE
-      list(name=getvpID(vpname), clip=clip, coords=coords)
+      list(name=getID(vpname, "vp"), clip=clip, coords=coords)
   } else {
       clip <- TRUE
       list(vpx=coords$x,
            vpy=coords$y,
            vpw=coords$width,
            vph=coords$height,
-           name=getvpID(vpname),
+           name=getID(vpname, "vp"),
            clip=clip,
            coords=coords)
   }
@@ -563,15 +578,15 @@ devGrob.vpPath <- function(x, dev) {
   tm <- current.transform()
   if (is.null(vp$clip)) {
       clip <- FALSE
-      list(name=getvpID(vp$name), clip=clip)
+      list(name=getID(vp$name, "vp"), clip=clip)
   } else if (is.na(vp$clip)) {
       # Clipping has been turned OFF
       # FIXME:  CANNOT do this in SVG (enlarge the clip path)
       clip <- FALSE
-      list(name=getvpID(vp$name), clip=clip)
+      list(name=getID(vp$name, "vp"), clip=clip)
   } else if (! vp$clip) {
       clip <- FALSE
-      list(name=getvpID(vp$name), clip=clip)
+      list(name=getID(vp$name, "vp"), clip=clip)
   } else {
       clip <- TRUE
 
@@ -582,7 +597,7 @@ devGrob.vpPath <- function(x, dev) {
            vpy=cy(unit(loc[2], "inches"), dev),
            vpw=cw(unit(1, "npc"), dev),
            vph=ch(unit(1, "npc"), dev),
-           name=getvpID(vp$name),
+           name=getID(vp$name, "vp"),
            clip=clip)
   }  
 }
@@ -666,6 +681,12 @@ primToDev.line.to <- function(x, dev) {
     # NOTE:  MUST NOT evaluate devGrob() more than once
     #        because it has side-effects (within its closure)
     dgrob <- devGrob(x, dev)
+
+  if (get("uniqueNames", envir = .gridSVGEnv)) {
+      dgrob$name <- getID(dgrob$name, "grob")
+      x$name <- getID(x$name, "grob")
+  }
+
   # Grouping the grob
   devStartGroup(dgrob, NULL, dev)
 
@@ -683,6 +704,9 @@ primToDev.line.to <- function(x, dev) {
 }
 
 primToDev.lines <- function(x, dev) {
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
+
   # Grouping the grob
   devStartGroup(devGrob(x, dev), NULL, dev)
 
@@ -702,6 +726,9 @@ primToDev.lines <- function(x, dev) {
 }
 
 primToDev.polyline <- function(x, dev) {
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
+
   # If we only have one line
   if (is.null(x$id) && is.null(x$id.lengths)) {
       x$id <- rep(1L, length(x$x))
@@ -758,6 +785,9 @@ primToDev.segments <- function(x, dev) {
   gp <- expandGpar(x$gp, n)
   arrows <- expandArrow(x$arrow, n)
 
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
+
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
 
@@ -800,6 +830,9 @@ primToDev.polygon <- function(x, dev) {
 
   # Gp needs to be defined for each sub-grob
   gp <- expandGpar(x$gp, n)
+
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -876,6 +909,9 @@ primToDev.xspline <- function(x, dev) {
   gp <- expandGpar(x$gp, n)
   arrows <- expandArrow(x$arrow, n)
 
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
+
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
 
@@ -906,6 +942,9 @@ primToDev.xspline <- function(x, dev) {
 }
 
 primToDev.pathgrob <- function(x, dev) {
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
+
   # Grouping the grob
   devStartGroup(devGrob(x, dev), NULL, dev)
 
@@ -962,6 +1001,9 @@ primToDev.rastergrob <- function(x, dev) {
   # Expand the gp such that it fully defines all sub-grobs
   gp <- expandGpar(x$gp, n)
 
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
+
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
 
@@ -996,6 +1038,9 @@ primToDev.rect <- function(x, dev) {
 
   # Expand the gp such that it fully defines all sub-grobs
   gp <- expandGpar(x$gp, n)
+
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
 
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
@@ -1047,6 +1092,9 @@ primToDev.text <- function(x, dev) {
   # Expand the gp such that it fully defines all sub-grobs
   gp <- expandGpar(x$gp, n)
 
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
+
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
 
@@ -1079,6 +1127,9 @@ primToDev.circle <- function(x, dev) {
   # Expand the gp such that it fully defines all sub-grobs
   gp <- expandGpar(x$gp, n)
 
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
+
   # Grouping each sub-grob
   devStartGroup(devGrob(x, dev), NULL, dev)
 
@@ -1106,6 +1157,9 @@ primToDev.points <- function(x, dev) {
 
     # Expand the gp such that it fully defines all sub-grobs
     gp <- expandGpar(x$gp, n)
+
+    if (get("uniqueNames", envir = .gridSVGEnv))
+        x$name <- getID(x$name, "grob")
 
     # Grouping each sub-grob
     devStartGroup(devGrob(x, dev), NULL, dev) 
@@ -1202,6 +1256,8 @@ primToDev.points <- function(x, dev) {
 }
   
 primToDev.xaxis <- function(x, dev) {
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
   devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
   # If the at is NULL then the axis will have no
   # children;  need to be calculated on-the-fly
@@ -1223,6 +1279,8 @@ primToDev.xaxis <- function(x, dev) {
 }
 
 primToDev.yaxis <- function(x, dev) {
+  if (get("uniqueNames", envir = .gridSVGEnv))
+      x$name <- getID(x$name, "grob")
   devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
   # If the at is NULL then the axis will have no
   # children;  need to be calculated on-the-fly
@@ -1252,7 +1310,8 @@ grobToDev.frame <- function(x, dev) {
     
     devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
     lapply(x$children, function(child) {
-        child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
+        if (get("use.gPaths", envir = .gridSVGEnv))
+            child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
         grobToDev(child, dev)
     })
     devEndGroup(x$name, dev)
@@ -1273,7 +1332,8 @@ grobToDev.cellGrob <- function(x, dev) {
 
     devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
     lapply(x$children, function(child) {
-        child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
+        if (get("use.gPaths", envir = .gridSVGEnv))
+            child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
         grobToDev(child, dev)
     })
     devEndGroup(x$name, dev)
@@ -1296,12 +1356,14 @@ grobToDev.gTree <- function(x, dev) {
 }
 
 primToDev.gTree <- function(x, dev) {
+    if (x$name != "gridSVG" && get("uniqueNames", envir = .gridSVGEnv))
+        x$name <- getID(x$name, "grob")
     devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
     lapply(x$children, function(child) {
         # 'gridSVG' is a special case because it is just a wrapping gTree.
         # It is not useful for us to track the entire gPath as a result,
         # only the path *after* 'gridSVG'
-        if (x$name != "gridSVG")
+        if (get("use.gPaths", envir = .gridSVGEnv) && x$name != "gridSVG")
             child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
         grobToDev(child, dev)
     })
