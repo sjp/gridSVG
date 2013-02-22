@@ -60,3 +60,10 @@ getSVGMappings <- function(name, type, index = NULL) {
         paste(name, suffixes[index], sep = mappings$id.sep)
     }
 }
+
+readMappingsJS <- function(filename) {
+  jsData <- readLines(filename)
+  jsData <- gsub("var gridSVGMappings = ", "", jsData)
+  jsonData <- gsub(";$", "", jsData)
+  paste0(jsonData, collapse = "\n")
+}

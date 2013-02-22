@@ -50,7 +50,8 @@ export("getSVGoption",
        "setSVGoptions")
 
 export("gridSVGMappings",
-       "getSVGMappings")
+       "getSVGMappings",
+       "readMappingsJS")
 
 export("gridSVGCoords",
        "readCoordsJS",
