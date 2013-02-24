@@ -8,12 +8,9 @@
   with \code{gridToSVG}, to produce an SVG document with comments
   inserted at the point where the grob is \dQuote{drawn}.
 }
-\synopsis{
-grid.comment(comment, name = NULL, vp = NULL)
-commentGrob(comment, name = NULL, vp = NULL)
-}
 \usage{
 grid.comment(comment, name = NULL, vp = NULL)
+commentGrob(comment, name = NULL, vp = NULL)
 }
 \arguments{
   \item{comment}{

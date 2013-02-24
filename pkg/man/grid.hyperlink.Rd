@@ -9,15 +9,12 @@
   \code{gridToSVG}, to produce an SVG document with
   hyperlinked graphical elements.
 }
-\synopsis{
-hyperlinkGrob(x, href, show=NULL, group=TRUE)
-grid.hyperlink(path, href, show=NULL, group=TRUE, grep=FALSE)
-  }
 \usage{
-grid.hyperlink(path, href, show, group, grep)
+grid.hyperlink(path, href, show=NULL, group=TRUE, grep=FALSE)
+hyperlinkGrob(x, href, show=NULL, group=TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{x}{ A grob to add a hyperlink to. }
   \item{path}{ A grob path specifying a drawn grob. }
   \item{href}{ A valid Xlink URI.  Can be a vector of several links
     (see \code{group} argument below). }

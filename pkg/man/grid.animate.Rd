@@ -1,7 +1,6 @@
 \name{grid.animate}
 \alias{grid.animate}
 \alias{animateGrob}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Animate a grid grob }
 \description{
   Creates an animated.grob object.
@@ -9,21 +8,15 @@
   \code{gridToSVG}, to produce an SVG document with
   animated graphical elements.
 }
-\synopsis{
+\usage{
 animateGrob(grob, ...,
             duration=1, 
             rep=FALSE, revert=FALSE,
             begin=0, interpolate="linear", group=FALSE) 
-grid.animate(path, ...) 
-  }
-\usage{
-grid.animate(path, ...,
-             duration=1, 
-             rep=FALSE, revert=FALSE,
-             begin=0, interpolate="linear", group=FALSE) 
+grid.animate(path, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{grob}{ A grob to add animation to. }
   \item{path}{ A grob path specifying a drawn grob. }
   \item{\dots}{ Arguments of the grob to animate. }
   \item{duration}{ The duration in seconds of the animation. }
