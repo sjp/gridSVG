@@ -22,7 +22,9 @@ export("svgOpen",
        "svgAnimate",
        "svgStartLink",
        "svgEndLink",
-       "svgStyle"
+       "svgStyle",
+       "svgOpenElement",
+       "svgEndElement"
        )
 
 export("animValue",
@@ -42,6 +44,8 @@ export("grid.hyperlink",
        "garnishGrob",
        "grid.script",
        "scriptGrob",
+       "grid.element",
+       "elementGrob",
        "gridToSVG"
        )
 
@@ -77,6 +81,10 @@ S3method("grobToDev", "cellGrob")
 S3method("grobToDev", "recordedGrob")
 # S3method("grobToDev", "linked.grob")
 S3method("grobToDev", "script.grob")
+
+# elementGrob methods
+S3method("grobToDev", "element.grob")
+S3method("primToDev", "element.grob")
 
 # gtable fixes
 S3method("grobToDev", "gtable")

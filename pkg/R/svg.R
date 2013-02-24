@@ -139,6 +139,34 @@ svgClipAttr <- function(id, clip) {
     list()
 }
 
+svgOpenElement <- function(id = NULL, element = NULL, attrs = NULL,
+                           attributes=svgAttrib(), links=NULL, show = NULL,
+                           svgdev = svgDevice()) {
+  has.link <- hasLink(links[id])
+  if (has.link)
+    svgStartLink(links[id], show[id], svgdev)
+
+  attrs$id <- id
+  # If garnishing, clobber any existing attrs
+  for (name in names(attributes))
+      attrs[[name]] <- attributes[[name]]
+  attrs <- attrList(attrs)
+  element <- newXMLNode(element, attrs = attrs,
+                        parent = svgDevParent(svgdev))
+  svgDevChangeParent(element, svgdev)
+}
+
+# This is pretty much the same as svgEndGroup
+svgEndElement <- function(id=NULL, links=NULL, svgdev=svgDevice()) {
+  # In the case where we've got a link on our element, set the parent
+  # one level up because we've got an "a" tag above the group
+  has.link <- hasLink(links[id])
+  if (has.link)
+    svgEndLink(svgdev)
+
+  svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
+}
+
 svgStartGroup <- function(id=NULL, clip=FALSE,
                           attributes=svgAttrib(), links=NULL, show=NULL,
                           style=svgStyle(), coords=NULL, svgdev=svgDevice()) {

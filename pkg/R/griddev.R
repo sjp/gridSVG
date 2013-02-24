@@ -1244,7 +1244,7 @@ primToDev.points <- function(x, dev) {
     # Ending the group
     devEndGroup(x$name, dev) 
 }
-  
+
 primToDev.xaxis <- function(x, dev) {
   x$name <- getID(x$name, "grob")
   devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)

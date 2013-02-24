@@ -405,6 +405,23 @@ setMethod("devCircle", signature(device="svgDevice"),
                       devParToSVGStyle(gp, device), device@dev)
           })
 
+setMethod("devOpenElement", signature(device="svgDevice"),
+          function(element, gp, device) {
+            # Ignore gp, complicates output
+            svgOpenElement(id = element$id,
+                           element = element$name,
+                           attrs = element$attrs,
+                           attributes = device@attrs,
+                           links = device@links,
+                           show = device@show,
+                           svgdev = device@dev)
+          })
+
+setMethod("devEndElement", signature(device="svgDevice"),
+          function(name, device) {
+            svgEndElement(name, device@links, device@dev)
+          })
+
 setMethod("devStartGroup", signature(device="svgDevice"),
           function(group, gp, device) {
             clip <- FALSE

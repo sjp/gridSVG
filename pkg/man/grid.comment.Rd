@@ -9,18 +9,18 @@
   inserted at the point where the grob is \dQuote{drawn}.
 }
 \synopsis{
-grid.comment(name, comment, vp = NULL)
-commentGrob(name, comment, vp = NULL)
+grid.comment(comment, name = NULL, vp = NULL)
+commentGrob(comment, name = NULL, vp = NULL)
 }
 \usage{
-grid.comment(name, comment, vp = NULL)
+grid.comment(comment, name = NULL, vp = NULL)
 }
 \arguments{
-  \item{name}{ A character identifier. }
   \item{comment}{
     A character vector used to write out a comment. If this has a length
     greater than one, each element is assumed to be a line.
   }
+  \item{name}{ A character identifier. }
   \item{vp}{ The viewport to which the grob belongs. }
 }
 \value{

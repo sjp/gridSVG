@@ -15,6 +15,8 @@
 \alias{svgStartLink}
 \alias{svgEndLink}
 \alias{svgStyle}
+\alias{svgOpenElement}
+\alias{svgEndElement}
 \title{Internal gridSVG Functions}
 \description{
   Some functions you can call, but I'm not documenting (yet).
