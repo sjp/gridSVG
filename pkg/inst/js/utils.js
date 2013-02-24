@@ -353,16 +353,16 @@ var queryBuilder = function(loc, params) {
     if (!params)
         return loc;
 
-   var query = [];
-   for (var k in params)
-      query.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
-   var queryText = query.join("&"); 
+    var query = [];
+    for (var k in params)
+       query.push(encodeURIComponent(k) + "=" + encodeURIComponent(params[k]));
+    var queryText = query.join("&"); 
 
-   // If params is an object of length 0 we end up with ""
-   if (!queryText)
-       return loc;
+    // If params is an object of length 0 we end up with ""
+    if (!queryText)
+        return loc;
 
-   return loc + "?" + queryText;
+    return loc + "?" + queryText;
 }
 
 /**

@@ -36,8 +36,8 @@ svgClose <- function(svgdev) {
 }
 
 svgJSUtils <- function(export.js, svgfile, svgroot) {
-  utilsFn <- paste0(svgfile, ".convert.js")
-  utilsFile <- file(system.file("js/convert.js", package = "gridSVG"))
+  utilsFn <- paste0(svgfile, ".utils.js")
+  utilsFile <- file(system.file("js/utils.js", package = "gridSVG"))
   utilsLines <- readLines(utilsFile)
   close(utilsFile)
   if (export.js == "file") {
