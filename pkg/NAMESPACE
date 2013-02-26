@@ -82,10 +82,6 @@ S3method("grobToDev", "recordedGrob")
 # S3method("grobToDev", "linked.grob")
 S3method("grobToDev", "script.grob")
 
-# elementGrob methods
-S3method("grobToDev", "element.grob")
-S3method("primToDev", "element.grob")
-
 # gtable fixes
 S3method("grobToDev", "gtable")
 S3method("grobToDev", "gTableChild")
@@ -112,6 +108,7 @@ S3method("primToDev", "linked.grob")
 S3method("primToDev", "animated.grob")
 S3method("primToDev", "comment.grob")
 S3method("primToDev", "garnished.grob")
+S3method("primToDev", "element.grob")
 
 S3method("link", "grob")
 S3method("link", "gTree")

@@ -1,46 +1,39 @@
-# Functions for generating generic SVG elements
+# Functions for generating arbitrary SVG elements
 
 elementGrob <- function(el, name = NULL, attrs = NULL, children = NULL,
-                        vp = NULL, childrenvp = NULL) {
-    ng <- nullGrob(name = name, vp = vp)
-    # Fix name to be an elementGrob name instead of nullGrob
+                        vp = NULL, childrenvp = NULL,
+                        asis = FALSE) {
+    eg <- gTree(name = name, vp = vp,
+                children = children, childrenvp = childrenvp)
+    # Fix name to be an elementGrob name instead of gTree
     if (is.null(name))
-        ng$name <- gsub("null", "element", ng$name)
-    ng$el <- el
-    ng$attrs <- if (is.null(attrs)) list() else attrs
-    ng$children <- children
-    ng$childrenvp <- childrenvp
-    cl <- class(ng)
-    class(ng) <- unique(c("element.grob", cl))
-    ng
+        eg$name <- gsub("gTree", "element", eg$name)
+    # Keeping copy of name because of asis.
+    # If it's TRUE, we leave the id alone.
+    # When FALSE, the resulting id attribute could get modified
+    # by things like gTrees so that the name is a *path*.
+    eg$asis <- asis
+    eg$origname <- eg$name
+
+    eg$el <- el
+    eg$attrs <- if (is.null(attrs)) list() else attrs
+    cl <- class(eg)
+    class(eg) <- unique(c("element.grob", cl))
+    eg
 }
 
 
 grid.element <- function(el, name = NULL, attrs = NULL, children = NULL,
-                         vp = NULL, childrenvp = NULL) {
-    grid.draw(elementGrob(el, name, attrs, children, vp, childrenvp))
+                         vp = NULL, childrenvp = NULL,
+                         asis = FALSE) {
+    grid.draw(elementGrob(el, name, attrs, children, vp, childrenvp, asis))
 }
 
-# Same as gTree because we might want to place elements in specific
-# viewports/<g>'s (due to gpars)
-# Fortunately if we have them unnecessarily, it doesn't affect any
 devGrob.element.grob <- function(x, dev) {
-  list(id = getID(x$name, "grob"),
+  list(id = if (x$asis) x$origname else getID(x$name, "grob"),
        name = x$el,
        attrs = x$attrs)
 }
-
-# output because SVG <g>'s do not draw anything
-grobToDev.element.grob <- function(x, dev) {
-  depth <- enforceVP(x$vp, dev)
-  if (!is.null(x$childrenvp)) {
-    pushViewport(x$childrenvp)
-    upViewport(grid:::depth(x$childrenvp))
-  }
-  primToDev(x, dev)
-  unwindVP(x$vp, depth, dev)
-}
-
 
 # Unlike gTrees, we don't need a group for children because it
 # complicates output, when we want clear output to SVG.
