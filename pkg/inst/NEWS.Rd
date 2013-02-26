@@ -123,6 +123,10 @@
     \item Added new generic element interface, 'grid.element'. Allows
     any arbitrary SVG element (or tree of elements) to be inserted into
     the resulting SVG image. (Simon)
+
+    \item When using the 'grep' argument for 'grid.hyperlink' and
+    'grid.garnish', we can now apply effects to multiple grobs where
+    gPaths are regular expressions. (Simon)
   }
 }
 

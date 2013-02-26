@@ -16,9 +16,15 @@ hyperlinkGrob <- function(x, href, show=NULL, group=TRUE) {
 }
 
 grid.hyperlink <- function(path, href, show=NULL, group=TRUE, grep=FALSE) {
-    x <- grid.get(path, grep=grep)
-    x <- hyperlinkGrob(x, href, show, group)
-    grid.set(path, x, grep=grep, redraw=FALSE)
+    if (any(grep)) {
+        grobApply(path, function(path) {
+            grid.set(path, hyperlinkGrob(grid.get(path), href, show, group), redraw = FALSE)
+        }, grep = grep)
+    } else {
+        x <- grid.get(path, grep=grep)
+        x <- hyperlinkGrob(x, href, show, group)
+        grid.set(path, x, grep=grep, redraw=FALSE)
+    }
 }
 
 link <- function(x) {
