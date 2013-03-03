@@ -119,8 +119,6 @@ grobApply <- function(path, FUN, ..., grep = TRUE) {
     if (! length(matchingDepths))
         return()
 
-    # Insert code here for depth = 1 case (top level)
-
     nMatches <- 0
     searchMatches <- vector("list", length(matchingDepths))
     # For each name of the correct path length
@@ -128,11 +126,11 @@ grobApply <- function(path, FUN, ..., grep = TRUE) {
         dlPathPieces <-
             if (! is.null(path$path))
                 c(strsplit(dl$gPath[i], grid:::.grid.pathSep)[[1]],
-                              dl$name[i])
+                  dl$name[i])
             else
                 dl$name[i]
         matches <- logical(depth)
-        # Check whether we need to grep this level or not
+        # Check whether we need to grep this level or not, attempt match
         for (j in 1:depth) {
             matches[j] <-
                 if (grep[j])
@@ -147,13 +145,19 @@ grobApply <- function(path, FUN, ..., grep = TRUE) {
         }
     }
 
-    searchMatches <- searchMatches[1:nMatches]
     if (! nMatches)
         return()
+
+    # We may have allocated a list too large earlier,
+    # subset to only matching results
+    searchMatches <- searchMatches[1:nMatches]
 
     # Now that we have all of the grobs, lets try and get them,
     # and then apply a function to each of them
     for (i in 1:nMatches)
         FUN(searchMatches[[i]], ...)
+
+    # Ensure nothing is returned
+    invisible()
 }
 
