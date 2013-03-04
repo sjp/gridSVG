@@ -1136,7 +1136,7 @@ applyAnimation.rastergrob <- function(x, animSet, animation, group, dev) {
                        svgAnimateScale(cw(dim$w, dev), -ch(dim$h, dev), 
                                        begin[i], interp[i], dur[i],
                                        rep[i], rev[i],
-                                       paste(subName, "scale", sep="."),
+                                       paste(subName, "scale", sep=getSVGoption("id.sep")),
                                        dev@dev)
                    },
                    height={
@@ -1156,7 +1156,7 @@ applyAnimation.rastergrob <- function(x, animSet, animation, group, dev) {
                            svgAnimateScale(cw(dim$w, dev), -ch(dim$h, dev), 
                                            begin[i], interp[i], dur[i],
                                            rep[i], rev[i],
-                                           paste(subName, "scale", sep="."),
+                                           paste(subName, "scale", sep=getSVGoption("id.sep")),
                                            dev@dev)
                        }
                    },

@@ -119,7 +119,7 @@ svgComment <- function(comment, svgdev=svgDevice()) {
 
 svgClipPath <- function(id, vpx, vpy, vpw,
                         vph, svgdev=svgDevice()) {
-  clipPathID <- paste(id, "clipPath", sep=".")
+  clipPathID <- paste(id, "clipPath", sep = getSVGoption("id.sep"))
   newXMLNode("defs", parent = svgDevParent(svgdev),
              newXMLNode("clipPath",
                         attrs = list(id = clipPathID),
@@ -134,7 +134,8 @@ svgClipPath <- function(id, vpx, vpy, vpw,
 
 svgClipAttr <- function(id, clip) {
   if (clip)
-    list("clip-path" = paste0("url(#", id, ".clipPath)"))
+    list("clip-path" = paste0("url(#", id,
+                              getSVGoption("id.sep"), "clipPath)"))
   else
     list()
 }
@@ -514,12 +515,12 @@ markerTxt <- function(ends, name) {
 
 markerName <- function(ends, name) {
     if (ends == "first")
-        mname <- paste(name, ".markerStart", sep="")
+        mname <- paste(name, getSVGoption("id.sep"), "markerStart", sep="")
     if (ends == "last")
-        mname <- paste(name, ".markerEnd", sep="")
+        mname <- paste(name, getSVGoption("id.sep"), "markerEnd", sep="")
     if (ends == "both")
-        mname <- c(paste(name, ".markerStart", sep=""),
-                   paste(name, ".markerEnd", sep=""))
+        mname <- c(paste(name, getSVGoption("id.sep"), "markerStart", sep=""),
+                   paste(name, getSVGoption("id.sep"), "markerEnd", sep=""))
     mname
 }
 
@@ -608,7 +609,7 @@ svgRaster <- function(x, y, width, height, datauri, id=NULL,
   newXMLNode("g", parent = svgDevParent(svgdev),
              attrs = attrlist,
              newXMLNode("g",
-                        attrs = list(id = paste(id, "scale", sep="."),
+                        attrs = list(id = paste(id, "scale", sep = getSVGoption("id.sep")),
                                      transform = paste0("scale(",
                                                         round(width, 2), ", ",
                                                         round(-height, 2), ")")),
