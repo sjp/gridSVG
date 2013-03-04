@@ -68,8 +68,8 @@ gridToSVG(name = "Rplots.svg",
   }
   \item{usePaths}{
     If this parameter is set to \code{vpPaths}, then when writing out
-    viewports gridSVG will set the name to the current \code{vpPath}
-    instead of the current viewport.
+    viewports gridSVG will set the SVG element ID to the current
+    \code{vpPath} instead of the current viewport name.
 
     If this parameter is set to \code{gPaths}, gridSVG will set the
     names of grobs to be the current \code{gPath} instead of the current
@@ -99,6 +99,14 @@ gridToSVG(name = "Rplots.svg",
   }
 }
 \details{
+  The \code{uniqueNames} parameter is set to \code{TRUE} by default in
+  order to ensure that each SVG element ID is unique. This is a
+  requirement of XML (which SVG is based on). This differs from
+  \code{usePaths} because \code{usePaths} can still generate names that
+  are not unique (there are several ways for this to
+  happen). \code{uniqueNames} modifies grob and viewport names with a
+  numeric suffix to ensure uniqueness.
+
   See the files in the directory gridSVG/tests for examples
   of things that can be done.  See the file gridSVG/doc/overview.tex
   for limitations.

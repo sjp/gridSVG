@@ -1,11 +1,13 @@
-\name{Retrieve Names Mapped to SVG IDs}
+\name{Retrieve Names Mapped to SVG IDs, CSS Selectors and XPath Expressions}
 \alias{getSVGMappings}
 \title{
-  Retrieving Viewport and Grob Names as SVG IDs
+  Retrieving Viewport and Grob Names as SVG IDs, CSS Selectors and XPath
+  Expressions
 }
 \description{
-  This function gives us the SVG IDs that have been created from a grob
-  or viewport name as a result of exporting to SVG.
+  This function gives us SVG IDs (or CSS selectors and XPath
+  expressions) that have been created from a grob or viewport name as a
+  result of exporting to SVG.
 }
 \usage{
 getSVGMappings(name, type, result = "id", index = NULL)
@@ -22,11 +24,13 @@ getSVGMappings(name, type, result = "id", index = NULL)
     a grob or a viewport.
   }
   \item{result}{
-    The
+    The type of output we want. \code{"id"} gives us SVG element
+    IDs. \code{"selector"} gives us CSS selectors. \code{"xpath"} gives
+    us XPath expressions.
   }
   \item{index}{
-    Subsets the resulting IDs by a vector of indices if
-    required. \code{NULL} assumes all IDs are to be mapped.
+    Subsets the resulting output by a vector of indices if
+    required. \code{NULL} assumes all output is to be returned.
   }
 }
 \details{
@@ -43,7 +47,8 @@ getSVGMappings(name, type, result = "id", index = NULL)
   itself, nothing more.
 }
 \value{
-  A character vector representing SVG IDs.
+  A character vector representing values that can target specific SVG
+  output.
 }
 \author{
   Simon Potter
