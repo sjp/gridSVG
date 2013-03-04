@@ -371,13 +371,18 @@ var queryBuilder = function(loc, params) {
  *
  * @param {string} name The name of the object whose ID we are getting.
  * @param {string} type One of 'vp' or 'grob'. Determines whether the name refers to a viewport or a grob.
- * @param {number} index Optional. If specified, returns the mapped ID itself, rather than an array of IDs. The index is the (zero-based) index of the matching names.
- * @returns {Array|string} If 'number' is specified, gives the ID as a string. Otherwise we receive an array of IDs.
+ * @param {string?} result One of 'id', 'selector' or 'xpath'. Determines the type of results we want back, i.e. SVG IDs, CSS selectors or XPath expressions.
+ * @returns {Array} An array of values.
  *
  */
-var getSVGMappings = function(name, type, index) {
+var getSVGMappings = function(name, type, result) {
     if (type !== "vp" && type !== "grob") {
         throw new Error("Invalid type specified. Must be one of 'vp', 'grob'.");
+    }
+
+    // Assume we want an ID by default, and not a selector/xpath
+    if (! result) {
+        result = "id";
     }
 
     var obj;
@@ -392,36 +397,27 @@ var getSVGMappings = function(name, type, index) {
         throw new Error("Name not found in mapping table.");
     }
 
-    // If we have specified an index number
-    if (typeof index === "number") {
-        // If we only have one mapping for our name the index must be 0
-        if (typeof obj === "number") {
-            if (index === 0) {
-                return name + gridSVGMappings["id.sep"] + obj;
-            } else {
-                throw new Error("Invalid index specified (> 0), only one matching name found");
-            }
-        }
-
-        // Check we're not OOB, but because we also have more than one match,
-        // construct the result using the matching array
-        if (index > (obj.length - 1)) {
-            throw new Error("Index out of bounds for matching name.");
-        } else {
-            return name + gridSVGMappings["id.sep"] + obj[index];
-        }
-    } else {
-        // Force suffix to be an array of suffixes
-        if (typeof obj === "number") {
-            suffix = [obj];
-        } else {
-            suffix = obj;
+    if (result === "id") {
+        // Force suffix to be an array of suffixes because RJSONIO reduces
+        // vectors to scalars if length(vec) == 1
+        var suffix = obj.suffix;
+        if (typeof suffix === "number") {
+            suffix = [suffix];
         }
         var ids = [];
         for (var i = 0; i < suffix.length; i++) {
             ids.push(name + gridSVGMappings["id.sep"] + suffix[i]);
         }
         return ids;
+    }
+    if (result === "selector" || result === "xpath") {
+        // Force results to be an array of results because RJSONIO reduces
+        // vectors to scalars if length(vec) == 1
+        var vals = obj[result];
+        if (typeof vals === "string") {
+            vals = [vals];
+        }
+        return vals;
     }
 };
 

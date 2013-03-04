@@ -511,14 +511,19 @@ getID <- function(name, type, append = TRUE) {
     candidateName <- paste(name, suffix, sep = getSVGoption("id.sep"))
   }
 
-  if (append)
+  if (append) {
+    sel <- escapeSelector(candidateName)
+    xp <- escapeXPath(candidateName)
     assign("usageTable",
            rbind(ut,
                  data.frame(name = name,
                             suffix = suffix,
                             type = type,
+                            selector = sel,
+                            xpath = xp,
                             stringsAsFactors = FALSE)),
            envir = .gridSVGEnv)
+  }
 
   # Returning the new ID
   paste(name, suffix, sep = getSVGoption("id.sep"))

@@ -5,20 +5,20 @@ testUniqueMappings <- function(x) {
 }
 
 formatTypeMapping <- function(x, type) {
-    objs <- x[x$type == type, c("name", "suffix")]
+    objs <- x[x$type == type, c("name", "suffix", "selector", "xpath")]
     if (! nrow(objs))
         return(NULL)
     objNames <- unique(objs$name)
     objList <- vector("list", length(objNames))
     names(objList) <- objNames
     for (i in 1:length(objNames))
-        objList[[i]] <- objs[objs$name == objNames[i], "suffix"]
+        objList[[i]] <- objs[objs$name == objNames[i], c("suffix", "selector", "xpath")]
     objList
 }
 
 formatMappings <- function(x) {
     list(vps = formatTypeMapping(x, "vp"),
-         grobs =  formatTypeMapping(x, "grob"),
+         grobs = formatTypeMapping(x, "grob"),
          id.sep = getSVGoption("id.sep"))
 }
 
@@ -40,24 +40,30 @@ gridSVGMappingsGen <- function() {
 
 gridSVGMappings <- gridSVGMappingsGen()
 
-getSVGMappings <- function(name, type, index = NULL) {
+getSVGMappings <- function(name, type, result = "id", index = NULL) {
     if (! type %in% c("vp", "grob"))
         stop("'type' must be one of 'vp' or 'grob'")
+    if (! result %in% c("id", "selector", "xpath"))
+        stop("'result' must be one of 'id', 'selector' or 'xpath'")
     # Because the list itself uses vp/grob, rewrite
     type <- paste(type, "s", sep = "")
     mappings <- gridSVGMappings()
     if (is.null(mappings))
         stop("gridSVGMappings() must be initialised")
-    suffixes <- mappings[[type]][[name]]
-    if (is.null(suffixes))
+    nameData <- mappings[[type]][[name]]
+    if (is.null(nameData))
         stop("Name not found")
 
+    if (result == "id")
+        values <- paste(name, nameData$suffix, sep = mappings$id.sep)
+    else
+        values <- nameData[[result]]
     if (is.null(index)) {
-        # Return all suffixes
-        paste(name, suffixes, sep = mappings$id.sep)
+        # Return all values
+        values
     } else {
         # Return the matching indices only
-        paste(name, suffixes[index], sep = mappings$id.sep)
+        values[index]
     }
 }
 
