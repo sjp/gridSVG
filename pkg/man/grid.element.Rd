@@ -34,8 +34,9 @@ elementGrob(el, name = NULL, attrs = NULL, children = NULL,
     A viewport object to use for the children of the element grob.
   }
   \item{asis}{
-    If \code{TRUE}, SVG id attributes will be unmodified so that we can
-    easily refer to the generated elements.
+    If \code{TRUE}, SVG id attributes will be generated from the
+    \code{name} with no modification so that we can easily refer to the
+    generated elements.
   }
 }
 \value{

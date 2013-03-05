@@ -118,7 +118,9 @@
     information. (Simon)
 
     \item Added 'getSVGMappings' function to retrieve IDs generated for
-    an image from a grob or a viewport name. (Simon)
+    an image from a grob or a viewport name. Also exported are CSS
+    selectors and XPath expressions. These can also be retrieved by
+    'getSVGMappings'. (Simon)
 
     \item Added new generic element interface, 'grid.element'. Allows
     any arbitrary SVG element (or tree of elements) to be inserted into
