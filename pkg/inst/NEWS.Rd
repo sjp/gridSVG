@@ -129,6 +129,12 @@
     \item When using the 'grep' argument for 'grid.hyperlink' and
     'grid.garnish', we can now apply effects to multiple grobs where
     gPaths are regular expressions. (Simon)
+
+    \item Added a new optional argument to 'gridToSVG', called
+    'annotate'. If 'TRUE', adds an SVG comment below the root '<svg>'
+    element that provides information on how 'gridToSVG' was called,
+    along with metadata about gridSVG itself. Potentially useful for
+    debugging. (Simon)
   }
 }
 

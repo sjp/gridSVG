@@ -13,6 +13,7 @@ gridToSVG <- function(name="Rplots.svg",
                       htmlWrapper = FALSE,
                       usePaths = c("vpPaths", "gPaths", "none", "both"),
                       uniqueNames = TRUE,
+                      annotate = TRUE,
                       xmldecl = xmlDecl()) {
     # Important to know if we need to modify vpPaths/gPaths at all
     usePaths <- match.arg(usePaths)
@@ -92,6 +93,30 @@ gridToSVG <- function(name="Rplots.svg",
     coords <- svgCoords(export.coords, name, svgroot)
     mappings <- svgMappings(export.mappings, name, svgroot)
     jsutils <- svgJSUtils(export.js, name, svgroot)
+    # If we're annotating output with gridSVG call info
+    if (annotate) {
+        # Realise true values for some arguments
+        if (is.null(name))
+            name <- ""
+        if (is.null(res))
+            res <- round(par("cra")[1] / par("cin")[1], 2)
+        # Ignore annotate in this list, because it will be implied
+        # Also ignoring the XML declaration, we can see it in the
+        # output directly.
+        callAttrs <- list(
+            name = name,
+            export.coords = export.coords,
+            export.mappings = export.mappings,
+            export.js = export.js,
+            res = res,
+            indent = indent,
+            htmlWrapper = htmlWrapper,
+            usePaths = usePaths,
+            uniqueNames = uniqueNames
+        )
+        svgAnnotate(svgroot, callAttrs)
+    }
+
     doctxt <- saveXML(svgroot, indent = indent)
 
     # In an on-screen device, we can be left with a blank device
@@ -113,7 +138,7 @@ gridToSVG <- function(name="Rplots.svg",
                    utils = jsutils)
 
     if (! testUniqueMappings(svgroot))
-        warning("Not all element IDs are unique. Consider running gridToSVG() with 'uniqueNames = TRUE'.")
+        warning("Not all element IDs are unique. Consider running 'gridToSVG' with 'uniqueNames = TRUE'.")
 
     # Return SVG vector when an inadequate filename is supplied
     if (is.null(name) || ! nzchar(name))

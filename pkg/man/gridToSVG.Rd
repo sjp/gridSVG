@@ -14,6 +14,7 @@ gridToSVG(name = "Rplots.svg",
           htmlWrapper = FALSE,
           usePaths = c("vpPaths", "gPaths", "none", "both"),
           uniqueNames = TRUE,
+          annotate = TRUE,
           xmldecl = xmlDecl())
 }
 \arguments{
@@ -84,6 +85,13 @@ gridToSVG(name = "Rplots.svg",
     names. Unique names are required for valid SVG. It is highly
     recommended that mapping information is used when this parameter is
     \code{TRUE}.
+  }
+  \item{annotate}{
+    If \code{TRUE}, an SVG comment will be introduced directly below the
+    root \code{"<svg>"} element. This comment contains XML that
+    describes the information that gridSVG used to draw the image
+    (mostly arguments to \code{gridToSVG}). This output may be useful
+    for debugging purposes.
   }
   \item{xmldecl}{
     This parameter sets the XML declaraction that will be applied to the

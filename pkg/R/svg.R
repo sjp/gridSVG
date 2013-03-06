@@ -109,6 +109,46 @@ svgMappings <- function(export.mappings, svgfile, svgroot) {
   invisible(formatMappings(usageTable))
 }
 
+svgAnnotate <- function(svgRoot, callAttrs) {
+    # The purpose of this function is to collate all the information
+    # that gridSVG knows about as it being called. Provides us with a
+    # method of potentially debugging output and version detection.
+    #
+    # We put all this information in a comment node so that the output
+    # is not parsed by a viewer.
+    # However, if we are able to get the *text* from the comment we want
+    # to be able to *parse* the output.
+    
+    argNames <- names(callAttrs)
+    argValues <- unname(unlist(callAttrs))
+
+    # The call elements that we're going to be building up
+    metadata <- newXMLNode("metadata")
+
+    # Using the package DESCRIPTION version instead of packageVersion
+    # because packageVersion converts our versions from 1.0-0 to 1.0.0.
+    # Ignoring timezone in Sys.time(), should be fine
+    newXMLNode("generator",
+               attrs = c(name = "gridSVG",
+                         version = packageDescription("gridSVG")$Version,
+                         time = as.character(Sys.time())),
+               parent = metadata)
+
+    for (i in 1:length(callAttrs)) {
+        newXMLNode("argument",
+                   attrs = c(name = argNames[i], value = argValues[i]),
+                   parent = metadata)
+    }
+
+    comment <- newXMLCommentNode(paste("", saveXML(metadata), "", sep = "\n"))
+
+    # at = 0 because we want this comment to be inserted directly after
+    # the main <svg> element
+    addChildren(svgRoot, comment, at = 0)
+    
+    # Don't need to return anything, svgRoot is a reference
+}
+
 svgComment <- function(comment, svgdev=svgDevice()) {
   # If this is a multi-line comment, to ensure comments have the same
   # indentation, prefix and suffix the comment with empty lines
