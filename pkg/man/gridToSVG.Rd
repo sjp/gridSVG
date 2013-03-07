@@ -81,14 +81,14 @@ gridToSVG(name = "Rplots.svg",
     When \code{both}, viewports and grobs will both use paths.
   }
   \item{uniqueNames}{
-    If \code{TRUE}, gridSVG will make an attempt to produce unique
-    names. Unique names are required for valid SVG. It is highly
-    recommended that mapping information is used when this parameter is
-    \code{TRUE}.
+    If \code{TRUE}, gridSVG will make an attempt to produce unique grob
+    names. Unique \code{id} attributes are required for valid SVG. It is
+    highly recommended that mapping information is used when this
+    parameter is \code{TRUE}.
   }
   \item{annotate}{
     If \code{TRUE}, an SVG comment will be introduced directly below the
-    root \code{"<svg>"} element. This comment contains XML that
+    root \code{<svg>} element. This comment contains XML that
     describes the information that gridSVG used to draw the image
     (mostly arguments to \code{gridToSVG}). This output may be useful
     for debugging purposes.
@@ -113,7 +113,13 @@ gridToSVG(name = "Rplots.svg",
   \code{usePaths} because \code{usePaths} can still generate names that
   are not unique (there are several ways for this to
   happen). \code{uniqueNames} modifies grob and viewport names with a
-  numeric suffix to ensure uniqueness.
+  numeric suffix to ensure uniqueness. When \code{FALSE}, only grob
+  names will be kept unmodified because modifying viewport names would
+  affect coordinate information.
+
+  Occasionally the XML package can report warnings, despite valid SVG
+  being produced. If spurious warnings are being produced, set
+  \code{options(gridSVGWarnings = FALSE)} to ignore them.
 
   See the files in the directory gridSVG/tests for examples
   of things that can be done.  See the file gridSVG/doc/overview.tex
@@ -143,10 +149,6 @@ gridToSVG(name = "Rplots.svg",
 
   This list is always returned but when a valid filename is given, it is
   returned invisibly.
-
-  Occasionally the XML package can report warnings, despite valid SVG
-  being produced. If spurious warnings are being produced, set
-  \code{options(gridSVGWarnings = FALSE)} to ignore them.
 }
 \author{ Paul Murrell }
 \seealso{ \code{\link{grid.hyperlink}}, \code{\link{grid.animate}}, \code{\link{grid.garnish}} }
