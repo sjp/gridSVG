@@ -15,6 +15,12 @@ gridToSVG <- function(name="Rplots.svg",
                       uniqueNames = TRUE,
                       annotate = TRUE,
                       xmldecl = xmlDecl()) {
+    # 'XML' can sometimes give us namespace warnings, despite producing
+    # valid SVG. Silence any warnings that XML might give us as a result.
+    oldNSWarning <- options(suppressXMLNamespaceWarning = TRUE)
+    on.exit(options(suppressXMLNamespaceWarning =
+                    oldNSWarning$suppressXMLNamespaceWarning))
+
     # Important to know if we need to modify vpPaths/gPaths at all
     usePaths <- match.arg(usePaths)
     paths <-
@@ -125,7 +131,7 @@ gridToSVG <- function(name="Rplots.svg",
     # Also, to avoid having to ask to refresh, just temporarily
     # disable asking.
     old.ask <- devAskNewPage(FALSE)
-    on.exit(devAskNewPage(old.ask))
+    on.exit(devAskNewPage(old.ask), add = TRUE)
     grid.refresh()
 
     # See if we need an XML declaration added
