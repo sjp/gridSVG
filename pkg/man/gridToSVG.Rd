@@ -143,7 +143,11 @@ gridToSVG(name = "Rplots.svg",
 
   This list is always returned but when a valid filename is given, it is
   returned invisibly.
+
+  Occasionally the XML package can report warnings, despite valid SVG
+  being produced. If spurious warnings are being produced, set
+  \code{options(gridSVGWarnings = FALSE)} to ignore them.
 }
 \author{ Paul Murrell }
-\seealso{ \code{\link{grid.hyperlink}}, \code{\link{grid.animate}} }
+\seealso{ \code{\link{grid.hyperlink}}, \code{\link{grid.animate}}, \code{\link{grid.garnish}} }
 \keyword{ dplot }

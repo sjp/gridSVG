@@ -16,10 +16,13 @@ gridToSVG <- function(name="Rplots.svg",
                       annotate = TRUE,
                       xmldecl = xmlDecl()) {
     # 'XML' can sometimes give us namespace warnings, despite producing
-    # valid SVG. Silence any warnings that XML might give us as a result.
-    oldNSWarning <- options(suppressXMLNamespaceWarning = TRUE)
-    on.exit(options(suppressXMLNamespaceWarning =
-                    oldNSWarning$suppressXMLNamespaceWarning))
+    # valid SVG. Silence any warnings that 'XML' might give us.
+    if (! is.null(getOption("gridSVGWarnings")) &&
+        ! getOption("gridSVGWarnings")) {
+        oldNSWarning <- options(suppressXMLNamespaceWarning = TRUE)
+        on.exit(options(suppressXMLNamespaceWarning =
+                        oldNSWarning$suppressXMLNamespaceWarning))
+    }
 
     # Important to know if we need to modify vpPaths/gPaths at all
     usePaths <- match.arg(usePaths)
