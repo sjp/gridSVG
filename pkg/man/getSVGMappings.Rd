@@ -10,7 +10,7 @@
   result of exporting to SVG.
 }
 \usage{
-getSVGMappings(name, type, result = "id", index = NULL)
+getSVGMappings(name, type, result = "id")
 }
 \arguments{
   \item{name}{
@@ -24,13 +24,9 @@ getSVGMappings(name, type, result = "id", index = NULL)
     a grob or a viewport.
   }
   \item{result}{
-    The type of output we want. \code{"id"} gives us SVG element
-    IDs. \code{"selector"} gives us CSS selectors. \code{"xpath"} gives
-    us XPath expressions.
-  }
-  \item{index}{
-    Subsets the resulting output by a vector of indices if
-    required. \code{NULL} assumes all output is to be returned.
+    The type of output we want. \code{id} gives us SVG element
+    IDs. \code{selector} gives us CSS selectors. \code{xpath} gives us
+    XPath expressions.
   }
 }
 \details{
@@ -42,9 +38,9 @@ getSVGMappings(name, type, result = "id", index = NULL)
 
   To make using results easier with existing JavaScript libraries and R
   packages, CSS selectors and XPath expressions can be returned. This is
-  the case when \code{result} is specified as one of \code{"selector"}
-  or \code{"xpath"}. These are targeted to match just the SVG element
-  itself, nothing more.
+  the case when \code{result} is specified as one of \code{selector} or
+  \code{xpath}. These are targeted to match just the SVG element itself,
+  nothing more.
 }
 \value{
   A character vector representing values that can target specific SVG

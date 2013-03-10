@@ -40,7 +40,7 @@ gridSVGMappingsGen <- function() {
 
 gridSVGMappings <- gridSVGMappingsGen()
 
-getSVGMappings <- function(name, type, result = "id", index = NULL) {
+getSVGMappings <- function(name, type, result = "id") {
     if (! type %in% c("vp", "grob"))
         stop("'type' must be one of 'vp' or 'grob'")
     if (! result %in% c("id", "selector", "xpath"))
@@ -55,16 +55,9 @@ getSVGMappings <- function(name, type, result = "id", index = NULL) {
         stop("Name not found")
 
     if (result == "id")
-        values <- paste(name, nameData$suffix, sep = mappings$id.sep)
+        paste(name, nameData$suffix, sep = mappings$id.sep)
     else
-        values <- nameData[[result]]
-    if (is.null(index)) {
-        # Return all values
-        values
-    } else {
-        # Return the matching indices only
-        values[index]
-    }
+        nameData[[result]]
 }
 
 readMappingsJS <- function(filename) {
