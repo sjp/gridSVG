@@ -40,7 +40,7 @@ devGrob.element.grob <- function(x, dev) {
 # Also, do *not* add gpars because they also complicate output,
 # if we *really* want to do it, then just use the 'attrs' arg.
 primToDev.element.grob <- function(x, dev) {
-    devOpenElement(devGrob(x, dev), NULL, dev)
+    devStartElement(devGrob(x, dev), NULL, dev)
     lapply(x$children, function(child) {
         grobToDev(child, dev)
     })

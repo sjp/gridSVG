@@ -405,21 +405,47 @@ setMethod("devCircle", signature(device="svgDevice"),
                       devParToSVGStyle(gp, device), device@dev)
           })
 
-setMethod("devOpenElement", signature(device="svgDevice"),
+setMethod("devStartElement", signature(device="svgDevice"),
           function(element, gp, device) {
             # Ignore gp, complicates output
-            svgOpenElement(id = element$id,
-                           element = element$name,
-                           attrs = element$attrs,
-                           attributes = device@attrs,
-                           links = device@links,
-                           show = device@show,
-                           svgdev = device@dev)
+            svgStartElement(id = element$id,
+                            element = element$name,
+                            attrs = element$attrs,
+                            attributes = device@attrs,
+                            links = device@links,
+                            show = device@show,
+                            svgdev = device@dev)
           })
 
 setMethod("devEndElement", signature(device="svgDevice"),
           function(name, device) {
             svgEndElement(name, device@links, device@dev)
+          })
+
+setMethod("devStartClip", signature(device="svgDevice"),
+          function(clip, gp, device) {
+            svgClipPath(clip$name, clip$x, clip$y,
+                        clip$width, clip$height, device@dev)
+
+            # Because of the fact that we never stop clipping until
+            # we pop our current viewport, we need to store information
+            # on how many times we have clipped.
+            # This allows us to traverse back up the appropriate number
+            # of SVG <g>s.
+            clipLevel <- get("clipLevel", envir = .gridSVGEnv)
+            clipLevel <- clipLevel + 1
+            assign("clipLevel", clipLevel, envir = .gridSVGEnv)
+
+            # Can hard-code 'clip' and 'coords' because we're always clipping
+            # but we're not a viewport.
+            # 'style' is always going to be NULL too.
+            svgStartGroup(clip$name, clip=TRUE,
+                          attributes=device@attrs,
+                          links=device@links,
+                          show=device@show,
+                          style=devParToSVGStyle(gp, device),
+                          coords = NULL,
+                          svgdev=device@dev)
           })
 
 setMethod("devStartGroup", signature(device="svgDevice"),

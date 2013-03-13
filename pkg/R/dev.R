@@ -29,14 +29,19 @@ setGeneric("devArrow",
              standardGeneric("devArrow")
            })
 
-setGeneric("devOpenElement",
+setGeneric("devStartElement",
            function(element, gp, device) {
-             standardGeneric("devOpenElement")
+             standardGeneric("devStartElement")
            })
 
 setGeneric("devEndElement",
            function(name, device) {
              standardGeneric("devEndElement")
+           })
+
+setGeneric("devStartClip",
+           function(clip, gp, device) {
+             standardGeneric("devStartClip")
            })
 
 setGeneric("devStartGroup",

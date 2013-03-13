@@ -180,9 +180,9 @@ svgClipAttr <- function(id, clip) {
     list()
 }
 
-svgOpenElement <- function(id = NULL, element = NULL, attrs = NULL,
-                           attributes=svgAttrib(), links=NULL, show = NULL,
-                           svgdev = svgDevice()) {
+svgStartElement <- function(id = NULL, element = NULL, attrs = NULL,
+                            attributes=svgAttrib(), links=NULL, show = NULL,
+                            svgdev = svgDevice()) {
   has.link <- hasLink(links[id])
   if (has.link)
     svgStartLink(links[id], show[id], svgdev)
@@ -240,6 +240,15 @@ svgEndGroup <- function(id=NULL, links=NULL, svgdev=svgDevice()) {
   has.link <- hasLink(links[id])
   if (has.link)
     svgEndLink(svgdev)
+
+  # Handle case where clipGrobs have started groups
+  # "Pop" until we reach the appropriate group
+  while (get("clipLevel", envir = .gridSVGEnv) > 0) {
+    svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
+    assign("clipLevel",
+           get("clipLevel", envir = .gridSVGEnv) - 1,
+           envir = .gridSVGEnv)
+  }
 
   svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
 }

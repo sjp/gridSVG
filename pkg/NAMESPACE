@@ -23,7 +23,7 @@ export("svgOpen",
        "svgStartLink",
        "svgEndLink",
        "svgStyle",
-       "svgOpenElement",
+       "svgStartElement",
        "svgEndElement"
        )
 
@@ -89,6 +89,7 @@ S3method("grobToDev", "gTableParent")
 
 S3method("primToDev", "grob")
 S3method("primToDev", "gTree")
+S3method("primToDev", "clip")
 S3method("primToDev", "move.to")
 S3method("primToDev", "line.to")
 S3method("primToDev", "lines")

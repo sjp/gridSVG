@@ -658,6 +658,17 @@ devGrob.cellGrob <- function(x, dev) {
   }  
 }
 
+devGrob.clip <- function(x, dev) {
+  # Should be similar to a rect in description, because this is a clipping rect
+  lb <- leftbottom(x$x, x$y, x$width, x$height, x$just, x$hjust, x$vjust, dev)
+  dim <- dimToInches(x$width, x$height, dev)
+  list(x=cx(lb$x, dev),
+       y=cy(lb$y, dev),
+       width=cw(dim$w, dev),
+       height=ch(dim$h, dev),
+       name=getID(x$name, "grob"))
+}
+
 # Prim to Dev
 # This generates SVG from the grob to reproduce the grob in SVG code
 # General form:
@@ -680,6 +691,9 @@ arrowAddName <- function(arrow, name) {
        name = name)
 }
 
+primToDev.clip <- function(x, dev) {
+    devStartClip(devGrob(x, dev), NULL, dev)
+}
 
 primToDev.move.to <- function(x, dev) {
     devGrob(x, dev)
