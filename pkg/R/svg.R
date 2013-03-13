@@ -218,6 +218,17 @@ svgStartGroup <- function(id=NULL, clip=FALSE,
     currId <- getid(id, svgdev)
     currVpCoords[[currId]] <- coords
     assign("vpCoords", currVpCoords, envir = .gridSVGEnv)
+
+    # Also check for the case where a clipGrob might have created groups
+    # that set a clipping path. Unwind this tree if that is the case.
+    # FIXME: Clipping becomes inconsistent between 'grid' and 'SVG'.
+    #        Is this the right option??
+    while (get("clipLevel", envir = .gridSVGEnv) > 0) {
+      svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
+      assign("clipLevel",
+             get("clipLevel", envir = .gridSVGEnv) - 1,
+             envir = .gridSVGEnv)
+    }
   }
 
   has.link <- hasLink(links[id])
