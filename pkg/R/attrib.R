@@ -42,14 +42,15 @@ garnishGrob <- function(x, ..., group=TRUE) {
     x
 }
 
-grid.garnish <- function(path, ..., grep=FALSE, redraw=FALSE) {
+grid.garnish <- function(path, ..., group=TRUE, grep=FALSE, redraw=FALSE) {
     if (any(grep))
         grobApply(path, function(path) {
-            grid.set(path, garnishGrob(grid.get(path), ...), redraw = redraw)
+            grid.set(path, garnishGrob(grid.get(path), ..., group=group),
+                     redraw = redraw)
         }, grep = grep)
     else
-        grid.set(path, garnishGrob(grid.get(path, grep=grep), ...),
-                 grep=grep, redraw=redraw)
+        grid.set(path, garnishGrob(grid.get(path), ..., group = group),
+                 redraw = redraw)
 }
 
 garnish <- function(x, ...) {
@@ -88,7 +89,7 @@ garnish.gTree <- function(x, ...) {
              function(attr, groupName) {
                  names(attr) <- x$name
                  attr
-             }))                          
+             }))
 }
 
 # NOTE that this has to be a primToDev() method
@@ -160,4 +161,3 @@ grobApply <- function(path, FUN, ..., grep = TRUE) {
     # Ensure nothing is returned
     invisible()
 }
-

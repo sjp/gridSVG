@@ -1,7 +1,6 @@
 \name{grid.garnish}
 \alias{grid.garnish}
 \alias{garnishGrob}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Associate arbitrary SVG attributes with a grid grob }
 \description{
   Creates an svg.grob object which is a normal grid grob,
@@ -11,9 +10,8 @@
 }
 \usage{
 garnishGrob(x, ..., group=TRUE)
-grid.garnish(path, ..., grep=FALSE, redraw=FALSE)
+grid.garnish(path, ..., group=TRUE, grep=FALSE, redraw=FALSE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{A grob.}
   \item{path}{ A grob path specifying a drawn grob. }
@@ -35,6 +33,5 @@ grid.garnish(path, ..., grep=FALSE, redraw=FALSE)
   A garnished.grob object.
 }
 \author{ Paul Murrell }
-\seealso{ \code{\link{gridToSVG}} }                           
+\seealso{ \code{\link{gridToSVG}} }
 \keyword{ dplot }% at least one, from doc/KEYWORDS
-
