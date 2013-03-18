@@ -1208,12 +1208,17 @@ primToDev.points <- function(x, dev) {
         # cex and fontsize
         # A textGrob with an "M" will be a good approximation for the
         # point size when size is a "char"
-        if (attr(sizes[i], "unit") == "char") {
+        if (is.unit(sizes[i]) && attr(sizes[i], "unit") == "char") {
             pointSize <- convertHeight(grobHeight(textGrob("M", gp = pgp)),
                                        "inches", valueOnly = TRUE) * as.numeric(sizes[i])
             pointSize <- unit(pointSize, "inches")
-        } else
+        } else if (! is.unit(sizes[i]) && is.numeric(sizes[i])) {
+            # Just a number -- convert to a unit
+            pointSize <- unit(sizes[i], x$default.units)
+        } else {
+            # All other units
             pointSize <- sizes[i]
+        }
         
         asciipch <- if (pchs[i] %in% 32:127)
                         rawToChar(as.raw(pchs[i]))
