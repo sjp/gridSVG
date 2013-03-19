@@ -64,5 +64,5 @@ readMappingsJS <- function(filename) {
   jsData <- readLines(filename)
   jsData <- gsub("var gridSVGMappings = ", "", jsData)
   jsonData <- gsub(";$", "", jsData)
-  paste0(jsonData, collapse = "\n")
+  fromJSON(paste0(jsonData, collapse = "\n"))
 }

@@ -1,11 +1,12 @@
-\name{Import Mappings JS as JSON}
+\name{Import Mappings JS}
 \alias{readMappingsJS}
 \title{
-  Importing JavaScript mapping information as JSON.
+  Importing JavaScript mapping information.
 }
 \description{
   This function reads in a JavaScript file and transforms it into JSON
-  text.
+  text. This text is then transformed into a list that can be used in
+  conjunction with \code{\link{gridSVGMappings}}.
 }
 \usage{
 readMappingsJS(filename)
@@ -24,11 +25,10 @@ readMappingsJS(filename)
   literal to simply the object literal itself.
 
   This function performs that task by producing a valid JSON string ready
-  for parsing by \code{\link{fromJSON}}.
+  for parsing by \code{\link{fromJSON}}. It then returns the parsed list.
 }
 \value{
-  A single element character vector is returned, representing a JSON
-  object.
+  A list of mapping information.
 }
 \author{
   Simon Potter
