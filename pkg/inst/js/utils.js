@@ -365,19 +365,22 @@ var queryBuilder = function(loc, params) {
     return loc + "?" + queryText;
 }
 
+// NOTE: The following code assumes that a global object, "gridSVGMappings"
+//       is available. In other words, to use this code, load this object first.
+
 /**
  * Returns the mapping from a known grob/viewport name to an SVG ID.
  * Assumes the variable 'gridSVGMappings' is in scope.
  *
  * @param {string} name The name of the object whose ID we are getting.
- * @param {string} type One of 'vp' or 'grob'. Determines whether the name refers to a viewport or a grob.
+ * @param {string} type One of 'vp', 'grob' or 'ref'. Determines whether the name refers to a viewport or a grob or a reference to a defined object.
  * @param {string?} result One of 'id', 'selector' or 'xpath'. Determines the type of results we want back, i.e. SVG IDs, CSS selectors or XPath expressions.
  * @returns {Array} An array of values.
  *
  */
 var getSVGMappings = function(name, type, result) {
-    if (type !== "vp" && type !== "grob") {
-        throw new Error("Invalid type specified. Must be one of 'vp', 'grob'.");
+    if (type !== "vp" && type !== "grob" && type !== "ref") {
+        throw new Error("Invalid type specified. Must be one of 'vp', 'grob' or 'ref'.");
     }
 
     // Assume we want an ID by default, and not a selector/xpath
@@ -385,14 +388,8 @@ var getSVGMappings = function(name, type, result) {
         result = "id";
     }
 
-    var obj;
-    if (type === "vp") {
-        obj = gridSVGMappings.vps[name];
-    }
-    if (type === "grob") {
-        obj = gridSVGMappings.grobs[name];
-    }
-
+    type = type + "s";
+    var obj = gridSVGMappings[type][name];
     if (! obj) {
         throw new Error("Name not found in mapping table.");
     }

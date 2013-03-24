@@ -76,26 +76,36 @@ gridToSVG <- function(name="Rplots.svg",
     # based on ROOT vp
     # Use 'wrap=TRUE' to ensure correct capture of all types of 'grid' output
     gTree <- grid.grab(name="gridSVG", wrap=TRUE, gp=rootgp)
-    # Emptying the usage table
-    usageTable <- data.frame(name = character(0),
-                             suffix = integer(0),
-                             type = character(0),
-                             selector = character(0),
-                             xpath = character(0),
-                             stringsAsFactors = FALSE)
-    assign("usageTable", usageTable, envir = .gridSVGEnv)
+    if (anyRefsDefined()) {
+        # Reducing only to reference definitions
+        usageTable <- get("usageTable", envir = .gridSVGEnv)
+        usageTable <- usageTable[usageTable$type == "ref", ]
+        assign("usageTable", usageTable, envir = .gridSVGEnv)
+    } else {
+        # Emptying the usage table
+        assign("usageTable",
+               data.frame(name = character(0),
+                         suffix = integer(0),
+                         type = character(0),
+                         selector = character(0),
+                         xpath = character(0),
+                         stringsAsFactors = FALSE),
+               envir = .gridSVGEnv)
+    }
     # Emptying point usage table
-    pchUsageTable <- matrix(c(0:127, logical(128)), ncol = 2,
-                            dimnames = list(NULL, c("pch", "used")))
-    assign("pchUsageTable", pchUsageTable, envir = .gridSVGEnv)
+    assign("pchUsageTable", 
+           matrix(c(0:127, logical(128)), ncol = 2,
+                  dimnames = list(NULL, c("pch", "used"))),
+           envir = .gridSVGEnv)
     # Because the root viewport is never entered into, we need to set
     # the root vp coordinate information before we start entering into
     # other VPs
     currVpCoords <- list(ROOT = getCoordsInfo(rootvp, roottm, svgdev))
     assign("vpCoords", currVpCoords, envir = .gridSVGEnv)
-
     # Convert gTree to SVG
     gridToDev(gTree, svgdev)
+    # Flush out any referenced definitions so that grobs can use them
+    flushDefinitions(svgdev)
     svgroot <- devClose(svgdev)
     # Adding in JS if necessary, always write utils *last*.
     # Not strictly necessary but may avoid potential issues in JS.
@@ -149,7 +159,7 @@ gridToSVG <- function(name="Rplots.svg",
     if (! testUniqueMappings(svgroot))
         warning("Not all element IDs are unique. Consider running 'gridToSVG' with 'uniqueNames = TRUE'.")
 
-    # Return SVG vector when an inadequate filename is supplied
+    # Return SVG list when an inadequate filename is supplied
     if (is.null(name) || ! nzchar(name))
         return(result)
 
@@ -161,6 +171,26 @@ gridToSVG <- function(name="Rplots.svg",
 
     # Return result invisibly
     invisible(result)
+}
+
+gridSVG.newpage <- function(wipeRefs = TRUE, recording = TRUE) {
+    if (wipeRefs) {
+        assign("refDefinitions", list(), envir = .gridSVGEnv)
+        assign("refUsageTable",
+               data.frame(label = character(0),
+                          used = logical(0),
+                          stringsAsFactors = FALSE),
+               envir = .gridSVGEnv)
+        assign("usageTable",
+               data.frame(name = character(0),
+                         suffix = integer(0),
+                         type = character(0),
+                         selector = character(0),
+                         xpath = character(0),
+                         stringsAsFactors = FALSE),
+               envir = .gridSVGEnv)
+    }
+    grid.newpage(recording = recording)
 }
 
 old.gridToSVG <- function(name="Rplots.svg") {

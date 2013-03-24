@@ -1,13 +1,13 @@
 \name{Retrieve Names Mapped to SVG IDs, CSS Selectors and XPath Expressions}
 \alias{getSVGMappings}
 \title{
-  Retrieving Viewport and Grob Names as SVG IDs, CSS Selectors and XPath
-  Expressions
+  Retrieving Viewport, Grob, and Reference Names as SVG IDs, CSS
+  Selectors and XPath Expressions
 }
 \description{
   This function gives us SVG IDs (or CSS selectors and XPath
-  expressions) that have been created from a grob or viewport name as a
-  result of exporting to SVG.
+  expressions) that have been created from a grob, viewport, or
+  referenced name as a result of exporting to SVG.
 }
 \usage{
 getSVGMappings(name, type, result = "id")
@@ -19,9 +19,10 @@ getSVGMappings(name, type, result = "id")
     was exported.
   }
   \item{type}{
-    A single element character vector, must be one of \code{vp} or
-    \code{grob}. This determines whether we are trying to get the IDs of
-    a grob or a viewport.
+    A single element character vector, must be one of \code{vp},
+    \code{grob} or \code{ref}. This determines whether we are trying to
+    get the IDs of a grob or a viewport or a referenced object like a
+    fill pattern.
   }
   \item{result}{
     The type of output we want. \code{id} gives us SVG element

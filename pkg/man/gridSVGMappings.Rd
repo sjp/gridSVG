@@ -1,7 +1,7 @@
 \name{Mapping Names to IDs}
 \alias{gridSVGMappings}
 \title{
-  Mapping Viewport and Grob Names to SVG IDs
+  Mapping Viewport, Grob and Reference Names to SVG IDs
 }
 \description{
   This function is both a getter and a setter function for mapping
@@ -23,12 +23,12 @@ gridSVGMappings(newmappings = NULL)
   information on how names have been translated from their original
   grob/viewport names to their SVG IDs.
 
-  Mapping information is stored as a list with 3 components, viewport
-  mapping information, grob mapping information, and the ID separator
-  used at the time of exporting.
+  Mapping information is stored as a list with 4 components, viewport
+  mapping information, grob mapping information, reference mapping
+  information and the ID separator used at the time of exporting.
 
-  Viewport and grob mapping information is stored as the name of the
-  grob or viewport, paired with a vector of suffixes associated with
+  Viewport, grob, and reference mapping information is stored as the
+  name of the object, paired with a vector of suffixes associated with
   these names. When combined with the ID separator, we can construct the
   SVG IDs that have been applied, given each name. Use
   \code{\link{getSVGMappings}} to do this.

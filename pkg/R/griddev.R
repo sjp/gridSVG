@@ -484,10 +484,10 @@ devGrob.circle <- function(x, dev) {
 # 'append' determines whether we add our ID to the usageTable. Useful
 # not to in cases like animated grobs
 getID <- function(name, type, append = TRUE) {
-  # If this is a grob, only modify if we're trying to ensure uniqueness.
-  # We *really* need to do this for viewports though, so viewports are a
-  # special case.
-  if (type == "grob" && ! get("uniqueNames", envir = .gridSVGEnv))
+  # If this is a grob or ref, only modify if we're trying to ensure
+  # uniqueness. We *really* need to do this for viewports though, so
+  # viewports are a special case.
+  if (type != "vp" && ! get("uniqueNames", envir = .gridSVGEnv))
       return(name)
 
   # Finding out how many times a VP or grob has been used so far

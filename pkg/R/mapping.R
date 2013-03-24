@@ -1,5 +1,5 @@
 testUniqueMappings <- function(x) {
-    idNodes <- getNodeSet(x, "//*[@id]", c(svg = "http://www.w3.org/2000/svg"))
+    idNodes <- getNodeSet(x, "//*[@id]")
     ids <- sapply(idNodes, function(x) xmlGetAttr(x, "id"))
     length(ids) == length(unique(ids))
 }
@@ -19,6 +19,7 @@ formatTypeMapping <- function(x, type) {
 formatMappings <- function(x) {
     list(vps = formatTypeMapping(x, "vp"),
          grobs = formatTypeMapping(x, "grob"),
+         refs = formatTypeMapping(x, "ref"),
          id.sep = getSVGoption("id.sep"))
 }
 
@@ -41,8 +42,8 @@ gridSVGMappingsGen <- function() {
 gridSVGMappings <- gridSVGMappingsGen()
 
 getSVGMappings <- function(name, type, result = "id") {
-    if (! type %in% c("vp", "grob"))
-        stop("'type' must be one of 'vp' or 'grob'")
+    if (! type %in% c("vp", "grob", "ref"))
+        stop("'type' must be one of 'vp', 'grob' or 'ref'")
     if (! result %in% c("id", "selector", "xpath"))
         stop("'result' must be one of 'id', 'selector' or 'xpath'")
     # Because the list itself uses vp/grob, rewrite
