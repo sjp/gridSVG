@@ -49,6 +49,7 @@ export("grid.hyperlink",
        "grid.patternFill",
        "patternFillGrob",
        "fillPattern",
+       "fillPatternRef",
        "gridToSVG",
        "gridSVG.newpage"
        )

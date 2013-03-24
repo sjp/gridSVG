@@ -1,11 +1,12 @@
-\name{fillPattern}
+\name{Pattern Fills}
 \alias{fillPattern}
+\alias{fillPatternRef}
 \title{
   Create a definition of a fill pattern.
 }
 \description{
   A feature of SVG is that elements can be filled with a pattern that is
-  defined somewhere in the document. The purpose of this function is to
+  defined somewhere in the document. The purpose of these functions is to
   create the definition of a fill pattern so that it can be referred to
   by grobs drawn by gridSVG.
 }
@@ -17,10 +18,19 @@ fillPattern(label,
             default.units = "npc",
             just = "centre", hjust = NULL, vjust = NULL,
             dev.width = 7, dev.height = 7)
+fillPatternRef(label, refLabel,
+               x = unit(0, "npc"), y = unit(0, "npc"),
+               width = unit(0.1, "npc"), height = unit(0.1, "npc"),
+               default.units = "npc",
+               just = "centre", hjust = NULL, vjust = NULL)
 }
 \arguments{
   \item{label}{
     A character identifier for the definition.
+  }
+  \item{refLabel}{
+    A character identifier referring to an existing pattern definition
+    that has been created by \code{fillPattern}.
   }
   \item{grob}{
     A grid grob or tree of grobs.
@@ -81,8 +91,14 @@ fillPattern(label,
   function is being called. From then on, the definition of the location
   and size of the pattern are fixed.
 
-  In summary, this function defines what a pattern looks like, along
-  with how big each tile is (and its position).
+  In summary, the \code{fillPattern} function defines what a pattern
+  looks like, along with how big each tile is (and its position).
+
+  To avoid repetition of pattern definitions, use \code{fillPatternRef}
+  to reuse an existing pattern definition (referred to by
+  \code{refLabel}). This means that a pattern "tile" can now be reused,
+  repositioned and rescaled without having to describe how it needs to
+  be drawn.
 }
 \value{
   None.

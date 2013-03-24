@@ -66,6 +66,60 @@ fillPattern <- function(label, grob, vp = NULL,
     invisible()
 }
 
+fillPatternRef <- function(label, refLabel,
+                           x = unit(0, "npc"), y = unit(0, "npc"),
+                           width = unit(0.1, "npc"), height = unit(0.1, "npc"),
+                           default.units = "npc",
+                           just = "centre", hjust = NULL, vjust = NULL) {
+    # Ensure we have unique labels for a referenced pattern def
+    refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
+    if (label %in% names(refDefinitions))
+        stop(paste("label", sQuote(label),
+                   "already exists as a reference definition.")) 
+    if (! refLabel %in% names(refDefinitions))
+        stop(paste("The reference labelled", sQuote(label), "does not exist."))
+
+    if (! is.unit(x))
+        x <- unit(x, default.units)
+    if (! is.unit(y))
+        y <- unit(y, default.units)
+    if (! is.unit(width))
+        width <- unit(width, default.units)
+    if (! is.unit(height))
+        height <- unit(height, default.units)
+
+    # Now convert *at time of definition* to absolute units (inches)
+    loc <- leftbottom(x, y, width, height, just, hjust, vjust, NULL)
+    x <- loc$x
+    y <- loc$y
+    width <- convertWidth(width, "inches")
+    height <- convertHeight(height, "inches")
+
+    defList <- list(
+        label = label,
+        refLabel = refLabel,
+        id = getID(label, "ref"),
+        x = x,
+        y = y,
+        width = width,
+        height = height
+    )
+
+    class(defList) <- "patternFillRefDef"
+
+    refDefinitions[[label]] <- defList
+    assign("refDefinitions", refDefinitions, envir = .gridSVGEnv)
+    assign("refUsageTable",
+           rbind(get("refUsageTable", envir = .gridSVGEnv),
+                 data.frame(label = label, used = FALSE,
+                            stringsAsFactors = FALSE)),
+           envir = .gridSVGEnv)
+
+    # Return NULL invisibly because we don't actually care what the
+    # definition looks like until gridSVG tries to draw it. 
+    invisible()
+}
+
 drawDef <- function(def, dev) {
     UseMethod("drawDef")
 }
@@ -121,6 +175,23 @@ drawDef.patternFillDef <- function(def, dev) {
     xmlChildren(pattern) <- xmlChildren(gridSVGNode)
 }
 
+drawDef.patternFillRefDef <- function(def, dev) {
+    svgdev <- dev@dev
+
+    # Convert grid coords to SVG coords
+    x <- round(cx(def$x, dev), 2)
+    y <- round(cy(def$y, dev), 2)
+    width <- round(cw(def$width, dev), 2)
+    height <- round(ch(def$height, dev), 2)
+
+    # Creating the pattern element
+    pattern <- newXMLNode("pattern",
+        attrs = list(id = def$id, x = x, y = y,
+                     width = width, height = height,
+                     "xlink:href" = paste0("#", getLabelID(def$refLabel))),
+        parent = svgDevParent(svgdev))
+}
+
 flushDefinitions <- function(dev) {
     svgdev <- dev@dev
 
@@ -150,6 +221,19 @@ flushDefinitions <- function(dev) {
     defs <- newXMLNode("defs", parent = svgDevParent(svgdev))
     svgDevChangeParent(defs, svgdev)
 
+    # Check whether we have any dependent references, e.g. have a pattern
+    # fill by reference in use but not the pattern itself. We need to ensure
+    # that both are written out.
+    rut <- get("refUsageTable", envir = .gridSVGEnv)
+    for (i in 1:length(refDefinitions)) {
+        def <- refDefinitions[[i]]
+        if (isLabelUsed(def$label) &&
+            ! is.null(def$refLabel) && ! isLabelUsed(def$refLabel))
+            rut[rut$label == def$refLabel, "used"] <- TRUE
+    }    
+    assign("refUsageTable", rut, envir = .gridSVGEnv) 
+
+    # Now try drawing
     for (i in 1:length(refDefinitions)) {
         def <- refDefinitions[[i]]
         if (isLabelUsed(def$label))

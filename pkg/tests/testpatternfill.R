@@ -1,6 +1,7 @@
 library(gridSVG)
 
 pdf(file = NULL)
+grid.newpage()
 # We are just going to be drawing a cross for our pattern
 crossGrob <- gTree(children = gList(
     linesGrob(),
@@ -20,3 +21,13 @@ grid.patternFill("filledcircle", "cross", alpha = 0.5)
 gridToSVG("pattern-test.svg")
 dev.off()
 
+# Now lets create a new pattern that uses the existing pattern
+# but much larger
+pdf(file = NULL)
+grid.newpage()
+fillPatternRef("bigcross", "cross",
+               width = 0.3, height = 0.3)
+grid.circle(name = "filledcircle")
+grid.patternFill("filledcircle", "bigcross", alpha = 0.5)
+gridToSVG("pattern-test-ref.svg")
+dev.off()

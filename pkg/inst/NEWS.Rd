@@ -136,7 +136,12 @@
     along with metadata about gridSVG itself. Potentially useful for
     debugging. (Simon)
 
-    \item Including support for 'clipGrob's. (Simon).
+    \item Including support for 'clipGrob's. (Simon)
+
+    \item Initial implementation of pattern fills. Define pattern fills
+    using 'fillPattern' (and also 'fillPatternRef' to reuse an existing
+    definition). These can then be applied to grobs using
+    'grid.patternFill' and 'patternFillGrob'. (Simon)
 
   }
 }
