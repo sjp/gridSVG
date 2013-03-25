@@ -102,6 +102,9 @@ gridToSVG <- function(name="Rplots.svg",
     # other VPs
     currVpCoords <- list(ROOT = getCoordsInfo(rootvp, roottm, svgdev))
     assign("vpCoords", currVpCoords, envir = .gridSVGEnv)
+    # grid.force() the scene to resolve high-level grobs
+    # to their standard components
+    grid.force(redraw = FALSE)
     # Convert gTree to SVG
     gridToDev(gTree, svgdev)
     # Flush out any referenced definitions so that grobs can use them
