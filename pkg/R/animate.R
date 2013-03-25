@@ -528,8 +528,7 @@ applyAnimation.points <- function(x, animSet, animation, group, dev) {
   # as we change the size of a point
   sw <- if (! is.null(x$gp$lwd)) x$gp$lwd
         else get.gpar()$lwd
-  sw <- rep(devLwdToSVG(sw, dev), length.out = n)
-  sw <- as.numeric(gsub("px", "", sw))
+  sw <- rep(as.numeric(devLwdToSVG(sw, dev)), length.out = n)
 
   # Repeating animation parameters so that each element can have
   # distinct values

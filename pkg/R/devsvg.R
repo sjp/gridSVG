@@ -40,7 +40,7 @@ devParNameToSVGStyleName <- function(name) {
 
 # R lwd is in points
 devLwdToSVG <- function(lwd, dev) {
-    paste(round(lwd/72*dev@res, 2), "px", sep="")
+    round(lwd/72 * dev@res, 2)
 }
 
 # An R lty has to become an SVG stroke-dasharray
@@ -62,7 +62,7 @@ devLtyToSVG <- function(lty, lwd, dev) {
     # Convert to SVG stroke-dasharray string
     paste(ifelse(scaledlty == 0,
                  "none",
-                 paste(round(scaledlty/72*dev@res, 2), "px", sep="")),
+                 round(scaledlty/72 * dev@res, 2)),
           collapse=",")
 }
 
@@ -84,7 +84,7 @@ devColAlphaToSVG <- function(colAlpha) {
 }
 
 devFontSizeToSVG <- function(fontsize, dev) {
-    paste(round(fontsize/72*dev@res, 2), "px", sep="")
+    round(fontsize/72 * dev@res, 2)
 }
 
 devLineJoinToSVG <- function(linejoin, dev) {
