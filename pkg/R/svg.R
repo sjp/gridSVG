@@ -330,8 +330,8 @@ svgAnimatePointSW <- function(values,
                            "1 0" # point is shrinking
                        })
   keySplines <- paste(keySplines, "1 1", collapse = ";")
-  keyTimes <- paste(round(keyTimes, 2), collapse = ";")
-  values <- paste0(round(values, 2), "px", collapse = ";")
+  keyTimes <- paste0(round(keyTimes, 2), collapse = ";")
+  values <- paste0(round(values, 2), collapse = ";")
 
   newXMLNode("animate", parent = svgDevParent(svgdev),
              attrs = list("xlink:href" = paste0("#", getid(id, svgdev, n)),
@@ -829,7 +829,7 @@ svgText <- function(x, y, text, hjust="left", vjust="bottom", rot=0,
     topattrs$transform <- paste0("translate(",
                                  round(x, 2), ", ",
                                  round(y, 2), ")")
-    topattrs$`stroke-width` <- "0.1px"
+    topattrs$`stroke-width` <- "0.1"
     topattrs$id <- id
 
     # Flip the y-direction again so that text is drawn "upright"
@@ -946,11 +946,10 @@ svgUseSymbol <- function(id, x, y, size, pch,
                               round(r, 2), ")")
   # Need to scale the stroke width otherwise for large points
   # we also have large strokes
-  sw <- tmpattr$`stroke-width`
-  sw <- as.numeric(gsub("px", "", sw))
+  sw <- as.numeric(tmpattr$`stroke-width`)
   scalef <- size / 10 # 10 is the point viewBox size
   sw <- sw / scalef
-  tmpattr$`stroke-width` <- paste0(round(sw, 2), "px")
+  tmpattr$`stroke-width` <- round(sw, 2)
 
   # For pch outside 0-25 or characters
   if (is.character(pch) || (is.numeric(pch) && pch > 25)) {
@@ -961,12 +960,15 @@ svgUseSymbol <- function(id, x, y, size, pch,
       fsind <- which(names(tmpattr) == "font-size")
       if (length(fsind) > 0)
         tmpattr <- tmpattr[-fsind]
+      # Because we really want just a dot, use crispEdges
+      # as anti-aliasing isn't really necessary
+      tmpattr$`shape-rendering` <- "crispEdges"
     } else {
       # Make the s-w small so we see a stroke just barely
-      tmpattr$`stroke-width` <- "0.1px"
+      tmpattr$`stroke-width` <- "0.1"
       # Set the font-size, otherwise it's going to mess with our scaling.
       # 10px so it's the size of the point definition
-      tmpattr$`font-size` <- "10px"
+      tmpattr$`font-size` <- "10"
     }
   }
 
@@ -1417,10 +1419,6 @@ listToSVGStyle <- function(alist) {
 
 emptyStyle <- function(svgstyle) {
   length(svgstyle) == 0
-}
-
-px <- function(pxs) {
-  paste0(pxs, "px")
 }
 
 svgStyleCSS <- function(svgstyle) {
