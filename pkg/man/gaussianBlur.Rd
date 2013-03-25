@@ -8,7 +8,7 @@
   by grid grobs.
 }
 \usage{
-gaussianBlur(label, sd = 1)
+gaussianBlur(label, sd = 2)
 }
 \arguments{
   \item{label}{
