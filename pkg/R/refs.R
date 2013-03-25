@@ -120,6 +120,34 @@ fillPatternRef <- function(label, refLabel,
     invisible()
 }
 
+gaussianBlur <- function(label, sd = 2) {
+    # Ensure we have unique labels for a referenced pattern def
+    refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
+    if (label %in% names(refDefinitions))
+        stop(paste("label", sQuote(label),
+                   "already exists as a reference definition.")) 
+
+    defList <- list(
+        label = label,
+        id = getID(label, "ref"),
+        sd = sd
+    )
+
+    class(defList) <- "gaussianBlurDef"
+
+    refDefinitions[[label]] <- defList
+    assign("refDefinitions", refDefinitions, envir = .gridSVGEnv)
+    assign("refUsageTable",
+           rbind(get("refUsageTable", envir = .gridSVGEnv),
+                 data.frame(label = label, used = FALSE,
+                            stringsAsFactors = FALSE)),
+           envir = .gridSVGEnv)
+
+    # Return NULL invisibly because we don't actually care what the
+    # definition looks like until gridSVG tries to draw it. 
+    invisible()
+}
+
 drawDef <- function(def, dev) {
     UseMethod("drawDef")
 }
@@ -188,7 +216,19 @@ drawDef.patternFillRefDef <- function(def, dev) {
     pattern <- newXMLNode("pattern",
         attrs = list(id = def$id, x = x, y = y,
                      width = width, height = height,
-                     "xlink:href" = paste0("#", getLabelID(def$refLabel))),
+                     filterUnits = "userSpaceOnUse"),
+        parent = svgDevParent(svgdev))
+}
+
+drawDef.gaussianBlurDef <- function(def, dev) {
+    svgdev <- dev@dev
+
+    # Creating the filter element
+    pattern <- newXMLNode("filter",
+        attrs = list(id = def$id, width = "100%", height = "100%"),
+        newXMLNode("feGaussianBlur",
+                   attrs = list(stdDeviation = paste0(round(def$sd, 2),
+                                                      collapse = " "))),
         parent = svgDevParent(svgdev))
 }
 
@@ -299,6 +339,42 @@ patternFillGrob <- function(x, label, alpha = 1, group = TRUE) {
     class(x) <- unique(c("patternFilled.grob", class(x)))
     x
 }
+
+grid.gaussianBlur <- function(path, label, group = TRUE, grep = FALSE) {
+    checkForDefinition(label)
+    if (any(grep)) {
+        grobApply(path, function(path) {
+            grid.set(path, gaussianBlurGrob(grid.get(path), label, group = group))
+        }, grep = grep)
+    } else {
+        grid.set(path,
+                 gaussianBlurGrob(grid.get(path), label, group = group))
+    }
+}
+
+gaussianBlurGrob <- function(x, label, group = TRUE) {
+    checkForDefinition(label)
+    x$label <- label
+    label <- getLabelID(label)
+    # Allowing fill-opacity to be set by a garnish because
+    # grid only knows about a colour and its opacity. If we use a
+    # reference instead of a then nothing is known about the opacity.
+    # We want to ensure that we can still set it, so use the garnish
+    # to overwrite it.
+    x <- garnishGrob(x, filter = paste0("url(#", label, ")"), group = group)
+    class(x) <- unique(c("gaussianBlurred.grob", class(x)))
+    x
+}
+
+primToDev.gaussianBlurred.grob <- function(x, dev) {
+    # Now that we know a reference is being used, ensure that it can be
+    # written out later
+    rut <- get("refUsageTable", envir = .gridSVGEnv)
+    rut[rut$label == x$label, "used"] <- TRUE
+    assign("refUsageTable", rut, envir = .gridSVGEnv)
+    NextMethod()
+}
+
 
 checkForDefinition <- function(label) {
     if (! label %in% names(get("refDefinitions", envir = .gridSVGEnv)))
