@@ -6,9 +6,9 @@
 }
 \usage{
 gridToSVG(name = "Rplots.svg",
-          export.coords = c("file", "inline", "none"),
-          export.mappings = c("file", "inline", "none"),
-          export.js = c("file", "inline", "none"),
+          export.coords = c("none", "inline", "file"),
+          export.mappings = c("none", "inline", "file"),
+          export.js = c("none", "inline", "file"),
           res = NULL,
           indent = TRUE,
           htmlWrapper = FALSE,
