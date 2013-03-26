@@ -139,7 +139,7 @@
     \item Including support for 'clipGrob's. (Simon)
 
     \item Initial implementation of pattern fills. Define pattern fills
-    using 'fillPattern' (and also 'fillPatternRef' to reuse an existing
+    using 'patternFill' (and also 'patternFillRef' to reuse an existing
     definition). These can then be applied to grobs using
     'grid.patternFill' and 'patternFillGrob'. (Simon)
 

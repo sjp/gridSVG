@@ -12,7 +12,7 @@ crossGrob <- gTree(children = gList(
 # Call the pattern "cross"
 # Using a small device size because the line widths
 # will be too small otherwise
-fillPattern("cross", grob = crossGrob,
+patternFill("cross", grob = crossGrob,
             dev.width = 1, dev.height = 1)
 
 grid.circle(name = "filledcircle")
@@ -25,7 +25,7 @@ dev.off()
 # but much larger
 pdf(file = NULL)
 grid.newpage()
-fillPatternRef("bigcross", "cross",
+patternFillRef("bigcross", "cross",
                width = 0.3, height = 0.3)
 grid.circle(name = "filledcircle")
 grid.patternFill("filledcircle", "bigcross", alpha = 0.5)

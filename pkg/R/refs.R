@@ -7,7 +7,7 @@
 # Because the location is being defined at the time of definition, the
 # current viewport is determining the location of the pattern, not the
 # graphics device.
-fillPattern <- function(label, grob, vp = NULL,
+patternFill <- function(label, grob, vp = NULL,
                         x = unit(0, "npc"), y = unit(0, "npc"),
                         width = unit(0.1, "npc"), height = unit(0.1, "npc"),
                         default.units = "npc",
@@ -66,7 +66,7 @@ fillPattern <- function(label, grob, vp = NULL,
     invisible()
 }
 
-fillPatternRef <- function(label, refLabel,
+patternFillRef <- function(label, refLabel,
                            x = unit(0, "npc"), y = unit(0, "npc"),
                            width = unit(0.1, "npc"), height = unit(0.1, "npc"),
                            default.units = "npc",
@@ -165,7 +165,7 @@ drawDef.patternFillDef <- function(def, dev) {
     # If the prefix is safe, then it will *always* be safe
     # because the names are known *after* content is drawn
     # and the referenced labels must be unique
-    prefix <- paste0(".gridSVG.fillPattern.", def$id)
+    prefix <- paste0(".gridSVG.patternFill.", def$id)
 
     # There is a little bit of replication going on from
     # 'gridToSVG' but it avoids some problems.
@@ -216,7 +216,7 @@ drawDef.patternFillRefDef <- function(def, dev) {
     pattern <- newXMLNode("pattern",
         attrs = list(id = def$id, x = x, y = y,
                      width = width, height = height,
-                     filterUnits = "userSpaceOnUse"),
+                     "xlink:href" = paste0("#", getLabelID(def$refLabel))),
         parent = svgDevParent(svgdev))
 }
 
