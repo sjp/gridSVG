@@ -123,12 +123,14 @@ svgAnnotate <- function(svgRoot, callAttrs) {
     argValues <- unname(unlist(callAttrs))
 
     # The call elements that we're going to be building up
-    metadata <- newXMLNode("metadata")
+    metadata <- newXMLNode("metadata", namespaceDefinitions =
+                           c(gridsvg = "http://www.stat.auckland.ac.nz/~paul/R/gridSVG/"))
 
     # Using the package DESCRIPTION version instead of packageVersion
     # because packageVersion converts our versions from 1.0-0 to 1.0.0.
     # Ignoring timezone in Sys.time(), should be fine
     newXMLNode("generator",
+               namespace = "gridsvg",
                attrs = c(name = "gridSVG",
                          version = packageDescription("gridSVG")$Version,
                          time = as.character(Sys.time())),
@@ -136,17 +138,14 @@ svgAnnotate <- function(svgRoot, callAttrs) {
 
     for (i in 1:length(callAttrs)) {
         newXMLNode("argument",
+                   namespace = "gridsvg",
                    attrs = c(name = argNames[i], value = argValues[i]),
                    parent = metadata)
     }
 
-    comment <- newXMLCommentNode(paste("", saveXML(metadata), "", sep = "\n"))
-
     # at = 0 because we want this comment to be inserted directly after
     # the main <svg> element
-    addChildren(svgRoot, comment, at = 0)
-    
-    # Don't need to return anything, svgRoot is a reference
+    addChildren(svgRoot, metadata, at = 0)
 }
 
 svgComment <- function(comment, svgdev=svgDevice()) {
