@@ -143,6 +143,8 @@
     definition). These can then be applied to grobs using
     'grid.patternFill' and 'patternFillGrob'. (Simon)
 
+    \item Add support for 'gpar()'s 'lex' parameter. (Simon)
+
   }
 }
 

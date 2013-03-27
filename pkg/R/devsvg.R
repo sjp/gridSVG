@@ -268,6 +268,13 @@ devParToSVGStyle <- function(gp, dev) {
             else
                 gp$fontsize <- (get.gpar("fontsize")[[1]] * gp$cex)
         }
+        # Do the same for "lex"
+        if ("lex" %in% names(gp)) {
+            if ("lwd" %in% names(gp))
+                gp$lwd <- (gp$lwd * gp$lex)
+            else
+                gp$lwd <- (get.gpar("lwd")[[1]] * gp$lex)
+        }
         # Scale lty by lwd
         if ("lty" %in% names(gp)) {
             if ("lwd" %in% names(gp)) {
