@@ -228,24 +228,24 @@ gridsvg <- function(name="Rplots.svg",
     assign(".Devices", devs, envir = baseenv())
 }
 
-dev.off <- function() {
+dev.off <- function(which = dev.cur()) {
     if (.Devices[[dev.cur()]] == "gridsvg") {
         # If there's nothing on the display list then nothing
         # can be drawn
         if (! length(grid.ls(print = FALSE)$name)) {
-            grDevices::dev.off()
+            grDevices::dev.off(which)
             warning("No grid image was drawn so no SVG was created")
             return(invisible())
         }
         gridsvg.args <- get("gridToSVGArgs", envir = .gridSVGEnv)[[dev.cur()]]
         name <- gridsvg.args$name
         image <- do.call("gridToSVG", gridsvg.args)
-        grDevices::dev.off()
+        grDevices::dev.off(which)
         if (is.null(name) || ! nzchar(name))
             image
         else
             invisible(image)
     } else {
-        grDevices::dev.off()
+        grDevices::dev.off(which)
     }
 }
