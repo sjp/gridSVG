@@ -54,7 +54,9 @@ export("grid.hyperlink",
        "grid.gaussianBlur",
        "gaussianBlurGrob",
        "gridToSVG",
-       "gridSVG.newpage"
+       "gridSVG.newpage",
+       "gridsvg",
+       "dev.off"
        )
 
 export("getSVGoption",

@@ -193,6 +193,63 @@ gridSVG.newpage <- function(wipeRefs = TRUE, recording = TRUE) {
     grid.newpage(recording = recording)
 }
 
+gridsvg <- function(name="Rplots.svg",
+                    export.coords=c("none", "inline", "file"),
+                    export.mappings=c("none", "inline", "file"),
+                    export.js=c("none", "inline", "file"),
+                    res = NULL,
+                    indent = TRUE,
+                    htmlWrapper = FALSE,
+                    usePaths = c("vpPaths", "gPaths", "none", "both"),
+                    uniqueNames = TRUE,
+                    annotate = TRUE,
+                    xmldecl = xmlDecl(),
+                    ...) {
+    callargs <- as.list(match.call(expand.dots = FALSE))[-1]
+    dev.args <- as.list(callargs$`...`) # pairlists...
+    if (is.null(dev.args))
+        dev.args <- list(file = NULL)
+    else
+        dev.args["file"] <- list(NULL)
+    do.call("pdf", dev.args)
+    devind <- which(names(callargs) == "...")
+    gridsvg.args <- if (length(devind)) callargs[-devind]
+                    else callargs
+    if (exists("gridToSVGArgs", envir = .gridSVGEnv))
+        gridToSVGArgs <- get("gridToSVGArgs", envir = .gridSVGEnv)
+    else
+        gridToSVGArgs <- list()
+    gridToSVGArgs[[dev.cur()]] <- gridsvg.args
+    assign("gridToSVGArgs", gridToSVGArgs, envir = .gridSVGEnv)
+    # HACK!
+    # This renames the pdf device to "gridsvg" purely for convenience.
+    devs <- .Devices
+    devs[[dev.cur()]] <- "gridsvg"
+    assign(".Devices", devs, envir = baseenv())
+}
+
+dev.off <- function() {
+    if (.Devices[[dev.cur()]] == "gridsvg") {
+        # If there's nothing on the display list then nothing
+        # can be drawn
+        if (! length(grid.ls(print = FALSE)$name)) {
+            grDevices::dev.off()
+            warning("No grid image was drawn so no SVG was created")
+            return(invisible())
+        }
+        gridsvg.args <- get("gridToSVGArgs", envir = .gridSVGEnv)[[dev.cur()]]
+        name <- gridsvg.args$name
+        image <- do.call("gridToSVG", gridsvg.args)
+        grDevices::dev.off()
+        if (is.null(name) || ! nzchar(name))
+            image
+        else
+            invisible(image)
+    } else {
+        grDevices::dev.off()
+    }
+}
+
 old.gridToSVG <- function(name="Rplots.svg") {
   svgdev <- openSVGDev(name, width=par("din")[1], height=par("din")[2])
   # Start a new page because we are going to be reproducing the
