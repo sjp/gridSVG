@@ -138,6 +138,8 @@
 
     \item Including support for 'clipGrob's. (Simon).
 
+    \item Add support for 'gpar()'s 'lex' parameter. (Simon)
+
   }
 }
 
