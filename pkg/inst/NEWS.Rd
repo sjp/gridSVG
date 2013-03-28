@@ -2,6 +2,71 @@
 \title{NEWS file for the gridSVG package}
 \encoding{UTF-8}
 
+\section{Changes in version 1.2-0}{
+  \itemize{
+
+    \item Initial implementation of pattern fills. Define pattern fills
+    using 'patternFill' (and also 'patternFillRef' to reuse an existing
+    definition). These can then be applied to grobs using
+    'grid.patternFill' and 'patternFillGrob'. (Simon)
+
+  }
+}
+
+\section{Changes in version 1.1-0}{
+  \itemize{
+
+    \item Added options for 'vpPath' and 'gPath' separators. This allows
+    for easier manipulation in JavaScript as the separators no longer
+    need to be the troublesome '::' (which require escaping with CSS
+    selectors). (Simon)
+
+    \item Exporting HTML files is now optional. (Simon)
+
+    \item Always return a named list with the output of
+    'gridToSVG()'. This is invisibly returned when an SVG file is saved
+    to disk. (Simon)
+
+    \item Added 'usePaths' option for determining whether to use vpPaths
+    and gPaths SVG IDs. (Simon)
+
+    \item Added 'uniqueNames' option for generating unique names for SVG
+    IDs from grob and viewport names. This further distances ourselves
+    from the original grid names. (Simon)
+
+    \item Added 'export.mappings' option for exporting name mapping
+    information. This allows us to keep track of names and how they have
+    been modified by gridSVG. (Simon)
+
+    \item Added 'gridSVGMappings' function to import mapping
+    information. (Simon)
+
+    \item Added 'getSVGMappings' function to retrieve IDs generated for
+    an image from a grob or a viewport name. Also exported are CSS
+    selectors and XPath expressions. These can also be retrieved by
+    'getSVGMappings'. (Simon)
+
+    \item Added new generic element interface, 'grid.element'. Allows
+    any arbitrary SVG element (or tree of elements) to be inserted into
+    the resulting SVG image. (Simon)
+
+    \item When using the 'grep' argument for 'grid.hyperlink' and
+    'grid.garnish', we can now apply effects to multiple grobs where
+    gPaths are regular expressions. (Simon)
+
+    \item Added a new optional argument to 'gridToSVG', called
+    'annotate'. If 'TRUE', adds an SVG 'metadata' element below the root
+    '<svg>' element that provides information on how 'gridToSVG' was
+    called, along with metadata about gridSVG itself. Potentially useful
+    for debugging. (Simon)
+
+    \item Including support for 'clipGrob's. (Simon)
+
+    \item Add support for 'gpar()'s 'lex' parameter. (Simon)
+
+  }
+}
+
 \section{Changes in version 1.0-0}{
   \itemize{
 
@@ -91,59 +156,6 @@
 
     \item Added 'grep' argument to grid.hyperlink()
     (suggestion by Oscar Perpignan Lamigueiro).
-
-    \item Added options for 'vpPath' and 'gPath' separators. This allows
-    for easier manipulation in JavaScript as the separators no longer
-    need to be the troublesome '::' (which require escaping with CSS
-    selectors). (Simon)
-
-    \item Exporting HTML files is now optional. (Simon)
-
-    \item Always return a named list with the output of
-    'gridToSVG()'. This is invisibly returned when an SVG file is saved
-    to disk. (Simon)
-
-    \item Added 'usePaths' option for determining whether to use vpPaths
-    and gPaths SVG IDs. (Simon)
-
-    \item Added 'uniqueNames' option for generating unique names for SVG
-    IDs from grob and viewport names. This further distances ourselves
-    from the original grid names. (Simon)
-
-    \item Added 'export.mappings' option for exporting name mapping
-    information. This allows us to keep track of names and how they have
-    been modified by gridSVG. (Simon)
-
-    \item Added 'gridSVGMappings' function to import mapping
-    information. (Simon)
-
-    \item Added 'getSVGMappings' function to retrieve IDs generated for
-    an image from a grob or a viewport name. Also exported are CSS
-    selectors and XPath expressions. These can also be retrieved by
-    'getSVGMappings'. (Simon)
-
-    \item Added new generic element interface, 'grid.element'. Allows
-    any arbitrary SVG element (or tree of elements) to be inserted into
-    the resulting SVG image. (Simon)
-
-    \item When using the 'grep' argument for 'grid.hyperlink' and
-    'grid.garnish', we can now apply effects to multiple grobs where
-    gPaths are regular expressions. (Simon)
-
-    \item Added a new optional argument to 'gridToSVG', called
-    'annotate'. If 'TRUE', adds an SVG 'metadata' element below the root
-    '<svg>' element that provides information on how 'gridToSVG' was
-    called, along with metadata about gridSVG itself. Potentially useful
-    for debugging. (Simon)
-
-    \item Including support for 'clipGrob's. (Simon)
-
-    \item Initial implementation of pattern fills. Define pattern fills
-    using 'patternFill' (and also 'patternFillRef' to reuse an existing
-    definition). These can then be applied to grobs using
-    'grid.patternFill' and 'patternFillGrob'. (Simon)
-
-    \item Add support for 'gpar()'s 'lex' parameter. (Simon)
 
   }
 }
