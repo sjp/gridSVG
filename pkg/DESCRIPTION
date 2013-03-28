@@ -6,6 +6,6 @@ Authors@R: c(person("Paul", "Murrell", role = c("cre", "aut"),
              person("Simon", "Potter", role = "aut",
                     email = "simon.potter@auckland.ac.nz"))
 Description: Export grid graphics as SVG
-Depends: R (>= 2.15.0), methods, grid, RJSONIO, XML
+Depends: R (>= 3.0.0), methods, grid, RJSONIO, XML
 Suggests: lattice
 License: GPL
