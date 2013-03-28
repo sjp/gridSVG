@@ -87,8 +87,8 @@ gridToSVG(name = "Rplots.svg",
     parameter is \code{TRUE}.
   }
   \item{annotate}{
-    If \code{TRUE}, an SVG comment will be introduced directly below the
-    root \code{<svg>} element. This comment contains XML that
+    If \code{TRUE}, an SVG metadata element will be introduced directly
+    below the root \code{<svg>} element. This element contains XML that
     describes the information that gridSVG used to draw the image
     (mostly arguments to \code{gridToSVG}). This output may be useful
     for debugging purposes.
