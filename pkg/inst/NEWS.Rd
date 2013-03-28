@@ -10,6 +10,9 @@
     definition). These can then be applied to grobs using
     'grid.patternFill' and 'patternFillGrob'. (Simon)
 
+    \item Add a graphics device-like interface to gridSVG. Use 'gridsvg'
+    to open a gridSVG device, and 'dev.off' to close it. (Simon)
+
   }
 }
 
