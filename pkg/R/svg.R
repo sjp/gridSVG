@@ -143,6 +143,15 @@ svgAnnotate <- function(svgRoot, callAttrs) {
                    parent = metadata)
     }
 
+    seps <- unlist(getSVGoptions())
+    for (i in 1:length(seps)) {
+        newXMLNode("separator",
+                   namespace = "gridsvg",
+                   attrs = c(name = names(seps[i]),
+                             value = unname(seps[i])),
+                   parent = metadata)
+    }
+
     # at = 0 because we want this comment to be inserted directly after
     # the main <svg> element
     addChildren(svgRoot, metadata, at = 0)
