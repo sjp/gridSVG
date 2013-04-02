@@ -196,7 +196,7 @@ drawDef.patternFillDef <- function(def, dev) {
 
     # Creating the pattern element
     pattern <- newXMLNode("pattern",
-                          attrs = list(id = def$id, x = x, y = y,
+                          attrs = list(id = prefixName(def$id), x = x, y = y,
                                        width = width, height = height,
                                        viewBox = viewBox,
                                        patternUnits = "userSpaceOnUse"),
@@ -216,9 +216,10 @@ drawDef.patternFillRefDef <- function(def, dev) {
 
     # Creating the pattern element
     pattern <- newXMLNode("pattern",
-        attrs = list(id = def$id, x = x, y = y,
+        attrs = list(id = prefixName(def$id), x = x, y = y,
                      width = width, height = height,
-                     "xlink:href" = paste0("#", getLabelID(def$refLabel))),
+                     "xlink:href" =
+                       paste0("#", getLabelID(def$refLabel))),
         parent = svgDevParent(svgdev))
 }
 
@@ -227,7 +228,7 @@ drawDef.gaussianBlurDef <- function(def, dev) {
 
     # Creating the filter element
     pattern <- newXMLNode("filter",
-        attrs = list(id = def$id, width = "100%", height = "100%"),
+        attrs = list(id = prefixName(def$id), width = "100%", height = "100%"),
         newXMLNode("feGaussianBlur",
                    attrs = list(stdDeviation = paste0(round(def$sd, 2),
                                                       collapse = " "))),
@@ -267,7 +268,9 @@ flushDefinitions <- function(dev) {
     
     # Begin creating definitions
     # First ensure we're under #gridSVG
-    gridSVGNode <- getNodeSet(svgDevParent(svgdev), "//*[@id='gridSVG']")[[1]]
+    rootID <- prefixName("gridSVG")
+    gridSVGNode <- getNodeSet(svgDevParent(svgdev),
+                              paste0("//*[@id='", rootID, "']"))[[1]]
     svgDevChangeParent(gridSVGNode, svgdev)
     defs <- newXMLNode("defs", parent = svgDevParent(svgdev))
     svgDevChangeParent(defs, svgdev)
@@ -386,7 +389,6 @@ primToDev.gaussianBlurred.grob <- function(x, dev) {
     NextMethod()
 }
 
-
 checkForDefinition <- function(label) {
     if (! label %in% names(get("refDefinitions", envir = .gridSVGEnv)))
         stop("A reference definition must be created before using this label")
@@ -395,7 +397,7 @@ checkForDefinition <- function(label) {
 getLabelID <- function(label) {
     ut <- get("usageTable", envir = .gridSVGEnv)
     suffix <- ut[ut$name == label & ut$type == "ref", "suffix"]
-    paste0(label, getSVGoption("id.sep"), suffix)
+    prefixName(paste0(label, getSVGoption("id.sep"), suffix))
 }
 
 primToDev.patternFilled.grob <- function(x, dev) {

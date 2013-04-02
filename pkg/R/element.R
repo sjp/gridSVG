@@ -22,7 +22,6 @@ elementGrob <- function(el, name = NULL, attrs = NULL, children = NULL,
     eg
 }
 
-
 grid.element <- function(el, name = NULL, attrs = NULL, children = NULL,
                          vp = NULL, childrenvp = NULL,
                          asis = FALSE) {
@@ -30,7 +29,8 @@ grid.element <- function(el, name = NULL, attrs = NULL, children = NULL,
 }
 
 devGrob.element.grob <- function(x, dev) {
-  list(id = if (x$asis) x$origname else getID(x$name, "grob"),
+  list(id = if (x$asis) x$origname
+            else getID(x$name, "grob"),
        name = x$el,
        attrs = x$attrs)
 }

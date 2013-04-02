@@ -50,6 +50,10 @@ baseGrobName <- function(subGrobName,
   grobName
 }
 
+prefixName <- function(name) {
+  paste0(get("prefix", envir = .gridSVGEnv), name)
+}
+
 # Convert a gpar object to an device-neutral graphical parameter list
 gparToDevPars <- function(gp) {
     # Split up col into col plus colAlpha

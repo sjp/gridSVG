@@ -9,6 +9,7 @@ gridToSVG <- function(name="Rplots.svg",
                       export.mappings=c("none", "inline", "file"),
                       export.js=c("none", "inline", "file"),
                       res = NULL,
+                      prefix = "",
                       indent = TRUE,
                       htmlWrapper = FALSE,
                       usePaths = c("vpPaths", "gPaths", "none", "both"),
@@ -38,6 +39,7 @@ gridToSVG <- function(name="Rplots.svg",
     assign("use.vpPaths", paths[1], envir = .gridSVGEnv)
     assign("use.gPaths", paths[2], envir = .gridSVGEnv)
     assign("uniqueNames", uniqueNames, envir = .gridSVGEnv)
+    assign("prefix", prefix, envir = .gridSVGEnv)
 
     # Saving how to export
     export.coords <- match.arg(export.coords)
@@ -131,6 +133,7 @@ gridToSVG <- function(name="Rplots.svg",
             export.mappings = export.mappings,
             export.js = export.js,
             res = res,
+            prefix = prefix,
             indent = indent,
             htmlWrapper = htmlWrapper,
             usePaths = usePaths,

@@ -14,6 +14,7 @@ assign("clipLevel", 0, envir = .gridSVGEnv)
 
 # Needed by getID()
 assign("uniqueNames", TRUE, envir = .gridSVGEnv)
+assign("prefix", "", envir = .gridSVGEnv)
 
 # We are going to be filling this list with lists of information (describing
 # reference definitions) keyed by their labels

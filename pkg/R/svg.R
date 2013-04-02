@@ -167,7 +167,8 @@ svgComment <- function(comment, svgdev=svgDevice()) {
 
 svgClipPath <- function(id, vpx, vpy, vpw,
                         vph, svgdev=svgDevice()) {
-  clipPathID <- paste(id, "clipPath", sep = getSVGoption("id.sep"))
+  clipPathID <- prefixName(paste(id, "clipPath",
+                                 sep = getSVGoption("id.sep")))
   newXMLNode("defs", parent = svgDevParent(svgdev),
              newXMLNode("clipPath",
                         attrs = list(id = clipPathID),
@@ -182,8 +183,8 @@ svgClipPath <- function(id, vpx, vpy, vpw,
 
 svgClipAttr <- function(id, clip) {
   if (clip)
-    list("clip-path" = paste0("url(#", id,
-                              getSVGoption("id.sep"), "clipPath)"))
+    list("clip-path" = prefixName(paste0("url(#", id,
+                                         getSVGoption("id.sep"), "clipPath)")))
   else
     list()
 }
@@ -195,7 +196,7 @@ svgStartElement <- function(id = NULL, element = NULL, attrs = NULL,
   if (has.link)
     svgStartLink(links[id], show[id], svgdev)
 
-  attrs$id <- id
+  attrs$id <- prefixName(id)
   # If garnishing, clobber any existing attrs
   for (name in names(attributes))
       attrs[[name]] <- attributes[[name]]
@@ -232,7 +233,7 @@ svgStartGroup <- function(id=NULL, clip=FALSE,
   if (has.link)
     svgStartLink(links[id], show[id], svgdev)
 
-  attrlist <- list(id = getid(id, svgdev),
+  attrlist <- list(id = prefixName(id),
                    svgAttribTxt(attributes, id),
                    svgClipAttr(id, clip),
                    svgStyleAttributes(style))
@@ -264,7 +265,7 @@ svgEndGroup <- function(id=NULL, links=NULL, svgdev=svgDevice()) {
 svgStartSymbol <- function(pch, svgdev = svgDevice()) {
   defs <- newXMLNode("defs", parent = svgDevParent(svgdev))
   symbol <- newXMLNode("symbol", parent = defs,
-                       attrs = list(id = paste0("gridSVG.pch", pch),
+                       attrs = list(id = prefixName(paste0("gridSVG.pch", pch)),
                                     viewBox = "-5 -5 10 10",
                                     overflow = "visible"))
   svgDevChangeParent(symbol, svgdev)
@@ -299,7 +300,7 @@ svgAnimate <- function(attrib, values,
   n <- if (is.null(id)) 1 else length(unique(id))
 
   newXMLNode("animate", parent = svgDevParent(svgdev),
-             attrs = list("xlink:href" = paste0("#", getid(id, svgdev, n)),
+             attrs = list("xlink:href" = paste0("#", prefixName(getid(id, svgdev, n))),
                           attributeName = attrib,
                           begin = paste0(begin, "s"),
                           calcMode = interp,
@@ -331,7 +332,7 @@ svgAnimatePointSW <- function(values,
   values <- paste0(round(values, 2), collapse = ";")
 
   newXMLNode("animate", parent = svgDevParent(svgdev),
-             attrs = list("xlink:href" = paste0("#", getid(id, svgdev, n)),
+             attrs = list("xlink:href" = paste0("#", prefixName(getid(id, svgdev, n))),
                           attributeName = "stroke-width",
                           begin = paste0(begin, "s"),
                           calcMode = "spline",
@@ -425,7 +426,7 @@ svgAnimateTransform <- function(attrib, values,
                                 svgdev=svgDevice()) {
   n <- if (is.null(id)) 1 else length(unique(id))
   newXMLNode("animateTransform", parent = svgDevParent(svgdev),
-             attrs = list("xlink:href" = paste0("#", getid(id, svgdev, n)),
+             attrs = list("xlink:href" = paste0("#", prefixName(getid(id, svgdev, n))),
                           attributeName = "transform",
                           type = attrib,
                           begin = paste0(begin, "s"),
@@ -477,7 +478,7 @@ svgLines <- function(x, y, id=NULL, arrow = NULL,
   attrlist <- list(svgAttribTxt(attributes, id),
                    lineMarkerTxt,
                    svgStyleAttributes(style),
-                   id = id,
+                   id = prefixName(id),
                    points = paste0(round(x, 2), ",",
                                    round(y, 2),
                                    collapse=" "))
@@ -578,7 +579,7 @@ markerName <- function(ends, name) {
     if (ends == "both")
         mname <- c(paste(name, getSVGoption("id.sep"), "markerStart", sep=""),
                    paste(name, getSVGoption("id.sep"), "markerEnd", sep=""))
-    mname
+    prefixName(mname)
 }
 
 svgPolygon <- function(x, y, id=NULL,
@@ -593,7 +594,7 @@ svgPolygon <- function(x, y, id=NULL,
 
   tmpattr <- list(svgAttribTxt(attributes, id),
                   svgStyleAttributes(style),
-                  id = id,
+                  id = prefixName(id),
                   points = paste0(round(x, 2), ",",
                                   round(y, 2),
                                   collapse = " "))
@@ -630,7 +631,7 @@ svgPath <- function(x, y, rule, id=NULL,
 
     tmpattr <- list(svgAttribTxt(attributes, id),
                     svgStyleAttributes(style),
-                    id = id,
+                    id = prefixName(id),
                     d = paste(unlist(d), collapse = " "),
                     "fill-rule" = switch(rule, winding="nonzero", "evenodd"))
     tmpattr <- attrList(tmpattr)
@@ -655,7 +656,7 @@ svgRaster <- function(x, y, width, height, datauri, id=NULL,
   if (has.link)
     svgStartLink(links[id], show[id], svgdev)
 
-  attrlist <- list(id = id,
+  attrlist <- list(id = prefixName(id),
                    transform = paste0("translate(",
                                       round(x, 2), ",",
                                       round(height + y, 2),
@@ -666,7 +667,7 @@ svgRaster <- function(x, y, width, height, datauri, id=NULL,
   newXMLNode("g", parent = svgDevParent(svgdev),
              attrs = attrlist,
              newXMLNode("g",
-                        attrs = list(id = paste(id, "scale", sep = getSVGoption("id.sep")),
+                        attrs = list(id = paste(prefixName(id), "scale", sep = getSVGoption("id.sep")),
                                      transform = paste0("scale(",
                                                         round(width, 2), ", ",
                                                         round(-height, 2), ")")),
@@ -689,7 +690,7 @@ svgRect <- function(x, y, width, height, id=NULL,
   if (has.link)
     svgStartLink(links[id], show[id], svgdev)
 
-  attrlist <- list(id = id,
+  attrlist <- list(id = prefixName(id),
                    x = round(x, 2),
                    y = round(y, 2),
                    width = round(width, 2),
@@ -827,7 +828,7 @@ svgText <- function(x, y, text, hjust="left", vjust="bottom", rot=0,
                                  round(x, 2), ", ",
                                  round(y, 2), ")")
     topattrs$`stroke-width` <- "0.1"
-    topattrs$id <- id
+    topattrs$id <- prefixName(id)
 
     # Flip the y-direction again so that text is drawn "upright"
     # Do the flip in a separate <g> so that can animate the
@@ -868,7 +869,7 @@ svgCircle <- function(x, y, r, id=NULL,
   if (has.link)
     svgStartLink(links[id], show[id], svgdev)
 
-  tmpattr <- list(id = id,
+  tmpattr <- list(id = prefixName(id),
                   cx = round(x, 2),
                   cy = round(y, 2),
                   r = round(r, 2),
@@ -886,7 +887,7 @@ svgCircle <- function(x, y, r, id=NULL,
 svgScript <- function(body, href, type="application/ecmascript",
                       id=NULL, svgdev=svgDevice()) {
   tmpattr <- list(type = type,
-                  id = getid(id, svgdev, 1))
+                  id = prefixName(getid(id, svgdev, 1)))
   if (nchar(href) > 0)
     tmpattr$`xlink:href` <- href
 
@@ -926,8 +927,9 @@ svgUseSymbol <- function(id, x, y, size, pch,
             else
                 pch
 
-  tmpattr <- list(id = id,
-                  "xlink:href" = paste0("#gridSVG.pch", numpch),
+  tmpattr <- list(id = prefixName(id),
+                  "xlink:href" =
+                    paste0("#", prefixName(paste0("gridSVG.pch", numpch))),
                   x = round(x, 2),
                   y = round(y, 2),
                   width = round(size, 2),

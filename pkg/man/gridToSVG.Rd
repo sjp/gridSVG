@@ -10,6 +10,7 @@ gridToSVG(name = "Rplots.svg",
           export.mappings = c("none", "inline", "file"),
           export.js = c("none", "inline", "file"),
           res = NULL,
+          prefix = "",
           indent = TRUE,
           htmlWrapper = FALSE,
           usePaths = c("vpPaths", "gPaths", "none", "both"),
@@ -54,6 +55,11 @@ gridToSVG(name = "Rplots.svg",
     If \code{NULL}, this is automatically calculated to be the
     resolution of the current device. Typically the PDF device would be
     used, and this uses a resolution of 72, i.e. 72 DPI.
+  }
+  \item{prefix}{
+    A prefix to apply to all generated SVG ID attributes. Useful for
+    ensuring unique IDs when many SVG images exist within the same HTML
+    document.
   }
   \item{indent}{
     Determines whether the resulting SVG document will be exported with
