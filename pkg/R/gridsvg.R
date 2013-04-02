@@ -102,6 +102,9 @@ gridToSVG <- function(name="Rplots.svg",
     # other VPs
     currVpCoords <- list(ROOT = getCoordsInfo(rootvp, roottm, svgdev))
     assign("vpCoords", currVpCoords, envir = .gridSVGEnv)
+    # When using referenced content, the ID generated at the time of
+    # definition may be different to the ID at draw time, see getSVGoptions()
+    assignRefIDs()
     # Convert gTree to SVG
     gridToDev(gTree, svgdev)
     # Flush out any referenced definitions so that grobs can use them

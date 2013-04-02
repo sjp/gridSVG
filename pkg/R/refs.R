@@ -38,6 +38,8 @@ patternFill <- function(label, grob, vp = NULL,
     width <- convertWidth(width, "inches")
     height <- convertHeight(height, "inches")
 
+    # ID will be overwritten later, because we might change
+    # the separator used for "id.sep"
     defList <- list(
         label = label,
         id = getID(label, "ref"),
@@ -230,6 +232,15 @@ drawDef.gaussianBlurDef <- function(def, dev) {
                    attrs = list(stdDeviation = paste0(round(def$sd, 2),
                                                       collapse = " "))),
         parent = svgDevParent(svgdev))
+}
+
+# This function ensures that if we change the ID separator value between
+# the time of definition and draw time, we still get the expected IDs.
+assignRefIDs <- function() {
+    refdefs <- get("refDefinitions", envir = .gridSVGEnv)
+    for (i in seq_along(refdefs))
+        refdefs[[i]]$id <- getLabelID(refdefs[[i]]$label)
+    assign("refDefinitions", refdefs, envir = .gridSVGEnv)
 }
 
 flushDefinitions <- function(dev) {
