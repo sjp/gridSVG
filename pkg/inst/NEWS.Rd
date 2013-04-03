@@ -18,6 +18,25 @@
     images in the same document as it ensures uniqueness of IDs between
     documents. (Simon)
 
+    \item The main change in this version involves taking advantage of
+    changes in R version 3.0.0, which introduced a \code{grid.force()}
+    function. This reduces the need for special methods in this package
+    to draw custom grobs.
+
+    \item Bumped R version dependency to R >= 3.0.0 because
+    \code{gridToSVG()} now calls \code{grid.force()} before export
+
+    \item Removed several \code{primToDev()} methods:
+    \itemize{
+      \item \code{primToDev.xaxis()}
+      \item \code{primToDev.yaxis()}
+      \item \code{grobToDev.roundrect()}
+      \item \code{grobToDev.frame()}
+      \item \code{grobToDev.cellGrob()}
+    }
+
+    \item Bug fix for multi-line text when cex != 1
+
   }
 }
 

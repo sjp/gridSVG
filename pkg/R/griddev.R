@@ -222,13 +222,7 @@ unwindVP <- function(vp, depth, dev) {
     if (depth > 0) {
         for (i in 1:depth)
             devEndGroup("", dev)
-        if (is.null(vp)) { # recorded pops or ups
-            upViewport(depth)
-        } else if (!inherits(vp, "vpPath")) {
-            popViewport(depth)
-        } else {
-            upViewport(depth)
-        }
+        upViewport(depth)
     }
 }
 
@@ -414,7 +408,8 @@ devGrob.text <- function(x, dev) {
   # determine line height.  This does WAAAAY back so we just
   # have to swallow and follow along.
   # textLineHeight <-  ch(charHeight * gp$lineheight, dev)
-  textLineHeight <- ch(unit(gp$lineheight * gp$cex *
+  xcex <- if (is.null(x$gp$cex)) 1 else x$gp$cex
+  textLineHeight <- ch(unit(gp$lineheight * gp$cex * xcex *
                             graphics::par("cin")[2], "inches"), dev)
   charHeight <- ch(charHeight, dev)
   
@@ -425,7 +420,6 @@ devGrob.text <- function(x, dev) {
   #   comment in row for 'baseline-shift' in the 'percentages' column
   # This is needed for positioning plotmath expressions
   # to anything close to the right place
-  xcex <- if (is.null(x$gp$cex)) 1 else x$gp$cex
   fontHeight <- ch(unit(gp$fontsize * gp$cex * xcex/ 72, "inches"), dev)
 
   # Width of the text/expression
