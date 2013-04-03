@@ -403,7 +403,7 @@ var getSVGMappings = function(name, type, result) {
         }
         var ids = [];
         for (var i = 0; i < suffix.length; i++) {
-            ids.push(name + gridSVGMappings["id.sep"] + suffix[i]);
+            ids.push(gridSVGMappings.prefix + name + gridSVGMappings["id.sep"] + suffix[i]);
         }
         return ids;
     }

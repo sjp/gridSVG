@@ -13,6 +13,11 @@
     \item Add a graphics device-like interface to gridSVG. Use 'gridsvg'
     to open a gridSVG device, and 'dev.off' to close it. (Simon)
 
+    \item Now allowing for a prefix to be applied to each SVG ID
+    attribute. Particularly useful when including multiple gridSVG
+    images in the same document as it ensures uniqueness of IDs between
+    documents. (Simon)
+
   }
 }
 

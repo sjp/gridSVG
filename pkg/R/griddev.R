@@ -516,8 +516,8 @@ getID <- function(name, type, append = TRUE) {
   }
 
   if (append) {
-    sel <- escapeSelector(candidateName)
-    xp <- escapeXPath(candidateName)
+    sel <- prefixName(escapeSelector(candidateName))
+    xp <- prefixName(escapeXPath(candidateName))
     assign("usageTable",
            rbind(ut,
                  data.frame(name = name,

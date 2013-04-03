@@ -20,7 +20,8 @@ formatMappings <- function(x) {
     list(vps = formatTypeMapping(x, "vp"),
          grobs = formatTypeMapping(x, "grob"),
          refs = formatTypeMapping(x, "ref"),
-         id.sep = getSVGoption("id.sep"))
+         id.sep = getSVGoption("id.sep"),
+         prefix = get("prefix", envir = .gridSVGEnv))
 }
 
 exportMappings <- function(x) {
@@ -56,7 +57,7 @@ getSVGMappings <- function(name, type, result = "id") {
         stop("Name not found")
 
     if (result == "id")
-        paste(name, nameData$suffix, sep = mappings$id.sep)
+        paste0(mappings$prefix, name, mappings$id.sep, nameData$suffix)
     else
         nameData[[result]]
 }

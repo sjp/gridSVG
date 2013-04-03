@@ -191,7 +191,8 @@ drawDef.patternFillDef <- function(def, dev) {
         gridToDev(gt, newdev)
         newroot <- devClose(newdev)
         viewBox <- xmlGetAttr(newroot, "viewBox")
-        gridSVGNode <- getNodeSet(newroot, "//*[@id='gridSVG']")[[1]]
+        gridSVGNode <- prefixName("gridSVG")
+        gridSVGNode <- getNodeSet(newroot, paste0("//*[@id='", gridSVGNode, "']"))[[1]]
     dev.off()
 
     # Creating the pattern element
@@ -242,6 +243,21 @@ assignRefIDs <- function() {
     for (i in seq_along(refdefs))
         refdefs[[i]]$id <- getLabelID(refdefs[[i]]$label)
     assign("refDefinitions", refdefs, envir = .gridSVGEnv)
+
+    # Because the separators might have changed, ensure that the
+    # usageTable has the correct (escaped) values for selectors and xpath
+    ut <- get("usageTable", envir = .gridSVGEnv)
+    inds <- which(ut$type == "ref")
+    for (i in inds) {
+        fullName <- paste(ut[i, "name"],
+                          ut[i, "suffix"],
+                          sep = getSVGoption("id.sep"))
+        sel <- prefixName(escapeSelector(fullName))
+        xp <- prefixName(escapeXPath(fullName))
+        ut[i, "selector"] <- sel
+        ut[i, "xpath"] <- xp
+    }
+    assign("usageTable", ut, envir = .gridSVGEnv)
 }
 
 flushDefinitions <- function(dev) {
@@ -305,7 +321,6 @@ flushDefinitions <- function(dev) {
     rut$used <- logical(nrow(rut))
     assign("refUsageTable", rut, envir = .gridSVGEnv)
     # Again for usage table 
-    usageTable <- usageTable[usageTable$type == "ref", ]
     assign("usageTable", usageTable, envir = .gridSVGEnv)
 
     # Get out of defs

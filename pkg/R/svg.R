@@ -224,7 +224,7 @@ svgStartGroup <- function(id=NULL, clip=FALSE,
   # we will have coordinate information, otherwise don't bother.
   if (! is.null(coords)) {
     currVpCoords <- get("vpCoords", envir = .gridSVGEnv)
-    currId <- getid(id, svgdev)
+    currId <- prefixName(getid(id, svgdev))
     currVpCoords[[currId]] <- coords
     assign("vpCoords", currVpCoords, envir = .gridSVGEnv)
   }
