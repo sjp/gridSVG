@@ -9,8 +9,10 @@
   graphical elements with pattern fills.
 }
 \usage{
-grid.patternFill(path, label, alpha = 1, group = TRUE, grep = FALSE)
-patternFillGrob(x, label, alpha = 1, group = TRUE)
+grid.patternFill(path, label = NULL, pattern = NULL,
+                 alpha = 1, group = TRUE, grep = FALSE)
+patternFillGrob(x, label = NULL, pattern = NULL,
+                alpha = 1, group = TRUE)
 }
 \arguments{
   \item{x}{
@@ -20,6 +22,11 @@ patternFillGrob(x, label, alpha = 1, group = TRUE)
     A label that is associated with a definition of a pattern fill. This
     is the label used to create a pattern fill definition with
     \code{\link{patternFill}}.
+  }
+  \item{pattern}{
+    A \code{pattern} object, provided by the \code{createPattern}
+    function. Provides the definition of a pattern fill that will be
+    applied to \code{x} or \code{path}.
   }
   \item{path}{
     A grob path specifying a drawn grob.
@@ -36,8 +43,15 @@ patternFillGrob(x, label, alpha = 1, group = TRUE)
     Whether the \code{path} should be treated as a regular expression.
   }
 }
+\details{
+  If \code{label} is specified, uses a pattern that has been supplied to
+  \code{\link{patternFill}}. If \code{pattern} is specified it will be
+  used as the fill pattern applied to each grob. If both are specified,
+  it will attempt to define the pattern with the given label, as well
+  as applying a pattern fill to the appropriate grobs.
+}
 \value{
-  A patternFilled.grob object.
+  A patternFilled.grob object (for \code{patternFillGrob}).
 }
 \author{ Simon Potter }
 \seealso{ \code{\link{patternFill}} }

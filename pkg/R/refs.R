@@ -7,21 +7,13 @@
 # Because the location is being defined at the time of definition, the
 # current viewport is determining the location of the pattern, not the
 # graphics device.
-patternFill <- function(label, grob, vp = NULL,
-                        x = unit(0, "npc"), y = unit(0, "npc"),
-                        width = unit(0.1, "npc"), height = unit(0.1, "npc"),
-                        default.units = "npc",
-                        just = "centre", hjust = NULL, vjust = NULL,
-                        dev.width = 7, dev.height = 7) {
-    # Ensure we have unique labels for a referenced pattern def
-    refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
-    if (label %in% names(refDefinitions))
-        stop(paste("label", sQuote(label),
-                   "already exists as a reference definition."))
 
-    if (missing(grob))
-        stop("A grob must be given as a fill pattern.")
-
+createPattern <- function(grob = NULL, vp = NULL,
+                          x = unit(0, "npc"), y = unit(0, "npc"),
+                          width = unit(0.1, "npc"), height = unit(0.1, "npc"),
+                          default.units = "npc",
+                          just = "centre", hjust = NULL, vjust = NULL,
+                          dev.width = 7, dev.height = 7) {
     if (! is.unit(x))
         x <- unit(x, default.units)
     if (! is.unit(y))
@@ -31,26 +23,49 @@ patternFill <- function(label, grob, vp = NULL,
     if (! is.unit(height))
         height <- unit(height, default.units)
 
+    pattern <- list(grob = grob, vp = vp,
+                    x = x, y = y,
+                    width = width, height = height,
+                    just = just, hjust = hjust, vjust = vjust,
+                    dev.width = dev.width, dev.height = dev.height)
+    class(pattern) <- "pattern"
+    pattern
+}
+
+patternFill <- function(label, pattern = NULL, ...) {
+    checkExistingDefinition(label)
+    refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
+
+    if (is.null(pattern)) {
+        pattern <- createPattern(...)
+    } else if (! inherits(pattern, "pattern")) {
+        stop("'pattern' must be a 'pattern' object")
+    }
+
+    if (is.null(pattern$grob))
+        stop("A grob must be given for a fill pattern definition")
+
     # Now convert *at time of definition* to absolute units (inches)
-    loc <- leftbottom(x, y, width, height, just, hjust, vjust, NULL)
+    loc <- leftbottom(pattern$x, pattern$y, pattern$width, pattern$height,
+                      pattern$just, pattern$hjust, pattern$vjust, NULL)
     x <- loc$x
     y <- loc$y
-    width <- convertWidth(width, "inches")
-    height <- convertHeight(height, "inches")
+    width <- convertWidth(pattern$width, "inches")
+    height <- convertHeight(pattern$height, "inches")
 
     # ID will be overwritten later, because we might change
     # the separator used for "id.sep"
     defList <- list(
         label = label,
         id = getID(label, "ref"),
-        grob = grob,
-        vp = vp,
+        grob = pattern$grob,
+        vp = pattern$vp,
         x = x,
         y = y,
         width = width,
         height = height,
-        dev.width = dev.width,
-        dev.height = dev.height
+        dev.width = pattern$dev.width,
+        dev.height = pattern$dev.height
     )
 
     class(defList) <- "patternFillDef"
@@ -68,34 +83,26 @@ patternFill <- function(label, grob, vp = NULL,
     invisible()
 }
 
-patternFillRef <- function(label, refLabel,
-                           x = unit(0, "npc"), y = unit(0, "npc"),
-                           width = unit(0.1, "npc"), height = unit(0.1, "npc"),
-                           default.units = "npc",
-                           just = "centre", hjust = NULL, vjust = NULL) {
-    # Ensure we have unique labels for a referenced pattern def
+patternFillRef <- function(label, refLabel, pattern = NULL, ...) {
+    checkExistingDefinition(label)
     refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
-    if (label %in% names(refDefinitions))
-        stop(paste("label", sQuote(label),
-                   "already exists as a reference definition.")) 
     if (! refLabel %in% names(refDefinitions))
         stop(paste("The reference labelled", sQuote(label), "does not exist."))
 
-    if (! is.unit(x))
-        x <- unit(x, default.units)
-    if (! is.unit(y))
-        y <- unit(y, default.units)
-    if (! is.unit(width))
-        width <- unit(width, default.units)
-    if (! is.unit(height))
-        height <- unit(height, default.units)
+    if (is.null(pattern)) {
+        pattern <- createPattern(...)
+    } else if (! inherits(pattern, "pattern")) {
+        stop("'pattern' must be a 'pattern' object")
+    }
 
     # Now convert *at time of definition* to absolute units (inches)
-    loc <- leftbottom(x, y, width, height, just, hjust, vjust, NULL)
+    loc <- leftbottom(pattern$x, pattern$y,
+                      pattern$width, pattern$height,
+                      pattern$just, pattern$hjust, pattern$vjust, NULL)
     x <- loc$x
     y <- loc$y
-    width <- convertWidth(width, "inches")
-    height <- convertHeight(height, "inches")
+    width <- convertWidth(pattern$width, "inches")
+    height <- convertHeight(pattern$height, "inches")
 
     defList <- list(
         label = label,
@@ -123,11 +130,8 @@ patternFillRef <- function(label, refLabel,
 }
 
 gaussianBlur <- function(label, sd = 2) {
-    # Ensure we have unique labels for a referenced pattern def
+    checkExistingDefinition(label)
     refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
-    if (label %in% names(refDefinitions))
-        stop(paste("label", sQuote(label),
-                   "already exists as a reference definition.")) 
 
     defList <- list(
         label = label,
@@ -341,21 +345,48 @@ isLabelUsed <- function(label) {
     rut[rut$label == label, "used"]
 }
 
-grid.patternFill <- function(path, label, alpha = 1,
-                             group = TRUE, grep = FALSE) {
-    checkForDefinition(label)
+grid.patternFill <- function(path, label = NULL, pattern = NULL,
+                             alpha = 1, group = TRUE, grep = FALSE) {
+    if (is.null(label) & is.null(pattern)) {
+        stop("At least one of 'label' or 'pattern' must be supplied")
+    } else if (is.null(label)) {
+        label <- getNewLabel("gridSVG.patternFill")
+        patternFill(label, pattern)
+    } else if (is.null(pattern)) {
+        checkForDefinition(label)
+    } else {
+        checkExistingDefinition(label)
+        patternFill(label, pattern)
+        pattern <- NULL # use the ref from now on
+    }
+
     if (any(grep)) {
         grobApply(path, function(path) {
-            grid.set(path, patternFillGrob(grid.get(path), label, alpha, group = group))
+            grid.set(path, patternFillGrob(grid.get(path), label = label,
+                                           pattern = pattern, alpha = alpha,
+                                           group = group))
         }, grep = grep)
     } else {
         grid.set(path,
-                 patternFillGrob(grid.get(path), label, alpha, group = group))
+                 patternFillGrob(grid.get(path), label = label, pattern = pattern,
+                                 alpha = alpha, group = group))
     }
 }
 
-patternFillGrob <- function(x, label, alpha = 1, group = TRUE) {
-    checkForDefinition(label)
+patternFillGrob <- function(x, label = NULL, pattern = NULL,
+                            alpha = 1, group = TRUE) {
+    if (is.null(label) & is.null(pattern)) {
+        stop("At least one of 'label' or 'pattern' must be supplied")
+    } else if (is.null(label)) {
+        label <- getNewLabel("gridSVG.patternFill")
+        patternFill(label, pattern)
+    } else if (is.null(pattern)) {
+        checkForDefinition(label)
+    } else {
+        checkExistingDefinition(label)
+        patternFill(label, pattern)
+    }
+
     x$label <- label
     label <- getLabelID(label)
     # Allowing fill-opacity to be set by a garnish because
@@ -365,7 +396,7 @@ patternFillGrob <- function(x, label, alpha = 1, group = TRUE) {
     # to overwrite it.
     x <- garnishGrob(x, fill = paste0("url(#", label, ")"),
                      "fill-opacity" = alpha, group = group)
-    class(x) <- unique(c("patternFilled.grob", class(x)))
+    class(x) <- unique(c("patternFilled.grob", "referring.grob", class(x)))
     x
 }
 
@@ -391,11 +422,11 @@ gaussianBlurGrob <- function(x, label, group = TRUE) {
     # We want to ensure that we can still set it, so use the garnish
     # to overwrite it.
     x <- garnishGrob(x, filter = paste0("url(#", label, ")"), group = group)
-    class(x) <- unique(c("gaussianBlurred.grob", class(x)))
+    class(x) <- unique(c("gaussianBlurred.grob", "referring.grob", class(x)))
     x
 }
 
-primToDev.gaussianBlurred.grob <- function(x, dev) {
+primToDev.referring.grob <- function(x, dev) {
     # Now that we know a reference is being used, ensure that it can be
     # written out later
     rut <- get("refUsageTable", envir = .gridSVGEnv)
@@ -409,18 +440,30 @@ checkForDefinition <- function(label) {
         stop("A reference definition must be created before using this label")
 }
 
+checkExistingDefinition <- function(label) {
+    if (label %in% names(get("refDefinitions", envir = .gridSVGEnv)))
+        stop(paste("label", sQuote(label),
+                   "already exists as a reference definition")) 
+}
+
+# When we need to generate a temporary label (i.e. when specifying a
+# gradient fill directly on a grob with no label), we supply a prefix and
+# return a new label that is going to be unique (among labels).
+# getID() will perform the task of ensuring uniqueness among IDs.
+getNewLabel <- function(prefix) {
+    i <- 1
+    candidateName <- paste0(prefix, ".", i)
+    refdefs <- get("refDefinitions", envir = .gridSVGEnv)
+    while(candidateName %in% names(refdefs)) {
+        i <- i + 1
+        candidateName <- paste0(prefix, getSVGoption("id.sep"), i)
+    }
+    candidateName
+}
+
 getLabelID <- function(label) {
     ut <- get("usageTable", envir = .gridSVGEnv)
     suffix <- ut[ut$name == label & ut$type == "ref", "suffix"]
     prefixName(paste0(label, getSVGoption("id.sep"), suffix))
-}
-
-primToDev.patternFilled.grob <- function(x, dev) {
-    # Now that we know a reference is being used, ensure that it can be
-    # written out later
-    rut <- get("refUsageTable", envir = .gridSVGEnv)
-    rut[rut$label == x$label, "used"] <- TRUE
-    assign("refUsageTable", rut, envir = .gridSVGEnv)
-    NextMethod()
 }
 

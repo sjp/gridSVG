@@ -46,13 +46,6 @@ export("grid.hyperlink",
        "scriptGrob",
        "grid.element",
        "elementGrob",
-       "patternFill",
-       "patternFillRef",
-       "grid.patternFill",
-       "patternFillGrob",
-       "gaussianBlur",
-       "grid.gaussianBlur",
-       "gaussianBlurGrob",
        "gridToSVG",
        "gridSVG.newpage",
        "gridsvg",
@@ -115,8 +108,34 @@ S3method("primToDev", "animated.grob")
 S3method("primToDev", "comment.grob")
 S3method("primToDev", "garnished.grob")
 S3method("primToDev", "element.grob")
-S3method("primToDev", "patternFilled.grob")
-S3method("primToDev", "gaussianBlurred.grob")
+S3method("primToDev", "referring.grob")
+
+# Gradients
+export("linearGradient",
+       "radialGradient",
+       "gradientStop",
+       "addGradientStop",
+       "gradientFill",
+       "grid.gradientFill",
+       "gradientFillGrob")
+S3method("[", "gradient")
+S3method("[[", "gradient")
+S3method("[<-", "gradient")
+S3method("[[<-", "gradient")
+S3method("print", "gradient")
+S3method("print", "gradient.stop")
+
+# Patterns
+export("createPattern",
+       "patternFill",
+       "patternFillRef",
+       "grid.patternFill",
+       "patternFillGrob")
+
+# Gaussian Blurring
+export("gaussianBlur",
+       "grid.gaussianBlur",
+       "gaussianBlurGrob")
 
 S3method("link", "grob")
 S3method("link", "gTree")

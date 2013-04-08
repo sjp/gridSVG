@@ -1,4 +1,5 @@
 \name{Pattern Fills}
+\alias{createPattern}
 \alias{patternFill}
 \alias{patternFillRef}
 \title{
@@ -11,18 +12,14 @@
   by grobs drawn by gridSVG.
 }
 \usage{
-patternFill(label,
-            grob, vp = NULL,
-            x = unit(0, "npc"), y = unit(0, "npc"),
-            width = unit(0.1, "npc"), height = unit(0.1, "npc"),
-            default.units = "npc",
-            just = "centre", hjust = NULL, vjust = NULL,
-            dev.width = 7, dev.height = 7)
-patternFillRef(label, refLabel,
-               x = unit(0, "npc"), y = unit(0, "npc"),
-               width = unit(0.1, "npc"), height = unit(0.1, "npc"),
-               default.units = "npc",
-               just = "centre", hjust = NULL, vjust = NULL)
+createPattern(grob, vp = NULL,
+              x = unit(0, "npc"), y = unit(0, "npc"),
+              width = unit(0.1, "npc"), height = unit(0.1, "npc"),
+              default.units = "npc",
+              just = "centre", hjust = NULL, vjust = NULL,
+              dev.width = 7, dev.height = 7)
+patternFill(label, pattern = NULL, ...)
+patternFillRef(label, refLabel, pattern = NULL, ...)
 }
 \arguments{
   \item{label}{
@@ -31,6 +28,9 @@ patternFillRef(label, refLabel,
   \item{refLabel}{
     A character identifier referring to an existing pattern definition
     that has been created by \code{patternFill}.
+  }
+  \item{pattern}{
+    A \code{pattern} object created by \code{createPattern}.
   }
   \item{grob}{
     A grid grob or tree of grobs.
@@ -76,6 +76,9 @@ patternFillRef(label, refLabel,
     The width and height of the fill pattern's graphics region in
     inches. The default values are \code{7}.
   }
+  \item{\dots}{
+    Arguments to be be passed onto \code{createPattern}.
+  }
 }
 \details{
   The pattern fill is drawn off-screen on a new device. The size of this
@@ -91,7 +94,7 @@ patternFillRef(label, refLabel,
   function is being called. From then on, the definition of the location
   and size of the pattern are fixed.
 
-  In summary, the \code{patternFill} function defines what a pattern
+  In summary, the \code{createPattern} function defines what a pattern
   looks like, along with how big each tile is (and its position).
 
   To avoid repetition of pattern definitions, use \code{patternFillRef}
@@ -99,9 +102,13 @@ patternFillRef(label, refLabel,
   \code{refLabel}). This means that a pattern "tile" can now be reused,
   repositioned and rescaled without having to describe how it needs to
   be drawn.
+
+  In general use, first create a pattern object, then either give a
+  label to the definition (for grobs to use), or alternatively simply
+  pass on the pattern object to \code{\link{grid.patternFill}}.
 }
 \value{
-  None.
+  A \code{pattern} object for \code{createPattern}, none otherwise.
 }
 \author{
   Simon Potter

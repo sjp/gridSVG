@@ -5,19 +5,6 @@
 \section{Changes in version 1.2-0}{
   \itemize{
 
-    \item Initial implementation of pattern fills. Define pattern fills
-    using 'patternFill' (and also 'patternFillRef' to reuse an existing
-    definition). These can then be applied to grobs using
-    'grid.patternFill' and 'patternFillGrob'. (Simon)
-
-    \item Add a graphics device-like interface to gridSVG. Use 'gridsvg'
-    to open a gridSVG device, and 'dev.off' to close it. (Simon)
-
-    \item Now allowing for a prefix to be applied to each SVG ID
-    attribute. Particularly useful when including multiple gridSVG
-    images in the same document as it ensures uniqueness of IDs between
-    documents. (Simon)
-
     \item The main change in this version involves taking advantage of
     changes in R version 3.0.0, which introduced a \code{grid.force()}
     function. This reduces the need for special methods in this package
@@ -36,6 +23,24 @@
     }
 
     \item Bug fix for multi-line text when cex != 1
+
+    \item Initial implementation of pattern fills. Define pattern fills
+    using 'createPattern' and 'patternFill' (and also 'patternFillRef'
+    to reuse an existing definition). These can then be applied to grobs
+    using 'grid.patternFill' and 'patternFillGrob'. (Simon)
+
+    \item Add a graphics device-like interface to gridSVG. Use 'gridsvg'
+    to open a gridSVG device, and 'dev.off' to close it. (Simon)
+
+    \item Now allowing for a prefix to be applied to each SVG ID
+    attribute. Particularly useful when including multiple gridSVG
+    images in the same document as it ensures uniqueness of IDs between
+    documents. (Simon)
+
+    \item Added implementation of gradient fills for grobs. See
+    'linearGradient', 'radialGradient', 'gradientStop' and
+    'gradientFill' for defining gradients. Use 'grid.gradientFill' and
+    'gradientFillGrob' to apply gradient fills to grobs. (Simon)
 
   }
 }
