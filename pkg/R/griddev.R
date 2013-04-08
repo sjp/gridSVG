@@ -335,7 +335,7 @@ devGrob.points <- function(x, dev) {
   loc <- locToInches(x$x, x$y, dev)
   list(name = x$name,
        x = cx(loc$x, dev),
-       y = cx(loc$y, dev),
+       y = cy(loc$y, dev),
        size = cd(dToInches(x$size), dev),
        pch = x$pch)
 }
@@ -1154,15 +1154,7 @@ primToDev.points <- function(x, dev) {
 
         pgp <- gp[i]
 
-        # Need to calculate the size of a char, which is affected by
-        # cex and fontsize
-        # A textGrob with an "M" will be a good approximation for the
-        # point size when size is a "char"
-        if (is.unit(sizes[i]) && attr(sizes[i], "unit") == "char") {
-            pointSize <- convertHeight(grobHeight(textGrob("M", gp = pgp)),
-                                       "inches", valueOnly = TRUE) * as.numeric(sizes[i])
-            pointSize <- unit(pointSize, "inches")
-        } else if (! is.unit(sizes[i]) && is.numeric(sizes[i])) {
+        if (! is.unit(sizes[i]) && is.numeric(sizes[i])) {
             # Just a number -- convert to a unit
             pointSize <- unit(sizes[i], x$default.units)
         } else {

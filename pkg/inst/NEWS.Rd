@@ -42,6 +42,9 @@
     'gradientFill' for defining gradients. Use 'grid.gradientFill' and
     'gradientFillGrob' to apply gradient fills to grobs. (Simon)
 
+    \item Bug fix for pointsGrobs. 'size' units were unnecessarily being
+    manipulated. (Simon & Paul)
+
   }
 }
 
