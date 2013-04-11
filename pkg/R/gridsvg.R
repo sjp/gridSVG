@@ -73,6 +73,9 @@ gridToSVG <- function(name="Rplots.svg",
     roottm <- current.transform()
 
     svgdev <- openSVGDev(name, width=par("din")[1], height=par("din")[2], res = res)
+    # grid.force() the scene to resolve high-level grobs
+    # to their standard components
+    grid.force(redraw = FALSE)
     # Create a gTree from the current page
     # NOTE that set the 'gp' slot on this top-level gTree
     # based on ROOT vp
@@ -107,9 +110,6 @@ gridToSVG <- function(name="Rplots.svg",
     # When using referenced content, the ID generated at the time of
     # definition may be different to the ID at draw time, see getSVGoptions()
     assignRefIDs()
-    # grid.force() the scene to resolve high-level grobs
-    # to their standard components
-    grid.force(redraw = FALSE)
     # Convert gTree to SVG
     gridToDev(gTree, svgdev)
     # Flush out any referenced definitions so that grobs can use them

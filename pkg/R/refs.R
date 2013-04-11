@@ -171,7 +171,7 @@ drawDef.patternFillDef <- function(def, dev) {
     # If the prefix is safe, then it will *always* be safe
     # because the names are known *after* content is drawn
     # and the referenced labels must be unique
-    prefix <- paste0(".gridSVG.patternFill.", def$id)
+    prefix <- paste0("gridSVG.patternFill.", def$id)
 
     # There is a little bit of replication going on from
     # 'gridToSVG' but it avoids some problems.
@@ -191,6 +191,7 @@ drawDef.patternFillDef <- function(def, dev) {
         grid.draw(gTree(name = getID(prefix, "grob"),
                   children = gList(def$grob),
                   gp = get.gpar())) # Force gp to ensure correct styling
+        grid.force(redraw = FALSE)
         gt <- grid.grab(name = "gridSVG", wrap = TRUE)
         gridToDev(gt, newdev)
         newroot <- devClose(newdev)

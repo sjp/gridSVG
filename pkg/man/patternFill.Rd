@@ -83,7 +83,7 @@ patternFillRef(label, refLabel, pattern = NULL, ...)
 \details{
   The pattern fill is drawn off-screen on a new device. The size of this
   device is determined by \code{dev.width} and \code{dev.height}. The
-  \code{grob} and \code{vp} given to this function are then drawn within
+  \code{grob} and \code{vp} that have been given are then drawn within
   this device. This is relevant for determining what the pattern
   definition looks like.
 

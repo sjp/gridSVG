@@ -243,21 +243,6 @@ grobToDev.grob <- function(x, dev) {
   unwindVP(x$vp, depth, dev)
 }
 
-# roundrect has its own preDrawDetails so ...
-grobToDev.roundrect <- function(x, dev) {
-    depth <- enforceVP(x$vp, dev)
-    rrvp <- viewport(x$x, x$y, x$width, x$height, just=x$just)
-    rrdepth <- enforceVP(rrvp, dev)
-
-    boundary <- grid:::rrpoints(x)
-    primToDev(polygonGrob(boundary$x, boundary$y,
-                          gp=x$gp, name=x$name),
-              dev)
-
-    unwindVP(rrvp, rrdepth, dev)
-    unwindVP(x$vp, depth, dev)
-}
-
 # grob to device grob
 # This just converts a grid grob into a generic (bland) device grob
 # (which is just a list of values)
