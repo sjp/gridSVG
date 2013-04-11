@@ -95,7 +95,6 @@ clipPath <- function(label, clippath = NULL, ...) {
 }
 
 createClippingPath <- function(grob = NULL, vp = NULL) {
-    clippingRegion <- match.arg(clippingRegion)
     clippath <- list(grob = grob, vp = vp)
     class(clippath) <- "clipping.path"
     clippath
