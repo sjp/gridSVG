@@ -25,7 +25,7 @@
     \item Bug fix for multi-line text when cex != 1
 
     \item Initial implementation of pattern fills. Define pattern fills
-    using 'createPattern' and 'registerPatternFill' (and also
+    using 'pattern' and 'registerPatternFill' (and also
     'registerPatternFillRef' to reuse an existing definition). These can
     then be applied to grobs using 'grid.patternFill' and
     'patternFillGrob'. (Simon)

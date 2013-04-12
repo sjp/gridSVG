@@ -136,16 +136,11 @@ S3method("print", "gradient")
 S3method("print", "gradient.stop")
 
 # Patterns
-export("createPattern",
+export("pattern",
        "registerPatternFill",
        "registerPatternFillRef",
        "grid.patternFill",
        "patternFillGrob")
-
-# Gaussian Blurring
-export("gaussianBlur",
-       "grid.gaussianBlur",
-       "gaussianBlurGrob")
 
 S3method("link", "grob")
 S3method("link", "gTree")

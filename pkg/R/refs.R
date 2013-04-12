@@ -8,12 +8,12 @@
 # current viewport is determining the location of the pattern, not the
 # graphics device.
 
-createPattern <- function(grob = NULL,
-                          x = unit(0, "npc"), y = unit(0, "npc"),
-                          width = unit(0.1, "npc"), height = unit(0.1, "npc"),
-                          default.units = "npc",
-                          just = "centre", hjust = NULL, vjust = NULL,
-                          dev.width = 7, dev.height = 7) {
+pattern <- function(grob = NULL,
+                    x = unit(0, "npc"), y = unit(0, "npc"),
+                    width = unit(0.1, "npc"), height = unit(0.1, "npc"),
+                    default.units = "npc",
+                    just = "centre", hjust = NULL, vjust = NULL,
+                    dev.width = 7, dev.height = 7) {
     if (! is.unit(x))
         x <- unit(x, default.units)
     if (! is.unit(y))
@@ -37,7 +37,7 @@ registerPatternFill <- function(label, pattern = NULL, ...) {
     refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
 
     if (is.null(pattern)) {
-        pattern <- createPattern(...)
+        pattern <- gridSVG::pattern(...)
     } else if (! inherits(pattern, "pattern")) {
         stop("'pattern' must be a 'pattern' object")
     }
@@ -90,7 +90,7 @@ registerPatternFillRef <- function(label, refLabel, pattern = NULL, ...) {
         stop(paste("The reference labelled", sQuote(label), "does not exist."))
 
     if (is.null(pattern)) {
-        pattern <- createPattern(...)
+        pattern <- gridSVG::pattern(...)
     } else if (! inherits(pattern, "pattern")) {
         stop("'pattern' must be a 'pattern' object")
     }
@@ -115,31 +115,6 @@ registerPatternFillRef <- function(label, refLabel, pattern = NULL, ...) {
     )
 
     class(defList) <- "patternFillRefDef"
-
-    refDefinitions[[label]] <- defList
-    assign("refDefinitions", refDefinitions, envir = .gridSVGEnv)
-    assign("refUsageTable",
-           rbind(get("refUsageTable", envir = .gridSVGEnv),
-                 data.frame(label = label, used = FALSE,
-                            stringsAsFactors = FALSE)),
-           envir = .gridSVGEnv)
-
-    # Return NULL invisibly because we don't actually care what the
-    # definition looks like until gridSVG tries to draw it. 
-    invisible()
-}
-
-gaussianBlur <- function(label, sd = 2) {
-    checkExistingDefinition(label)
-    refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
-
-    defList <- list(
-        label = label,
-        id = getID(label, "ref"),
-        sd = sd
-    )
-
-    class(defList) <- "gaussianBlurDef"
 
     refDefinitions[[label]] <- defList
     assign("refDefinitions", refDefinitions, envir = .gridSVGEnv)
@@ -226,18 +201,6 @@ drawDef.patternFillRefDef <- function(def, dev) {
                      width = width, height = height,
                      "xlink:href" =
                        paste0("#", getLabelID(def$refLabel))),
-        parent = svgDevParent(svgdev))
-}
-
-drawDef.gaussianBlurDef <- function(def, dev) {
-    svgdev <- dev@dev
-
-    # Creating the filter element
-    pattern <- newXMLNode("filter",
-        attrs = list(id = prefixName(def$id), width = "100%", height = "100%"),
-        newXMLNode("feGaussianBlur",
-                   attrs = list(stdDeviation = paste0(round(def$sd, 2),
-                                                      collapse = " "))),
         parent = svgDevParent(svgdev))
 }
 
@@ -398,32 +361,6 @@ patternFillGrob <- function(x, label = NULL, pattern = NULL,
     x <- garnishGrob(x, fill = paste0("url(#", label, ")"),
                      "fill-opacity" = alpha, group = group)
     class(x) <- unique(c("patternFilled.grob", "referring.grob", class(x)))
-    x
-}
-
-grid.gaussianBlur <- function(path, label, group = TRUE, grep = FALSE) {
-    checkForDefinition(label)
-    if (any(grep)) {
-        grobApply(path, function(path) {
-            grid.set(path, gaussianBlurGrob(grid.get(path), label, group = group))
-        }, grep = grep)
-    } else {
-        grid.set(path,
-                 gaussianBlurGrob(grid.get(path), label, group = group))
-    }
-}
-
-gaussianBlurGrob <- function(x, label, group = TRUE) {
-    checkForDefinition(label)
-    x$label <- label
-    label <- getLabelID(label)
-    # Allowing fill-opacity to be set by a garnish because
-    # grid only knows about a colour and its opacity. If we use a
-    # reference instead of a then nothing is known about the opacity.
-    # We want to ensure that we can still set it, so use the garnish
-    # to overwrite it.
-    x <- garnishGrob(x, filter = paste0("url(#", label, ")"), group = group)
-    class(x) <- unique(c("gaussianBlurred.grob", "referring.grob", class(x)))
     x
 }
 

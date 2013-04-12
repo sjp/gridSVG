@@ -24,7 +24,7 @@ patternFillGrob(x, label = NULL, pattern = NULL,
     \code{\link{registerPatternFill}}.
   }
   \item{pattern}{
-    A \code{pattern} object, provided by the \code{createPattern}
+    A \code{pattern} object, provided by the \code{pattern}
     function. Provides the definition of a pattern fill that will be
     applied to \code{x} or \code{path}.
   }

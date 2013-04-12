@@ -1,5 +1,5 @@
 \name{Pattern Fills}
-\alias{createPattern}
+\alias{pattern}
 \alias{registerPatternFill}
 \alias{registerPatternFillRef}
 \title{
@@ -12,12 +12,12 @@
   by grobs drawn by gridSVG.
 }
 \usage{
-createPattern(grob,
-              x = unit(0, "npc"), y = unit(0, "npc"),
-              width = unit(0.1, "npc"), height = unit(0.1, "npc"),
-              default.units = "npc",
-              just = "centre", hjust = NULL, vjust = NULL,
-              dev.width = 7, dev.height = 7)
+pattern(grob,
+        x = unit(0, "npc"), y = unit(0, "npc"),
+        width = unit(0.1, "npc"), height = unit(0.1, "npc"),
+        default.units = "npc",
+        just = "centre", hjust = NULL, vjust = NULL,
+        dev.width = 7, dev.height = 7)
 registerPatternFill(label, pattern = NULL, ...)
 registerPatternFillRef(label, refLabel, pattern = NULL, ...)
 }
@@ -30,7 +30,7 @@ registerPatternFillRef(label, refLabel, pattern = NULL, ...)
     that has been created by \code{registerPatternFill}.
   }
   \item{pattern}{
-    A \code{pattern} object created by \code{createPattern}.
+    A \code{pattern} object created by \code{pattern}.
   }
   \item{grob}{
     A grid grob or tree of grobs.
@@ -73,7 +73,7 @@ registerPatternFillRef(label, refLabel, pattern = NULL, ...)
     inches. The default values are \code{7}.
   }
   \item{\dots}{
-    Arguments to be be passed onto \code{createPattern}.
+    Arguments to be be passed onto \code{pattern}.
   }
 }
 \details{
@@ -90,7 +90,7 @@ registerPatternFillRef(label, refLabel, pattern = NULL, ...)
   function is being called. From then on, the definition of the location
   and size of the pattern are fixed.
 
-  In summary, the \code{createPattern} function defines what a pattern
+  In summary, the \code{pattern} function defines what a pattern
   looks like, along with how big each tile is (and its position).
 
   To avoid repetition of pattern definitions, use
@@ -104,7 +104,7 @@ registerPatternFillRef(label, refLabel, pattern = NULL, ...)
   pass on the pattern object to \code{\link{grid.patternFill}}.
 }
 \value{
-  A \code{pattern} object for \code{createPattern}, none otherwise.
+  A \code{pattern} object for \code{pattern}, none otherwise.
 }
 \author{
   Simon Potter
