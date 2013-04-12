@@ -2,67 +2,64 @@
 \alias{grid.clipPath}
 \alias{clipPathGrob}
 \title{
-  Apply a custom clipping path to a grob.
+  Apply a custom clipping path.
 }
 \description{
-  Creates a \code{pathClipped.grob} object which is a normal grid grob,
-  with a defined clipping path applied. Used in conjunction with
-  \code{\link{clipPath}}, to produce an SVG document containing
-  graphical elements with arbitrary clipping paths.
+  A feature of SVG is that elements can be clipped to by more than just
+  a rectangular region. Most graphical elements can be drawn. The
+  purpose of these functions is to define a more sophisticated clipping
+  path that will be applied until the current viewport is popped.
 }
 \usage{
-grid.clipPath(path, label = NULL,
-              clippath = NULL, cliprule = "winding",
-              group = TRUE, grep = FALSE)
-clipPathGrob(x, label = NULL,
-             clippath = NULL, cliprule = "winding",
-             group = TRUE)
+grid.clipPath(...)
+clipPathGrob(grob, name = NULL)
 }
 \arguments{
-  \item{x}{
-    A grob to add a clipping path to.
+  \item{grob}{
+    A grob that defines a clipping path region.
   }
-  \item{path}{
-    A grob path specifying a drawn grob.
+  \item{name}{
+    A character identifier.
   }
-  \item{label}{
-    A label that is associated with a definition of a clipping
-    path. This is the label used to create a clipping path definition
-    with \code{clipPath}.
-  }
-  \item{clippath}{
-    A \code{clipping.path} object, provided by the
-    \code{\link{createClippingPath}} function. Provides the definition
-    of a clipping path that will be applied to \code{x} or \code{path}.
-  }
-  \item{cliprule}{
-    A character value specifying the fill rule: either
-    \code{"winding"} or \code{"evenodd"}. See \code{\link{grid.path}}
-    (particularly its examples) for more details.
-  }
-  \item{group}{
-    A logical vector that indicates whether the clipping path should be
-    applied to the overall parent group for the relevant SVG element, or
-    to individual SVG elements.
-  }
-  \item{grep}{
-    Whether the \code{path} should be treated as a regular expression.
+  \item{\dots}{
+    Arguments to be passed onto \code{clipPathGrob}.
   }
 }
 \details{
-  If \code{label} is specified, uses a clipping path that has been
-  supplied to \code{clipPath}. If \code{clippath} is specified it will
-  be used as the clipping path applied to each grob. If both are
-  specified, it will attempt to define the given clipping path with the
-  given label, as well as applying the clipping path to the appropriate
-  grobs.
+
+  A clipping path will be drawn within the current viewport. The effect
+  is that as soon as the clipping grob has been drawn, its boundaries
+  are now the clipping region, until the current viewport is popped.
+
+  Most grobs can be used for clipping but there are some limitations on
+  what will actually be used for clipping. In general though, anything
+  that is drawn as the clipping path will have the union of its drawn
+  regions become the new region that the current viewport will clip to.
+
+  The limitations are as follows:
+
+  \itemize{
+    \item Any viewport pushed by the clipping path grob will no longer clip to its
+    contents. However, its clipping region will remain. This means that
+    the clipping region for a pushed viewport will become the union of its
+    contents and the viewport clipping region itself, instead of just
+    the pushed viewport's clipping region.
+
+    \item No \code{pointGrob}s are able to be used for clipping.
+
+    \item Any operations that apply to containers (e.g. gpars,
+    garnishing, animation), will no longer work. Any operations that are
+    not applied to groups are unaffected. This affects in particular
+    viewports, gTrees, and the familiar gridSVG grob grouping that
+    occurs.
+  }
 }
 \value{
-  A \code{pathClipped.grob} object (for \code{clipPathGrob}).
+  \code{clipPathGrob} returns a \code{clipPath} object.
 }
 \author{
   Simon Potter
 }
 \seealso{
-  \code{\link{clipPath}}
+  \code{\link{grid.mask}}, \code{\link{grid.clip}}
 }

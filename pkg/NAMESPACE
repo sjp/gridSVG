@@ -109,18 +109,16 @@ S3method("primToDev", "comment.grob")
 S3method("primToDev", "garnished.grob")
 S3method("primToDev", "element.grob")
 S3method("primToDev", "referring.grob")
+S3method("primToDev", "clipPath")
+S3method("primToDev", "mask")
 
 # Clipping
 export("grid.clipPath",
-       "clipPathGrob",
-       "clipPath",
-       "createClippingPath")
+       "clipPathGrob")
 
 # Masking
 export("grid.mask",
-       "maskGrob",
-       "defineMask",
-       "createMask")
+       "maskGrob")
 
 # Gradients
 export("linearGradient",

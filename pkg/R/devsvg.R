@@ -455,6 +455,53 @@ setMethod("devStartClip", signature(device="svgDevice"),
                           svgdev=device@dev)
           })
 
+setMethod("devStartClipPath", signature(device="svgDevice"),
+          function(clippath, gp, device) {
+            svgStartGrobClipPath(clippath$name, device@dev)
+
+            # Because of the fact that we never stop clipping until
+            # we pop our current viewport, we need to store information
+            # on how many times we have clipped.
+            # This allows us to traverse back up the appropriate number
+            # of SVG <g>s.
+            clipLevel <- get("clipLevel", envir = .gridSVGEnv)
+            clipLevel <- clipLevel + 1
+            assign("clipLevel", clipLevel, envir = .gridSVGEnv)
+          })
+
+setMethod("devEndClipPath", signature(device="svgDevice"),
+          function(clippath, gp, device) {
+            svgEndGrobClipPath(device@dev)
+
+            # Start a new group to clip to
+            svgStartGroup(clippath$name, clip=TRUE,
+                          coords = NULL, svgdev=device@dev)
+          })
+
+setMethod("devStartMask", signature(device="svgDevice"),
+          function(mask, gp, device) {
+            svgStartMask(mask$name, mask$x, mask$y,
+                         mask$width, mask$height, device@dev)
+
+            # Because of the fact that we never stop clipping until
+            # we pop our current viewport, we need to store information
+            # on how many times we have clipped.
+            # This allows us to traverse back up the appropriate number
+            # of SVG <g>s.
+            clipLevel <- get("clipLevel", envir = .gridSVGEnv)
+            clipLevel <- clipLevel + 1
+            assign("clipLevel", clipLevel, envir = .gridSVGEnv)
+          })
+
+setMethod("devEndMask", signature(device="svgDevice"),
+          function(mask, gp, device) {
+            svgEndMask(device@dev)
+
+            # Start a new group to mask to
+            svgStartGroup(mask$name, mask=TRUE,
+                          coords = NULL, svgdev=device@dev)
+          })
+
 setMethod("devStartGroup", signature(device="svgDevice"),
           function(group, gp, device) {
             clip <- FALSE
@@ -476,8 +523,8 @@ setMethod("devStartGroup", signature(device="svgDevice"),
           })
 
 setMethod("devEndGroup", signature(device="svgDevice"),
-          function(name, device) {
-            svgEndGroup(name, device@links, device@dev)
+          function(name, vp, device) {
+            svgEndGroup(name, device@links, vp, device@dev)
           })
 
 setMethod("devStartSymbol", signature(device="svgDevice"),

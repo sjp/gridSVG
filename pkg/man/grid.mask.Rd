@@ -2,55 +2,74 @@
 \alias{grid.mask}
 \alias{maskGrob}
 \title{
-  Apply an opacity mask to a grob.
+  Apply an opacity mask.
 }
 \description{
-  Creates a \code{masked.grob} object which is a normal grid grob, with
-  a defined opacity mask applied. Used in conjunction with
-  \code{\link{createMask}}, to produce an SVG document containing
-  graphical elements with opacity masks applied.
+  A feature of SVG is that elements can have an opacity mask applied to
+  it. An opacity mask is an image that, for various levels of opacity,
+  makes the object that is being masked inherit the same levels of
+  opacity. The purpose of these functions is to define an opacity mask
+  that will be applied until the current viewport is popped.
 }
 \usage{
-grid.mask(path, label = NULL, mask = NULL,
-          group = TRUE, grep = FALSE)
-maskGrob(x, label = NULL, mask = NULL, group = TRUE)
+grid.mask(...)
+maskGrob(grob,
+         x = unit(0.5, "npc"), y = unit(0.5, "npc"),
+         width = unit(1, "npc"), height = unit(1, "npc"),
+         default.units = "npc",
+         just = "centre", hjust = NULL, vjust = NULL,
+         name = NULL, vp = NULL)
 }
 \arguments{
+  \item{grob}{
+    A grob or gTree that will be drawn as the opacity mask.
+  }
   \item{x}{
-    A grob to add an opacity mask to.
+    A numeric vector or unit object specifying x-location.
   }
-  \item{path}{
-    A grob path specifyng a drawn grob.
+  \item{y}{
+    A numeric vector or unit object specifying y-location.
   }
-  \item{label}{
-    A label that is associated with a definition of an opacity
-    mask. This is the label used to create an mask definition with
-    \code{defineMask}.
+  \item{width}{
+    A numeric vector or unit object specifying width.
   }
-  \item{mask}{
-    A \code{mask} object, provided by the \code{\link{createMask}}
-    function. Provides the definition of an opacity mask that will be
-    applied to \code{x} or \code{path}.
+  \item{height}{
+    A numeric vector or unit object specifying height.
   }
-  \item{group}{
-    A logical vector that indicates whether the opacity mask should be
-    applied to the overall parent group for the relevant SVG element, or
-    to individual SVG elements.
+  \item{default.units}{
+    A string indicating the default units to use if \code{x}, \code{y},
+    \code{width}, or \code{height} are only given as numeric vectors.
   }
-  \item{grep}{
-    Whether the \code{path} should be treated as a regular expression.
+  \item{just}{
+    The justification of the pattern relative to its (x, y) location.
+    If there are two values, the first value specifies horizontal
+    justification and the second value specifies vertical justification.
+    Possible string values are: \code{"left"}, \code{"right"},
+    \code{"centre"}, \code{"center"}, \code{"bottom"}, and \code{"top"}.
+    For numeric values, 0 means left alignment and 1 means right
+    alignment.
+  }
+  \item{hjust}{
+    A numeric vector specifying horizontal justification. If specified,
+    overrides the \code{just} setting.
+  }
+  \item{vjust}{
+    A numeric vector specifying vertical justification. If specified,
+    overrides the \code{just} setting.
+  }
+  \item{name}{
+    A character identifier.
+  }
+  \item{vp}{
+    A grid viewport object.
+  }
+  \item{\dots}{
+    Arguments to be passed onto \code{maskGrob}.
   }
 }
 \details{
-  If \code{label} is specified, uses a clipping path that has been
-  supplied to \code{clipPath}. If \code{clippath} is specified it will
-  be used as the clipping path applied to each grob. If both are
-  specified, it will attempt to define the given clipping path with the
-  given label, as well as applying the clipping path to the appropriate
-  grobs.
-
-  When referring to an opacity mask, the masked grob will be opaque at
-  the same coordinates that the mask is opaque. The same applies when
+  When referring to an opacity mask, the masked viewport will be opaque
+  at the same coordinates that the mask is opaque. The same applies when
   there is any level of transparency, as any transparency in the mask
   will also apply in the same corresponding region of the masked object.
 
@@ -59,13 +78,18 @@ maskGrob(x, label = NULL, mask = NULL, group = TRUE)
   via \code{\link{gpar}}'s \code{alpha} parameter, which is uniform
   across the grob, we can define varying opacities on a grob via an
   opacity mask.
+
+  The \code{x}, \code{y}, \code{width}, \code{height} parameters
+  determine the location and dimensions of the area to apply the mask
+  to. This means we can apply a mask to a rectangular region within the
+  current viewport.
 }
 \value{
-  A \code{masked.grob} object (for \code{maskGrob}).
+  \code{maskGrob} returns a \code{mask} grob.
 }
 \author{
   Simon Potter
 }
 \seealso{
-  \code{\link{createMask}}
+  \code{\link{grid.clipPath}}, \code{\link{grid.clip}}
 }

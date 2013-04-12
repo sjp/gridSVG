@@ -221,7 +221,7 @@ enforceVP <- function(vp, dev) {
 unwindVP <- function(vp, depth, dev) {
     if (depth > 0) {
         for (i in 1:depth)
-            devEndGroup("", dev)
+            devEndGroup("", TRUE, dev)
         upViewport(depth)
     }
 }
@@ -655,7 +655,7 @@ primToDev.line.to <- function(x, dev) {
   devLines(dgrob, gparToDevPars(x$gp), dev)
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.lines <- function(x, dev) {
@@ -676,7 +676,7 @@ primToDev.lines <- function(x, dev) {
 
   # Ending the group
   x$name <- oldname
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.polyline <- function(x, dev) {
@@ -722,7 +722,7 @@ primToDev.polyline <- function(x, dev) {
   }
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 # Any more efficient way of doing this?
@@ -758,7 +758,7 @@ primToDev.segments <- function(x, dev) {
   }
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.polygon <- function(x, dev) {
@@ -800,7 +800,7 @@ primToDev.polygon <- function(x, dev) {
   }
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.xspline <- function(x, dev) {
@@ -888,7 +888,7 @@ primToDev.xspline <- function(x, dev) {
   }
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.pathgrob <- function(x, dev) {
@@ -907,7 +907,7 @@ primToDev.pathgrob <- function(x, dev) {
 
   # Ending the group
   x$name <- oldname
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.rastergrob <- function(x, dev) {
@@ -972,7 +972,7 @@ primToDev.rastergrob <- function(x, dev) {
   }
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.rect <- function(x, dev) {
@@ -1007,7 +1007,7 @@ primToDev.rect <- function(x, dev) {
   }
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.text <- function(x, dev) {
@@ -1059,7 +1059,7 @@ primToDev.text <- function(x, dev) {
   }
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 primToDev.circle <- function(x, dev) {
@@ -1089,7 +1089,7 @@ primToDev.circle <- function(x, dev) {
   }
 
   # Ending the group
-  devEndGroup(x$name, dev)
+  devEndGroup(x$name, FALSE, dev)
 }
 
 # Quick fix for now
@@ -1193,7 +1193,7 @@ primToDev.points <- function(x, dev) {
     }
 
     # Ending the group
-    devEndGroup(x$name, dev) 
+    devEndGroup(x$name, FALSE, dev) 
 }
 
 grobToDev.gTree <- function(x, dev) {
@@ -1218,7 +1218,7 @@ primToDev.gTree <- function(x, dev) {
             child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
         grobToDev(child, dev)
     })
-    devEndGroup(x$name, dev)
+    devEndGroup(x$name, FALSE, dev)
 }
 
 # Viewports (and vpPaths and downs and ups)

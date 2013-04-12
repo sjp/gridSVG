@@ -44,13 +44,33 @@ setGeneric("devStartClip",
              standardGeneric("devStartClip")
            })
 
+setGeneric("devStartClipPath",
+           function(clippath, gp, device) {
+             standardGeneric("devStartClipPath")
+           })
+
+setGeneric("devEndClipPath",
+           function(clippath, gp, device) {
+             standardGeneric("devEndClipPath")
+           })
+
+setGeneric("devStartMask",
+           function(mask, gp, device) {
+             standardGeneric("devStartMask")
+           })
+
+setGeneric("devEndMask",
+           function(mask, gp, device) {
+             standardGeneric("devEndMask")
+           })
+
 setGeneric("devStartGroup",
            function(group, gp, device) {
              standardGeneric("devStartGroup")
            })
 
 setGeneric("devEndGroup",
-           function(name, device) {
+           function(name, vp, device) {
              standardGeneric("devEndGroup")
            })
 

@@ -4,10 +4,8 @@ elementGrob <- function(el, name = NULL, attrs = NULL, children = NULL,
                         vp = NULL, childrenvp = NULL,
                         asis = FALSE) {
     eg <- gTree(name = name, vp = vp,
-                children = children, childrenvp = childrenvp)
-    # Fix name to be an elementGrob name instead of gTree
-    if (is.null(name))
-        eg$name <- gsub("gTree", "element", eg$name)
+                children = children, childrenvp = childrenvp,
+                cl = "element")
     # Keeping copy of name because of asis.
     # If it's TRUE, we leave the id alone.
     # When FALSE, the resulting id attribute could get modified

@@ -189,6 +189,14 @@ svgClipAttr <- function(id, clip) {
     list()
 }
 
+svgMaskAttr <- function(id, mask) {
+  if (mask)
+    list("mask" = prefixName(paste0("url(#", id,
+                                    getSVGoption("id.sep"), "mask)")))
+  else
+    list()
+}
+
 svgStartElement <- function(id = NULL, element = NULL, attrs = NULL,
                             attributes=svgAttrib(), links=NULL, show = NULL,
                             svgdev = svgDevice()) {
@@ -217,7 +225,7 @@ svgEndElement <- function(id=NULL, links=NULL, svgdev=svgDevice()) {
   svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
 }
 
-svgStartGroup <- function(id=NULL, clip=FALSE,
+svgStartGroup <- function(id=NULL, clip=FALSE, mask=FALSE,
                           attributes=svgAttrib(), links=NULL, show=NULL,
                           style=svgStyle(), coords=NULL, svgdev=svgDevice()) {
   # If this is a viewport that we're starting a group for
@@ -236,6 +244,7 @@ svgStartGroup <- function(id=NULL, clip=FALSE,
   attrlist <- list(id = prefixName(id),
                    svgAttribTxt(attributes, id),
                    svgClipAttr(id, clip),
+                   svgMaskAttr(id, mask),
                    svgStyleAttributes(style))
   attrlist <- attrList(attrlist)
   newparent <- newXMLNode("g", parent = svgDevParent(svgdev),
@@ -243,20 +252,22 @@ svgStartGroup <- function(id=NULL, clip=FALSE,
   svgDevChangeParent(newparent, svgdev)
 }
 
-svgEndGroup <- function(id=NULL, links=NULL, svgdev=svgDevice()) {
+svgEndGroup <- function(id=NULL, links=NULL, vp=FALSE, svgdev=svgDevice()) {
   # In the case where we've got a link on our group, set the parent
   # one level up because we've got an "a" tag above the group
   has.link <- hasLink(links[id])
   if (has.link)
     svgEndLink(svgdev)
 
-  # Handle case where clipGrobs have started groups
-  # "Pop" until we reach the appropriate group
-  while (get("clipLevel", envir = .gridSVGEnv) > 0) {
-    svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
-    assign("clipLevel",
-           get("clipLevel", envir = .gridSVGEnv) - 1,
-           envir = .gridSVGEnv)
+  # Handle case where clipGrobs, clipPath grobs and maskGrobs
+  # have started groups. "pop" until we reach the appropriate group
+  if (vp) {
+    while (get("clipLevel", envir = .gridSVGEnv) > 0) {
+      svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
+      assign("clipLevel",
+             get("clipLevel", envir = .gridSVGEnv) - 1,
+             envir = .gridSVGEnv)
+    }
   }
 
   svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)

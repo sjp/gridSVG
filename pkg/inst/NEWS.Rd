@@ -45,14 +45,18 @@
     \item Bug fix for pointsGrobs. 'size' units were unnecessarily being
     manipulated. (Simon & Paul)
 
-    \item Added support for arbitrary clipping paths. See
-    'createClippingPath' and 'clipPath' for defining clipping paths. Use
+    \item Added support for non-rectangular clipping paths. Use
     'grid.clipPath' and 'clipPathGrob' for applying clipping paths to
-    grobs. (Simon)
+    the current viewport, using a grob as the definition for the
+    clipping path. Behaves similarly to 'grid.clip'. (Simon)
 
-    \item Added support for opacity masks. See 'createMask' and
-    'defineMask' for defining an opacity mask. Use 'grid.mask' and
-    'maskGrob' to apply opacity masks to grobs. (Simon).
+    \item Added support for opacity masks. Use 'grid.mask' and
+    'maskGrob' to apply opacity masks to the current viewport, using a
+    grob as the definition for an opacity mask. Behaves similarly to
+    'grid.clip'. (Simon)
+
+    \item Bug fix for 'clipGrob's. Now unwinds only when a viewport is
+    popped and not any grouped content. (Simon)
 
   }
 }
