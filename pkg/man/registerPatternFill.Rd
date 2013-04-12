@@ -1,7 +1,7 @@
 \name{Pattern Fills}
 \alias{createPattern}
-\alias{patternFill}
-\alias{patternFillRef}
+\alias{registerPatternFill}
+\alias{registerPatternFillRef}
 \title{
   Create a definition of a fill pattern.
 }
@@ -12,14 +12,14 @@
   by grobs drawn by gridSVG.
 }
 \usage{
-createPattern(grob, vp = NULL,
+createPattern(grob,
               x = unit(0, "npc"), y = unit(0, "npc"),
               width = unit(0.1, "npc"), height = unit(0.1, "npc"),
               default.units = "npc",
               just = "centre", hjust = NULL, vjust = NULL,
               dev.width = 7, dev.height = 7)
-patternFill(label, pattern = NULL, ...)
-patternFillRef(label, refLabel, pattern = NULL, ...)
+registerPatternFill(label, pattern = NULL, ...)
+registerPatternFillRef(label, refLabel, pattern = NULL, ...)
 }
 \arguments{
   \item{label}{
@@ -27,17 +27,13 @@ patternFillRef(label, refLabel, pattern = NULL, ...)
   }
   \item{refLabel}{
     A character identifier referring to an existing pattern definition
-    that has been created by \code{patternFill}.
+    that has been created by \code{registerPatternFill}.
   }
   \item{pattern}{
     A \code{pattern} object created by \code{createPattern}.
   }
   \item{grob}{
     A grid grob or tree of grobs.
-  }
-  \item{vp}{
-    A grid viewport object. If not \code{NULL}, this will be pushed into
-    prior to drawing the \code{grob}.
   }
   \item{x}{
     A numeric vector or unit object specifying x-location.
@@ -97,11 +93,11 @@ patternFillRef(label, refLabel, pattern = NULL, ...)
   In summary, the \code{createPattern} function defines what a pattern
   looks like, along with how big each tile is (and its position).
 
-  To avoid repetition of pattern definitions, use \code{patternFillRef}
-  to reuse an existing pattern definition (referred to by
-  \code{refLabel}). This means that a pattern "tile" can now be reused,
-  repositioned and rescaled without having to describe how it needs to
-  be drawn.
+  To avoid repetition of pattern definitions, use
+  \code{registerPatternFillRef} to reuse an existing pattern definition
+  (referred to by \code{refLabel}). This means that a pattern "tile" can
+  now be reused, repositioned and rescaled without having to describe
+  how it needs to be drawn.
 
   In general use, first create a pattern object, then either give a
   label to the definition (for grobs to use), or alternatively simply

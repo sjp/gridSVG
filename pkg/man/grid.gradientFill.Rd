@@ -2,18 +2,18 @@
 \alias{grid.gradientFill}
 \alias{gradientFillGrob}
 \title{
-  Associate a pattern fill with a grid grob
+  Associate a gradient fill with a grid grob
 }
 \description{
   Creates a \code{gradientFilled.grob} object which is a normal grid
   grob, with a gradient fill used in place of a regular fill. Used in
-  conjunction with \code{gradientFill}, to produce an SVG document
-  containing graphical elements with gradient fills.
+  conjunction with \code{registerGradientFill}, to produce an SVG
+  document containing graphical elements with gradient fills.
 }
 \usage{
-grid.gradientFill(path, label = NULL, gradient = NULL,
+grid.gradientFill(path, gradient = NULL, label = NULL,
                   alpha = 1, group = TRUE, grep = FALSE)
-gradientFillGrob(x, label = NULL, gradient = NULL,
+gradientFillGrob(x, gradient = NULL, label = NULL,
                  alpha = 1, group = TRUE)
 }
 \arguments{
@@ -23,15 +23,15 @@ gradientFillGrob(x, label = NULL, gradient = NULL,
   \item{path}{
     A grob path specifying a drawn grob.
   }
-  \item{label}{
-    A label that is associated with a definition of a gradient
-    fill. This is the label used to create a gradient fill
-    definition with \code{gradientFill}.
-  }
   \item{gradient}{
     A \code{gradient} object, provided by the \code{linearGradient} and
     \code{radialGradient} functions. Provides the definition of a
     gradient fill that will be applied to \code{x} or \code{path}.
+  }
+  \item{label}{
+    A label that is associated with a definition of a gradient
+    fill. This is the label used to create a gradient fill
+    definition with \code{registerGradientFill}.
   }
   \item{alpha}{
     The alpha channel for transparency. A value between 0 and 1.
@@ -47,10 +47,10 @@ gradientFillGrob(x, label = NULL, gradient = NULL,
 }
 \details{
   If \code{label} is specified, uses a gradient that has been supplied
-  to \code{gradientFill}. If \code{gradient} is specified it will be
-  used as the gradient fill applied to each grob. If both are specified,
-  it will attempt to define the gradient with the given label, as well
-  as applying a gradient fill to the appropriate grobs.
+  to \code{registerGradientFill}. If \code{gradient} is specified it
+  will be used as the gradient fill applied to each grob. If both are
+  specified, it will attempt to define the gradient with the given
+  label, as well as applying a gradient fill to the appropriate grobs.
 }
 \value{
   A gradientFilled.grob object (for \code{gradientFillGrob}).
@@ -60,5 +60,5 @@ gradientFillGrob(x, label = NULL, gradient = NULL,
 }
 \seealso{
   \code{\link{linearGradient}}, \code{\link{radialGradient}},
-  \code{\link{gradientFill}}
+  \code{\link{registerGradientFill}}
 }

@@ -8,7 +8,7 @@
 # current viewport is determining the location of the pattern, not the
 # graphics device.
 
-createPattern <- function(grob = NULL, vp = NULL,
+createPattern <- function(grob = NULL,
                           x = unit(0, "npc"), y = unit(0, "npc"),
                           width = unit(0.1, "npc"), height = unit(0.1, "npc"),
                           default.units = "npc",
@@ -23,7 +23,7 @@ createPattern <- function(grob = NULL, vp = NULL,
     if (! is.unit(height))
         height <- unit(height, default.units)
 
-    pattern <- list(grob = grob, vp = vp,
+    pattern <- list(grob = grob,
                     x = x, y = y,
                     width = width, height = height,
                     just = just, hjust = hjust, vjust = vjust,
@@ -32,7 +32,7 @@ createPattern <- function(grob = NULL, vp = NULL,
     pattern
 }
 
-patternFill <- function(label, pattern = NULL, ...) {
+registerPatternFill <- function(label, pattern = NULL, ...) {
     checkExistingDefinition(label)
     refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
 
@@ -83,7 +83,7 @@ patternFill <- function(label, pattern = NULL, ...) {
     invisible()
 }
 
-patternFillRef <- function(label, refLabel, pattern = NULL, ...) {
+registerPatternFillRef <- function(label, refLabel, pattern = NULL, ...) {
     checkExistingDefinition(label)
     refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
     if (! refLabel %in% names(refDefinitions))
@@ -352,12 +352,12 @@ grid.patternFill <- function(path, label = NULL, pattern = NULL,
         stop("At least one of 'label' or 'pattern' must be supplied")
     } else if (is.null(label)) {
         label <- getNewLabel("gridSVG.patternFill")
-        patternFill(label, pattern)
+        registerPatternFill(label, pattern)
     } else if (is.null(pattern)) {
         checkForDefinition(label)
     } else {
         checkExistingDefinition(label)
-        patternFill(label, pattern)
+        registerPatternFill(label, pattern)
         pattern <- NULL # use the ref from now on
     }
 
@@ -380,12 +380,12 @@ patternFillGrob <- function(x, label = NULL, pattern = NULL,
         stop("At least one of 'label' or 'pattern' must be supplied")
     } else if (is.null(label)) {
         label <- getNewLabel("gridSVG.patternFill")
-        patternFill(label, pattern)
+        registerPatternFill(label, pattern)
     } else if (is.null(pattern)) {
         checkForDefinition(label)
     } else {
         checkExistingDefinition(label)
-        patternFill(label, pattern)
+        registerPatternFill(label, pattern)
     }
 
     x$label <- label

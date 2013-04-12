@@ -16,9 +16,8 @@ grid.mask(...)
 maskGrob(grob,
          x = unit(0.5, "npc"), y = unit(0.5, "npc"),
          width = unit(1, "npc"), height = unit(1, "npc"),
-         default.units = "npc",
          just = "centre", hjust = NULL, vjust = NULL,
-         name = NULL, vp = NULL)
+         default.units = "npc", name = NULL)
 }
 \arguments{
   \item{grob}{
@@ -59,9 +58,6 @@ maskGrob(grob,
   }
   \item{name}{
     A character identifier.
-  }
-  \item{vp}{
-    A grid viewport object.
   }
   \item{\dots}{
     Arguments to be passed onto \code{maskGrob}.

@@ -125,7 +125,7 @@ export("linearGradient",
        "radialGradient",
        "gradientStop",
        "addGradientStop",
-       "gradientFill",
+       "registerGradientFill",
        "grid.gradientFill",
        "gradientFillGrob")
 S3method("[", "gradient")
@@ -137,8 +137,8 @@ S3method("print", "gradient.stop")
 
 # Patterns
 export("createPattern",
-       "patternFill",
-       "patternFillRef",
+       "registerPatternFill",
+       "registerPatternFillRef",
        "grid.patternFill",
        "patternFillGrob")
 

@@ -86,7 +86,7 @@ maskGrob <- function(grob,
                      x = unit(0.5, "npc"), y = unit(0.5, "npc"),
                      width = unit(1, "npc"), height = unit(1, "npc"),
                      just = "centre", hjust = NULL, vjust = NULL,
-                     default.units = "npc", name = NULL, vp = NULL) {
+                     default.units = "npc", name = NULL) {
     if (! is.unit(x))
         x <- unit(x, default.units)
     if (! is.unit(y))
@@ -97,7 +97,7 @@ maskGrob <- function(grob,
         height <- unit(height, default.units)
     grid::grob(grob = grob, x = x, y = y, width = width, height = height,
                just = just, hjust = hjust, vjust = vjust,
-               name = name, vp = vp, cl = "mask")
+               name = name, cl = "mask")
 }
 
 primToDev.mask <- function(x, dev) {

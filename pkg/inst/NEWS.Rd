@@ -25,9 +25,10 @@
     \item Bug fix for multi-line text when cex != 1
 
     \item Initial implementation of pattern fills. Define pattern fills
-    using 'createPattern' and 'patternFill' (and also 'patternFillRef'
-    to reuse an existing definition). These can then be applied to grobs
-    using 'grid.patternFill' and 'patternFillGrob'. (Simon)
+    using 'createPattern' and 'registerPatternFill' (and also
+    'registerPatternFillRef' to reuse an existing definition). These can
+    then be applied to grobs using 'grid.patternFill' and
+    'patternFillGrob'. (Simon)
 
     \item Add a graphics device-like interface to gridSVG. Use 'gridsvg'
     to open a gridSVG device, and 'dev.off' to close it. (Simon)
@@ -39,8 +40,9 @@
 
     \item Added implementation of gradient fills for grobs. See
     'linearGradient', 'radialGradient', 'gradientStop' and
-    'gradientFill' for defining gradients. Use 'grid.gradientFill' and
-    'gradientFillGrob' to apply gradient fills to grobs. (Simon)
+    'registerGradientFill' for defining gradients. Use
+    'grid.gradientFill' and 'gradientFillGrob' to apply gradient fills
+    to grobs. (Simon)
 
     \item Bug fix for pointsGrobs. 'size' units were unnecessarily being
     manipulated. (Simon & Paul)

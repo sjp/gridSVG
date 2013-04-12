@@ -12,7 +12,8 @@
 }
 \usage{
 linearGradient(gradientUnits = c("bbox", "coords"),
-               x = unit(c(0, 1), "npc"), y = unit(c(0, 1), "npc"),
+               x0 = unit(0, "npc"), x1 = unit(1, "npc"),
+               y0 = unit(0, "npc"), y1 = unit(1, "npc"),
                default.units = "npc",
                spreadMethod = c("pad", "reflect", "repeat"),
                stops = NULL)
@@ -27,22 +28,38 @@ radialGradient(gradientUnits = c("bbox", "coords"),
 \arguments{
   \item{gradientUnits}{
     If \code{"bbox"}, the gradient is positioned relative to the
-    bounding box of the referring grob.
+    bounding box of the referring grob. All units attempt to be
+    converted to equivalent "npc" coordinates as a result.
 
     If \code{"coords"}, uses grid coordinates to determine positioning.
   }
+  \item{x0}{
+    Numeric or unit object indicating the starting x-location of the
+    linear gradient.
+  }
+  \item{x1}{
+    Numeric or unit object indicating the stopping x-location of the linear
+    gradient.
+  }
+  \item{y0}{
+    Numeric or unit object indicating the starting y-location of the linear
+    gradient.
+  }
+  \item{y1}{
+    Numeric or unit object indicating the stopping y-location of the linear
+    gradient.
+  }
   \item{x}{
-    A numeric vector or unit object specifying x-location(s). For linear
-    gradients this must have elements, corresponding to the start and
-    end x-location.
+    Numeric or unit object indicating the x-location of the radial
+    gradient.
   }
   \item{y}{
-    A numeric vector or unit object specifying y-location(s). For linear
-    gradients this must have elements, corresponding to the start and
-    end y-location.
+    Numeric or unit object indicating the y-location of the radial
+    gradient.
   }
   \item{r}{
-    A numeric vector or unit object specifying a radius.
+    A numeric vector or unit object specifying the radius of the radial
+    gradient.
   }
   \item{fx}{
     A numeric vector or unit object specifying an x-location. Determines

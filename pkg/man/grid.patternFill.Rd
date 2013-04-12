@@ -5,7 +5,7 @@
 \description{
   Creates a patternFilled.grob object which is a normal grid grob, with
   a pattern fill used in place of a regular fill. Used in conjunction
-  with \code{patternFill}, to produce an SVG document containing
+  with \code{registerPatternFill}, to produce an SVG document containing
   graphical elements with pattern fills.
 }
 \usage{
@@ -21,7 +21,7 @@ patternFillGrob(x, label = NULL, pattern = NULL,
   \item{label}{
     A label that is associated with a definition of a pattern fill. This
     is the label used to create a pattern fill definition with
-    \code{\link{patternFill}}.
+    \code{\link{registerPatternFill}}.
   }
   \item{pattern}{
     A \code{pattern} object, provided by the \code{createPattern}
@@ -45,13 +45,13 @@ patternFillGrob(x, label = NULL, pattern = NULL,
 }
 \details{
   If \code{label} is specified, uses a pattern that has been supplied to
-  \code{\link{patternFill}}. If \code{pattern} is specified it will be
-  used as the fill pattern applied to each grob. If both are specified,
-  it will attempt to define the pattern with the given label, as well
-  as applying a pattern fill to the appropriate grobs.
+  \code{\link{registerPatternFill}}. If \code{pattern} is specified it
+  will be used as the fill pattern applied to each grob. If both are
+  specified, it will attempt to define the pattern with the given label,
+  as well as applying a pattern fill to the appropriate grobs.
 }
 \value{
   A patternFilled.grob object (for \code{patternFillGrob}).
 }
 \author{ Simon Potter }
-\seealso{ \code{\link{patternFill}} }
+\seealso{ \code{\link{registerPatternFill}} }
