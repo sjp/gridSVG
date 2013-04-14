@@ -45,6 +45,9 @@ clipPathGrob(grob, name = NULL)
     contents and the viewport clipping region itself, instead of just
     the pushed viewport's clipping region.
 
+    \item When drawing a \code{textGrob}, only character labels will be
+    used, no \code{plotmath} expressions will be used.
+
     \item No \code{pointGrob}s are able to be used for clipping.
 
     \item Any operations that apply to containers (e.g. gpars,

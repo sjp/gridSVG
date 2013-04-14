@@ -69,6 +69,13 @@ maskGrob(grob,
   there is any level of transparency, as any transparency in the mask
   will also apply in the same corresponding region of the masked object.
 
+  The mask's opacity is defined as being the level of luminance present
+  in the mask. This means anything black is fully transparent, while
+  anything white is completely opaque. The background is assumed to be
+  black (i.e. fully transparent). The \code{alpha} value in a mask will
+  still be used, but its effect is combined with the computed opacity
+  from the luminance of the mask.
+
   By using an opacity mask it is possible to have a grob with
   non-uniform opacity. In other words, rather than specifying an opacity
   via \code{\link{gpar}}'s \code{alpha} parameter, which is uniform
@@ -88,4 +95,7 @@ maskGrob(grob,
 }
 \seealso{
   \code{\link{grid.clipPath}}, \code{\link{grid.clip}}
+}
+\references{
+  \url{http://www.w3.org/TR/SVG/masking.html#Masking}
 }

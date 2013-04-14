@@ -9,24 +9,24 @@
   graphical elements with pattern fills.
 }
 \usage{
-grid.patternFill(path, label = NULL, pattern = NULL,
+grid.patternFill(path, pattern = NULL, label = NULL,
                  alpha = 1, group = TRUE, grep = FALSE)
-patternFillGrob(x, label = NULL, pattern = NULL,
+patternFillGrob(x, pattern = NULL, label = NULL,
                 alpha = 1, group = TRUE)
 }
 \arguments{
   \item{x}{
     A grob to add a pattern fill to.
   }
-  \item{label}{
-    A label that is associated with a definition of a pattern fill. This
-    is the label used to create a pattern fill definition with
-    \code{\link{registerPatternFill}}.
-  }
   \item{pattern}{
     A \code{pattern} object, provided by the \code{pattern}
     function. Provides the definition of a pattern fill that will be
     applied to \code{x} or \code{path}.
+  }
+  \item{label}{
+    A label that is associated with a definition of a pattern fill. This
+    is the label used to create a pattern fill definition with
+    \code{\link{registerPatternFill}}.
   }
   \item{path}{
     A grob path specifying a drawn grob.

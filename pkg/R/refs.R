@@ -309,7 +309,7 @@ isLabelUsed <- function(label) {
     rut[rut$label == label, "used"]
 }
 
-grid.patternFill <- function(path, label = NULL, pattern = NULL,
+grid.patternFill <- function(path, pattern = NULL, label = NULL,
                              alpha = 1, group = TRUE, grep = FALSE) {
     if (is.null(label) & is.null(pattern)) {
         stop("At least one of 'label' or 'pattern' must be supplied")
@@ -332,12 +332,12 @@ grid.patternFill <- function(path, label = NULL, pattern = NULL,
         }, grep = grep)
     } else {
         grid.set(path,
-                 patternFillGrob(grid.get(path), label = label, pattern = pattern,
+                 patternFillGrob(grid.get(path), pattern = pattern, label = label,
                                  alpha = alpha, group = group))
     }
 }
 
-patternFillGrob <- function(x, label = NULL, pattern = NULL,
+patternFillGrob <- function(x, pattern = NULL, label = NULL,
                             alpha = 1, group = TRUE) {
     if (is.null(label) & is.null(pattern)) {
         stop("At least one of 'label' or 'pattern' must be supplied")

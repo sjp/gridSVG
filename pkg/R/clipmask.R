@@ -35,8 +35,7 @@ svgStartGrobClipPath <- function(id = NULL, svgdev = svgDevice()) {
 
 svgEndGrobClipPath <- function(svgdev = svgDevice()) {
     # First need to collect all children and filter out unwanted content
-    defs <- svgDevParent(svgdev)
-    clippath <- xmlChildren(defs)[[1]]
+    clippath <- svgDevParent(svgdev)
     nodelist <- flattenClippedSVG(clippath)
     # Wipe out all children, then add in the ones we want
     removeChildren(clippath, kids = xmlChildren(clippath))
