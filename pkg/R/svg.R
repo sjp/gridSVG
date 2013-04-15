@@ -262,7 +262,15 @@ svgEndGroup <- function(id=NULL, links=NULL, vp=FALSE, svgdev=svgDevice()) {
   # Handle case where clipGrobs, clipPath grobs and maskGrobs
   # have started groups. "pop" until we reach the appropriate group
   if (vp) {
-    while (get("clipLevel", envir = .gridSVGEnv) > 0) {
+    # In the case where we have reached something we know
+    # is a viewport, then we don't need to unwind further
+    parentIsVP <- function() {
+      id <- xmlGetAttr(svgDevParent(svgdev), "id")
+      ut <- get("usageTable", envir = .gridSVGEnv)
+      ut <- ut[ut$type == "vp", ]
+      baseGrobName(id) %in% ut$name
+    }
+    while (! parentIsVP() && get("clipLevel", envir = .gridSVGEnv) > 0) {
       svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
       assign("clipLevel",
              get("clipLevel", envir = .gridSVGEnv) - 1,

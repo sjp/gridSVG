@@ -90,11 +90,11 @@ gridToSVG <- function(name="Rplots.svg",
         # Emptying the usage table
         assign("usageTable",
                data.frame(name = character(0),
-                         suffix = integer(0),
-                         type = character(0),
-                         selector = character(0),
-                         xpath = character(0),
-                         stringsAsFactors = FALSE),
+                          suffix = integer(0),
+                          type = character(0),
+                          selector = character(0),
+                          xpath = character(0),
+                          stringsAsFactors = FALSE),
                envir = .gridSVGEnv)
     }
     # Emptying point usage table
