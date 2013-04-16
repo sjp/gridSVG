@@ -142,6 +142,67 @@ export("pattern",
        "grid.patternFill",
        "patternFillGrob")
 
+# Filters
+
+export("grid.filter",
+       "filterGrob",
+       "filterEffect",
+       "addFilterEffect",
+       "registerFilter",
+       "fe",
+       "feDistantLight",
+       "fePointLight",
+       "feSpotLight",
+       "feBlend",
+       "feComponentTransfer",
+       "addComponentFunction",
+       "transferFunction",
+       "feComposite",
+       "feConvolveMatrix",
+       "feDiffuseLighting",
+       "feDisplacementMap",
+       "feFlood",
+       "feGaussianBlur",
+       "feImage",
+       "feMerge",
+       "feMergeNode",
+       "addMergeNode",
+       "feMorphology",
+       "feOffset",
+       "feSpecularLighting",
+       "feTile",
+       "feTurbulence")
+
+S3method("flatten", "filter")
+S3method("flatten", "filter.effect")
+S3method("flatten", "fe.point.light")
+S3method("flatten", "fe.spot.light")
+S3method("flatten", "fe.diffuse.lighting")
+S3method("flatten", "fe.morphology")
+S3method("flatten", "fe.offset")
+S3method("flatten", "fe.specular.lighting")
+S3method("filterSVG", "fe.distant.light")
+S3method("filterSVG", "fe.point.light")
+S3method("filterSVG", "fe.spot.light")
+S3method("filterSVG", "fe.blend")
+S3method("filterSVG", "fe.color.matrix")
+S3method("filterSVG", "fe.component.transfer")
+S3method("filterSVG", "transfer.function")
+S3method("filterSVG", "fe.composite")
+S3method("filterSVG", "fe.convolve.matrix")
+S3method("filterSVG", "fe.diffuse.lighting")
+S3method("filterSVG", "fe.displacement.map")
+S3method("filterSVG", "fe.flood")
+S3method("filterSVG", "fe.gaussian.blur")
+S3method("filterSVG", "fe.image")
+S3method("filterSVG", "fe.merge")
+S3method("filterSVG", "fe.merge.node")
+S3method("filterSVG", "fe.morphology")
+S3method("filterSVG", "fe.offset")
+S3method("filterSVG", "fe.specular.lighting")
+S3method("filterSVG", "fe.tile")
+S3method("filterSVG", "fe.turbulence")
+
 S3method("link", "grob")
 S3method("link", "gTree")
 S3method("linkShow", "grob")
