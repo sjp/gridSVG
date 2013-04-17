@@ -373,6 +373,52 @@ primToDev.referring.grob <- function(x, dev) {
     NextMethod()
 }
 
+# Convenience function to list all referenced content definitions
+listSVGDefinitions <- function(print = TRUE) {
+    refdefs <- get("refDefinitions", envir = .gridSVGEnv)
+    n <- length(refdefs)
+    if (!n)
+        return(invisible())
+    defs <- data.frame(label = character(n),
+                       type = character(n),
+                       refLabel = character(n),
+                       stringsAsFactors = FALSE)
+
+    for (i in 1:n) {
+        curdef <- refdefs[[i]]
+        defs$label[i] <- curdef$label
+        if (! is.null(curdef$refLabel))
+            defs$refLabel[i] <- curdef$refLabel
+        defs$type[i] <- switch(class(curdef)[1],
+                               filterDef = "Filter Effect",
+                               gradientDef = "Gradient Fill",
+                               patternFillDef = "Pattern Fill",
+                               patternFillRefDef = "Pattern Fill Reference",
+                               "")
+    }
+
+    if (print) {
+        orderedTypes <- sort(unique(defs$type))
+        indent <- "  "
+        cat("Reference Definitions\n")
+        for (i in 1:length(orderedTypes)) {
+            typesub <- defs[defs$type == orderedTypes[i], ]
+            cat("\n", orderedTypes[i], "s\n", sep = "")
+            for (j in 1:nrow(typesub)) {
+                cat(indent, typesub$label[j], sep = "")
+                # If this is a pattern fill, show us what we're referencing
+                if (nchar(typesub$refLabel[j]))
+                    cat(" ", paste0("(referencing ", typesub$refLabel[j], ")"),
+                        "\n", sep = "")
+                else
+                    cat("\n")
+            }
+        }
+    }
+
+    invisible(defs)
+}
+
 checkForDefinition <- function(label) {
     if (! label %in% names(get("refDefinitions", envir = .gridSVGEnv)))
         stop("A reference definition must be created before using this label")

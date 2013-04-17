@@ -112,6 +112,8 @@ S3method("primToDev", "referring.grob")
 S3method("primToDev", "clipPath")
 S3method("primToDev", "mask")
 
+export("listSVGDefinitions")
+
 # Clipping
 export("grid.clipPath",
        "clipPathGrob")
