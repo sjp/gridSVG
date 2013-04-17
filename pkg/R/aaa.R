@@ -1,10 +1,10 @@
 # Setting up an environment for use within gridSVG
 .gridSVGEnv <- new.env()
 
-# Setting a clipping level for clipGrobs.
+# Setting a context level for clipGrobs, clipping paths and masks.
 # Allows popping viewports to work correctly if we know many
 # SVG groups we need to "pop".
-assign("clipLevel", 0, envir = .gridSVGEnv)
+assign("contextLevels", 0, envir = .gridSVGEnv)
 
 # The following definitions are required for references to work
 # because we cannot assume that everything is determined at

@@ -439,9 +439,9 @@ setMethod("devStartClip", signature(device="svgDevice"),
             # on how many times we have clipped.
             # This allows us to traverse back up the appropriate number
             # of SVG <g>s.
-            clipLevel <- get("clipLevel", envir = .gridSVGEnv)
-            clipLevel <- clipLevel + 1
-            assign("clipLevel", clipLevel, envir = .gridSVGEnv)
+            cl <- get("contextLevels", envir = .gridSVGEnv)
+            cl[length(cl)] <- cl[length(cl)] + 1
+            assign("contextLevels", cl, envir = .gridSVGEnv)
 
             # Can hard-code 'clip' and 'coords' because we're always clipping
             # but we're not a viewport.
@@ -464,9 +464,9 @@ setMethod("devStartClipPath", signature(device="svgDevice"),
             # on how many times we have clipped.
             # This allows us to traverse back up the appropriate number
             # of SVG <g>s.
-            clipLevel <- get("clipLevel", envir = .gridSVGEnv)
-            clipLevel <- clipLevel + 1
-            assign("clipLevel", clipLevel, envir = .gridSVGEnv)
+            cl <- get("contextLevels", envir = .gridSVGEnv)
+            cl[length(cl)] <- cl[length(cl)] + 1
+            assign("contextLevels", cl, envir = .gridSVGEnv)
           })
 
 setMethod("devEndClipPath", signature(device="svgDevice"),
@@ -488,9 +488,9 @@ setMethod("devStartMask", signature(device="svgDevice"),
             # on how many times we have clipped.
             # This allows us to traverse back up the appropriate number
             # of SVG <g>s.
-            clipLevel <- get("clipLevel", envir = .gridSVGEnv)
-            clipLevel <- clipLevel + 1
-            assign("clipLevel", clipLevel, envir = .gridSVGEnv)
+            cl <- get("contextLevels", envir = .gridSVGEnv)
+            cl[length(cl)] <- cl[length(cl)] + 1
+            assign("contextLevels", cl, envir = .gridSVGEnv)
           })
 
 setMethod("devEndMask", signature(device="svgDevice"),
@@ -511,6 +511,16 @@ setMethod("devStartGroup", signature(device="svgDevice"),
                 svgClipPath(group$name, group$vpx, group$vpy,
                             group$vpw, group$vph, device@dev)
               }
+            }
+
+            # If we're starting a VP, then allow for "contexts" to be
+            # added to children of this VP. A context is a clip path
+            # or mask. Coords are only present via VPs.
+            if (! is.null(group$coords)) {
+
+              assign("contextLevels",
+                     c(get("contextLevels", envir = .gridSVGEnv), 0),
+                     envir = .gridSVGEnv)
             }
 
             svgStartGroup(group$name, clip=clip,

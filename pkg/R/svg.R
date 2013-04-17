@@ -26,12 +26,16 @@ htmlFile <- function(filename, svgdev) {
 }
 
 svgOpen <- function(width=200, height=200) {
+  # Ensure all vp contexts are now zero
+  assign("contextLevels", 0, envir = .gridSVGEnv)
   svgdev <- svgDevice(width, height)
   svgHeader(width, height, svgdev)
   return(svgdev)
 }
 
 svgClose <- function(svgdev) {
+  # Ensure all vp contexts are now zero
+  assign("contextLevels", 0, envir = .gridSVGEnv)
   return(xmlRoot(svgDevParent(svgdev)))
 }
 
@@ -270,12 +274,15 @@ svgEndGroup <- function(id=NULL, links=NULL, vp=FALSE, svgdev=svgDevice()) {
       ut <- ut[ut$type == "vp", ]
       baseGrobName(id) %in% ut$name
     }
-    while (! parentIsVP() && get("clipLevel", envir = .gridSVGEnv) > 0) {
+    contextLevel <- tail(get("contextLevels", envir = .gridSVGEnv), 1)
+    while (! parentIsVP() && contextLevel > 0) {
       svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
-      assign("clipLevel",
-             get("clipLevel", envir = .gridSVGEnv) - 1,
-             envir = .gridSVGEnv)
+      contextLevel <- contextLevel - 1
     }
+    # Remove latest vp from list of contexts
+    assign("contextLevels",
+           head(get("contextLevels", envir = .gridSVGEnv), -1),
+           envir = .gridSVGEnv)
   }
 
   svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)
