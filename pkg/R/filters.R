@@ -342,7 +342,7 @@ fePointLight <- function(z = unit(0, "npc"), default.units = "npc",
                          zdim = "x", ...) {
     if (! is.unit(z))
         z <- unit(z, default.units)
-    x <- fe(x = x, y = y, z = z, zdim = zdim, default.units = default.units, ...)
+    x <- fe(z = z, zdim = zdim, default.units = default.units, ...)
     class(x) <- c("fe.point.light", class(x))
     x
 }
@@ -635,7 +635,7 @@ feDisplacementMap <- function(input = "SourceGraphic", input2 = "SourceGraphic",
                               scale = 0,
                               xChannelSelector = c("R", "G", "B", "A"),
                               yChannelSelector = c("R", "G", "B", "A"), ...) {
-    x <- fe("in" = input1, in2 = input2, scale = scale,
+    x <- fe("in" = input, in2 = input2, scale = scale,
             xChannelSelector = match.arg(xChannelSelector),
             yChannelSelector = match.arg(yChannelSelector), ...)
     class(x) <- c("fe.displacement.map", class(x))
@@ -649,7 +649,7 @@ filterSVG.fe.flood <- function(x, dev) {
                parent = svgDevParent(svgdev))
 }
 
-feFlood <- function(col = "black") {
+feFlood <- function(col = "black", ...) {
     cols <- c(col2rgb(col, alpha = TRUE))
     x <- fe("flood-color" = paste0("rgb(", paste0(cols[1:3], collapse = ", "), ")"),
             "flood-opacity" = cols[4] / 255, ...)
@@ -704,7 +704,9 @@ filterSVG.fe.merge <- function(x, dev) {
 feMerge <- function(mergeNodes = NULL, ...) {
     if (is.null(mergeNodes))
         mergeNodes <- list()
-    x <- fe("in" = input, mergeNodes = mergeNodes)
+    if (inherits(mergeNodes, "fe.merge.node"))
+        mergeNodes <- list(mergeNodes)
+    x <- fe(mergeNodes = mergeNodes, ...)
     class(x) <- c("fe.merge", class(x))
     x
 }
@@ -853,7 +855,7 @@ feTurbulence <- function(baseFrequency = 0, numOctaves = 1, seed = 1,
                          stitchTiles = FALSE,
                          type = c("fractalNoise", "turbulence"), ...) {
     stitchTiles <- if (stitchTiles) "stitch" else "noStitch"
-    x <- fe(baseFrequency = baseFrequency, numOctaves = numOctave, seed = seed,
+    x <- fe(baseFrequency = baseFrequency, numOctaves = numOctaves, seed = seed,
             stitchTiles = stitchTiles, type = match.arg(type), ...)
     class(x) <- c("fe.turbulence", class(x))
     x
