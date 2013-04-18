@@ -5,6 +5,7 @@
 # Allows popping viewports to work correctly if we know many
 # SVG groups we need to "pop".
 assign("contextLevels", 0, envir = .gridSVGEnv)
+assign("contextNames", character(0), envir = .gridSVGEnv)
 
 # The following definitions are required for references to work
 # because we cannot assume that everything is determined at

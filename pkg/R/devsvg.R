@@ -458,30 +458,16 @@ setMethod("devStartClip", signature(device="svgDevice"),
 setMethod("devStartClipPath", signature(device="svgDevice"),
           function(clippath, gp, device) {
             svgStartGrobClipPath(clippath$name, device@dev)
-
-            # Because of the fact that we never stop clipping until
-            # we pop our current viewport, we need to store information
-            # on how many times we have clipped.
-            # This allows us to traverse back up the appropriate number
-            # of SVG <g>s.
-            cl <- get("contextLevels", envir = .gridSVGEnv)
-            cl[length(cl)] <- cl[length(cl)] + 1
-            assign("contextLevels", cl, envir = .gridSVGEnv)
           })
 
 setMethod("devEndClipPath", signature(device="svgDevice"),
           function(clippath, gp, device) {
             svgEndGrobClipPath(device@dev)
-
-            # Start a new group to clip to
-            svgStartGroup(clippath$name, clip=TRUE,
-                          coords = NULL, svgdev=device@dev)
           })
 
-setMethod("devStartMask", signature(device="svgDevice"),
-          function(mask, gp, device) {
-            svgStartMask(mask$name, mask$x, mask$y,
-                         mask$width, mask$height, device@dev)
+setMethod("devStartClipPathGroup", signature(device="svgDevice"),
+          function(clippath, gp, device) {
+            svgStartGrobClipPathGroup(clippath$name, clippath$cp, device@dev)
 
             # Because of the fact that we never stop clipping until
             # we pop our current viewport, we need to store information
@@ -491,15 +477,41 @@ setMethod("devStartMask", signature(device="svgDevice"),
             cl <- get("contextLevels", envir = .gridSVGEnv)
             cl[length(cl)] <- cl[length(cl)] + 1
             assign("contextLevels", cl, envir = .gridSVGEnv)
+            # Also note the ID because we're pushing a context, makes it
+            # easier to locate later
+            assign("contextNames",
+                   c(get("contextNames", envir = .gridSVGEnv), clippath$name),
+                   envir = .gridSVGEnv)
+          })
+
+setMethod("devStartMask", signature(device="svgDevice"),
+          function(mask, gp, device) {
+            svgStartMask(mask$name, mask$x, mask$y, mask$width,
+                         mask$height, device@dev)
           })
 
 setMethod("devEndMask", signature(device="svgDevice"),
           function(mask, gp, device) {
             svgEndMask(device@dev)
+          })
 
-            # Start a new group to mask to
-            svgStartGroup(mask$name, mask=TRUE,
-                          coords = NULL, svgdev=device@dev)
+setMethod("devStartMaskGroup", signature(device="svgDevice"),
+          function(mask, gp, device) {
+            svgStartMaskGroup(mask$name, mask$mask, device@dev)
+
+            # Because of the fact that we never stop clipping until
+            # we pop our current viewport, we need to store information
+            # on how many times we have clipped.
+            # This allows us to traverse back up the appropriate number
+            # of SVG <g>s.
+            cl <- get("contextLevels", envir = .gridSVGEnv)
+            cl[length(cl)] <- cl[length(cl)] + 1
+            assign("contextLevels", cl, envir = .gridSVGEnv)
+            # Also note the ID because we're pushing a context, makes it
+            # easier to locate later
+            assign("contextNames",
+                   c(get("contextNames", envir = .gridSVGEnv), mask$name),
+                   envir = .gridSVGEnv)
           })
 
 setMethod("devStartGroup", signature(device="svgDevice"),

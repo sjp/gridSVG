@@ -66,6 +66,10 @@ gridToSVG <- function(name="Rplots.svg",
     assign("export.mappings", export.mappings, envir = .gridSVGEnv)
     assign("export.js", export.js, envir = .gridSVGEnv)
 
+    # Ensure contexts work correctly
+    assign("contextNames", character(0), envir = .gridSVGEnv)
+    assign("contextLevels", 0, envir = .gridSVGEnv)
+
     # Ensure we're at the top level
     upViewport(0)
     rootgp <- get.gpar()

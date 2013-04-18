@@ -49,16 +49,22 @@
 
     \item Added support for non-rectangular clipping paths. Use
     'grid.clipPath' and 'clipPathGrob' for applying clipping paths to
-    the current viewport, using a grob as the definition for the
-    clipping path. Behaves similarly to 'grid.clip'. (Simon)
+    grobs. Use 'pushClipPath' for applying to the current viewport,
+    which behaves similarly to 'grid.clip'. Uses a grob as the
+    definition for the clipping path as defined by
+    'registerClipPath'. (Simon)
 
     \item Added support for opacity masks. Use 'grid.mask' and
-    'maskGrob' to apply opacity masks to the current viewport, using a
-    grob as the definition for an opacity mask. Behaves similarly to
-    'grid.clip'. (Simon)
+    'maskGrob' to apply opacity masks to grobs. Use 'pushMask' for
+    applying to the current viewport, which behaves similarly to
+    'grid.clip'. Uses a grob as the definition for an opacity
+    mask. Define the mask using 'mask' and 'registerMask'. (Simon)
+
+    \item New function 'popContext', which stops the effect of
+    'pushMask' and 'pushClipPath'. (Simon)
 
     \item Bug fix for 'clipGrob's. Now unwinds only when a viewport is
-    popped and not any grouped content. (Simon)
+    popped and just not any grouped content. (Simon)
 
   }
 }

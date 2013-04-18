@@ -257,12 +257,6 @@ svgStartGroup <- function(id=NULL, clip=FALSE, mask=FALSE,
 }
 
 svgEndGroup <- function(id=NULL, links=NULL, vp=FALSE, svgdev=svgDevice()) {
-  # In the case where we've got a link on our group, set the parent
-  # one level up because we've got an "a" tag above the group
-  has.link <- hasLink(links[id])
-  if (has.link)
-    svgEndLink(svgdev)
-
   # Handle case where clipGrobs, clipPath grobs and maskGrobs
   # have started groups. "pop" until we reach the appropriate group
   if (vp) {
@@ -283,6 +277,13 @@ svgEndGroup <- function(id=NULL, links=NULL, vp=FALSE, svgdev=svgDevice()) {
     assign("contextLevels",
            head(get("contextLevels", envir = .gridSVGEnv), -1),
            envir = .gridSVGEnv)
+  } else {
+    # In the case where we've got a link on our group, set the parent
+    # one level up because we've got an "a" tag above the group.
+    # Only doing this in the case where we're dealing with a grob.
+    has.link <- hasLink(links[id])
+    if (has.link)
+      svgEndLink(svgdev)
   }
 
   svgDevChangeParent(xmlParent(svgDevParent(svgdev)), svgdev)

@@ -54,6 +54,11 @@ setGeneric("devEndClipPath",
              standardGeneric("devEndClipPath")
            })
 
+setGeneric("devStartClipPathGroup",
+           function(clippath, gp, device) {
+             standardGeneric("devStartClipPathGroup")
+           })
+
 setGeneric("devStartMask",
            function(mask, gp, device) {
              standardGeneric("devStartMask")
@@ -62,6 +67,11 @@ setGeneric("devStartMask",
 setGeneric("devEndMask",
            function(mask, gp, device) {
              standardGeneric("devEndMask")
+           })
+
+setGeneric("devStartMaskGroup",
+           function(mask, gp, device) {
+             standardGeneric("devStartMaskGroup")
            })
 
 setGeneric("devStartGroup",

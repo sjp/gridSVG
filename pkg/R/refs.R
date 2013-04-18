@@ -59,7 +59,6 @@ registerPatternFill <- function(label, pattern = NULL, ...) {
         label = label,
         id = getID(label, "ref"),
         grob = pattern$grob,
-        vp = pattern$vp,
         x = x,
         y = y,
         width = width,
@@ -161,8 +160,6 @@ drawDef.patternFillDef <- function(def, dev) {
         newdev <- openSVGDev("", res = dev@res,
                              width = par("din")[1], height = par("din")[2])
         pushViewport(viewport(name = getID(prefix, "vp")))
-        if (! is.null(def$vp))
-            pushViewport(def$vp)
         grid.draw(gTree(name = getID(prefix, "grob"),
                   children = gList(def$grob),
                   gp = get.gpar())) # Force gp to ensure correct styling
@@ -326,8 +323,8 @@ grid.patternFill <- function(path, pattern = NULL, label = NULL,
 
     if (any(grep)) {
         grobApply(path, function(path) {
-            grid.set(path, patternFillGrob(grid.get(path), label = label,
-                                           pattern = pattern, alpha = alpha,
+            grid.set(path, patternFillGrob(grid.get(path), pattern = pattern,
+                                           label = label, alpha = alpha,
                                            group = group))
         }, grep = grep)
     } else {
@@ -390,8 +387,10 @@ listSVGDefinitions <- function(print = TRUE) {
         if (! is.null(curdef$refLabel))
             defs$refLabel[i] <- curdef$refLabel
         defs$type[i] <- switch(class(curdef)[1],
+                               clipPathDef = "Clipping Path",
                                filterDef = "Filter Effect",
                                gradientDef = "Gradient Fill",
+                               maskDef = "Mask",
                                patternFillDef = "Pattern Fill",
                                patternFillRefDef = "Pattern Fill Reference",
                                "")

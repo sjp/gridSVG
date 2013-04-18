@@ -53,7 +53,7 @@ gradientFillGrob(x, gradient = NULL, label = NULL,
   label, as well as applying a gradient fill to the appropriate grobs.
 }
 \value{
-  A gradientFilled.grob object (for \code{gradientFillGrob}).
+  A \code{gradientFilled.grob} object (for \code{gradientFillGrob}).
 }
 \author{
   Simon Potter

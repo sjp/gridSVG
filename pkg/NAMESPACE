@@ -114,13 +114,25 @@ S3method("primToDev", "mask")
 
 export("listSVGDefinitions")
 
+# Context popping
+export("grid.popContext",
+       "popContextGrob")
+S3method("primToDev", "popContext")
+
 # Clipping
 export("grid.clipPath",
-       "clipPathGrob")
+       "clipPathGrob",
+       "registerClipPath",
+       "pushClipPath",
+       "popClipPath")
 
 # Masking
 export("grid.mask",
-       "maskGrob")
+       "maskGrob",
+       "registerMask",
+       "pushMask",
+       "popMask",
+       "mask")
 
 # Gradients
 export("linearGradient",
@@ -145,7 +157,6 @@ export("pattern",
        "patternFillGrob")
 
 # Filters
-
 export("grid.filter",
        "filterGrob",
        "filterEffect",
