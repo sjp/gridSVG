@@ -1,14 +1,10 @@
 # High level functions for escaping clipping paths and masks
-grid.popContext <- function(...) {
-    grid.draw(popContextGrob(...))
-}
-
-popContextGrob <- function(n = 1) {
+popContext <- function(n = 1) {
     if (n < 1)
         stop("Must pop at least one level of context")
     # Not even giving the option of configuring a name because
     # it should not be used in any serious manner
-    grob(n = n, cl = "popContext")
+    grid.draw(grob(n = n, cl = "popContext"))
 }
 
 # We have nothing to draw here, just rip out the SVG device to
@@ -58,7 +54,7 @@ svgPopContext <- function(n, svgdev) {
 
 # Alias for convenient popping of a clipping path
 popClipPath <- function() {
-    grid.popContext()
+    popContext()
 }
 
 pushClipPath <- function(clippath = NULL, label = NULL,
@@ -245,7 +241,7 @@ flattenClippedSVG <- function(node) {
 
 # Alias for popping out of a masking context
 popMask <- function() {
-    grid.popContext()
+    popContext()
 }
 
 pushMask <- function(mask = NULL, label = NULL, name = NULL, draw = TRUE) {

@@ -1,6 +1,5 @@
-\name{grid.popContext}
-\alias{grid.popContext}
-\alias{popContextGrob}
+\name{popContext}
+\alias{popContext}
 \title{
   Leaving A Modified Viewport Context
 }
@@ -14,30 +13,21 @@
   clipping to paths).
 }
 \usage{
-grid.popContext(...)
-popContextGrob(n = 1)
+popContext(n = 1)
 }
 \arguments{
   \item{n}{
     The number of contexts to pop. A warning will be given when \code{n}
     is greater than the number that has been applied.
   }
-  \item{\dots}{
-    Arguments to be passed onto \code{popContextGrob}.
-  }
 }
 \details{
-  Both functions create a \code{popContext} grob, but
-  \code{grid.popContext} draws the grob immediately.
-
-  Popping a context may sometimes be ignored. This will happen when a
-  "pop" does not occur in the same location in the tree that a context
-  was "pushed". For example this happens when a \code{gTree} is drawn
-  that has a child \code{popContextGrob}, but no child context being
-  pushed.
+  Popping a context can produce a warning. In this case it is
+  recommended that the context "pushing" and "popping" be revised to
+  have matching pairs of pushes and pops.
 }
 \value{
-  A \code{popContext} grob.
+  None.
 }
 \author{
   Simon Potter

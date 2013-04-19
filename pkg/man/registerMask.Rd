@@ -10,7 +10,7 @@
   makes the object that is being masked inherit the same levels of
   opacity. The purpose of these functions is to define an opacity mask
   that will be applied until the current viewport (or context, see
-  \code{\link{grid.popContext}}) is popped. Alternatively it can also be
+  \code{\link{popContext}}) is popped. Alternatively it can also be
   applied to grobs.
 }
 \usage{
@@ -104,5 +104,5 @@ registerMask(label, mask = NULL, ...)
 }
 \seealso{
   \code{\link{grid.mask}}, \code{\link{pushMask}},
-  \code{\link{grid.popContext}}.
+  \code{\link{popContext}}.
 }

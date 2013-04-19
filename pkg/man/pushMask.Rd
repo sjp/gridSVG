@@ -37,7 +37,7 @@ popMask()
   well as applying the mask as the new masking context for the current
   viewport.
 
-  \code{popMask} is an alias for \code{\link{grid.popContext}}.
+  \code{popMask} is an alias for \code{\link{popContext}}.
 }
 \value{
   A \code{pushMask} grob. The value is returned invisibly.
@@ -47,5 +47,5 @@ popMask()
 }
 \seealso{
   \code{\link{mask}}, \code{\link{registerMask}},
-  \code{\link{grid.mask}}, \code{\link{grid.popContext}}.
+  \code{\link{grid.mask}}, \code{\link{popContext}}.
 }

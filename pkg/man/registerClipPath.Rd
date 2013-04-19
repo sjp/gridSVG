@@ -8,7 +8,7 @@
   a rectangular region. Most graphical elements can be drawn. The
   purpose of these functions is to define a more sophisticated clipping
   path that will be applied until the current viewport (or context, see
-  \code{\link{grid.popContext}}) is popped.
+  \code{\link{popContext}}) is popped.
 }
 \usage{
 registerClipPath(label, clippath)
@@ -62,6 +62,6 @@ registerClipPath(label, clippath)
   Simon Potter
 }
 \seealso{
-  \code{\link{grid.popContext}}, \code{\link{grid.clipPath}},
+  \code{\link{popContext}}, \code{\link{grid.clipPath}},
   \code{\link{pushClipPath}}, \code{\link{grid.clip}}
 }

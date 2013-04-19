@@ -36,7 +36,7 @@ popClipPath()
   clipping path with the given label, as well as adding the clipping
   path as a clipping context for the current viewport.
 
-  \code{popClipPath} is an alias for \code{\link{grid.popContext}}
+  \code{popClipPath} is an alias for \code{\link{popContext}}
 }
 \value{
   A \code{pushClipPath} grob. The value is returned invisibly.
@@ -46,5 +46,5 @@ popClipPath()
 }
 \seealso{
   \code{\link{registerClipPath}}, \code{\link{grid.clipPath}},
-  \code{\link{grid.popContext}}.
+  \code{\link{popContext}}.
 }

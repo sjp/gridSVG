@@ -115,8 +115,7 @@ S3method("primToDev", "mask")
 export("listSVGDefinitions")
 
 # Context popping
-export("grid.popContext",
-       "popContextGrob")
+export("popContext")
 S3method("primToDev", "popContext")
 
 # Clipping
