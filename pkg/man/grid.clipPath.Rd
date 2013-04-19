@@ -49,7 +49,7 @@ clipPathGrob(x, clippath = NULL, label = NULL, group = TRUE)
   A \code{pathClipped.grob} object (for \code{clipPathGrob}).
 }
 \author{
-  Simon Potter.
+  Simon Potter
 }
 \seealso{
   \code{\link{registerClipPath}}, \code{\link{pushClipPath}}.

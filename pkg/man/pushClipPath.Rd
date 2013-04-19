@@ -1,5 +1,6 @@
 \name{pushClipPath}
 \alias{pushClipPath}
+\alias{popClipPath}
 \title{
   Apply a clipping context to the current viewport.
 }
@@ -10,6 +11,7 @@
 }
 \usage{
 pushClipPath(clippath = NULL, label = NULL, name = NULL, draw = TRUE)
+popClipPath()
 }
 \arguments{
   \item{clippath}{
@@ -33,6 +35,8 @@ pushClipPath(clippath = NULL, label = NULL, name = NULL, draw = TRUE)
   viewport. If both are specified, it will attempt to define the
   clipping path with the given label, as well as adding the clipping
   path as a clipping context for the current viewport.
+
+  \code{popClipPath} is an alias for \code{\link{grid.popContext}}
 }
 \value{
   A \code{pushClipPath} grob. The value is returned invisibly.

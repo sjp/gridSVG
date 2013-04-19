@@ -1,5 +1,6 @@
 \name{pushMask}
 \alias{pushMask}
+\alias{popMask}
 \title{
   Apply a masking context to the current viewport.
 }
@@ -11,6 +12,7 @@
 }
 \usage{
 pushMask(mask = NULL, label = NULL, name = NULL, draw = TRUE)
+popMask()
 }
 \arguments{
   \item{mask}{
@@ -34,6 +36,8 @@ pushMask(mask = NULL, label = NULL, name = NULL, draw = TRUE)
   specified, it will attempt to define the mask with the given label, as
   well as applying the mask as the new masking context for the current
   viewport.
+
+  \code{popMask} is an alias for \code{\link{grid.popContext}}.
 }
 \value{
   A \code{pushMask} grob. The value is returned invisibly.

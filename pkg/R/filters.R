@@ -412,10 +412,14 @@ filterSVG.fe.blend <- function(x, dev) {
                attrs = roundAttribs(x), parent = svgDevParent(svgdev))
 }
 
-feBlend <- function(input1 = "SourceGraphic", input2 = "SourceGraphic",
+feBlend <- function(input1 = NA, input2 = NA,
                     mode = c("normal", "multiply", "screen", "darken", "lighten"),
                     ...) {
-    x <- fe("in" = input1, in2 = input2, mode = match.arg(mode), ...)
+    x <- fe(mode = match.arg(mode), ...)
+    if (! is.na(input1))
+        x$`in` <- input1
+    if (! is.na(input2))
+        x$in2 <- input2
     class(x) <- c("fe.blend", class(x))
     x
 }
@@ -437,7 +441,7 @@ filterSVG.fe.color.matrix <- function(x, dev) {
                parent = svgDevParent(svgdev))
 }
 
-feColorMatrix <- function(input = "SourceGraphic",
+feColorMatrix <- function(input = NA,
                           type = c("matrix", "saturate", "hueRotate", "luminanceToAlpha"),
                           values = NULL, ...) {
     # Checking validity of args
@@ -458,7 +462,9 @@ feColorMatrix <- function(input = "SourceGraphic",
     if (type == "hueRotate")
         values <- values %% 360
 
-    x <- fe("in" = input, type = match.arg(type), values = values, ...)
+    x <- fe(type = match.arg(type), values = values, ...)
+    if (! is.na(input))
+        x$`in` <- input
     class(x) <- c("fe.color.matrix", class(x))
     x
 }
@@ -487,10 +493,12 @@ filterSVG.fe.component.transfer <- function(x, dev) {
     svgDevChangeParent(xmlParent(cm), svgdev)
 }
 
-feComponentTransfer <- function(input = "SourceGraphic", transfers = NULL, ...) {
+feComponentTransfer <- function(input = NA, transfers = NULL, ...) {
     if (is.null(transfers))
         transfers <- list()
-    x <- fe("in" = input, children = transfers, ...)
+    x <- fe(children = transfers, ...)
+    if (! is.na(input))
+        x$`in` <- input
     class(x) <- c("fe.component.transfer", class(x))
     x
 }
@@ -545,12 +553,20 @@ filterSVG.fe.composite <- function(x, dev) {
                parent = svgDevParent(svgdev))
 }
 
-feComposite <- function(input1 = "SourceGraphic", input2 = "SourceGraphic",
+feComposite <- function(input1 = NA, input2 = NA,
                         operator = c("over", "in", "out", "atop", "xor", "arithmetic"),
                         k1 = 0, k2 = 0, k3 = 0, k4 = 0, ...) {
-    x <- fe("in" = input1, in2 = input2,
-            operator = match.arg(operator),
-            k1 = k1, k2 = k2, k3 = k3, k4 = k4, ...)
+    x <- fe(operator = match.arg(operator), ...)
+    if (! is.na(input1))
+        x$`in` <- input1
+    if (! is.na(input2))
+        x$in2 <- input2
+    if (x$operator == "arithmetic") {
+        x$k1 <- k1
+        x$k2 <- k2 
+        x$k3 <- k3
+        x$k4 <- k4
+    }
     class(x) <- c("fe.composite", class(x))
     x
 }
@@ -561,6 +577,10 @@ filterSVG.fe.convolve.matrix <- function(x, dev) {
     if (length(x$order) > 1)
         x$order <- paste0(x$order, collapse = " ")
 
+    if (! is.null(x$kernelUnitLength))
+        x$kernelUnitLength <- paste0(round(x$kernelUnitLength, 2),
+                                     collapse = " ")
+
     x$kernelMatrix <- paste0(apply(x$kernelMatrix, 1, function(x) {
         paste0(round(x, 2), collapse = " ")
     }), collapse = " ")
@@ -570,7 +590,7 @@ filterSVG.fe.convolve.matrix <- function(x, dev) {
                parent = svgDevParent(svgdev))
 }
 
-feConvolveMatrix <- function(input = "SourceGraphic", order = 3,
+feConvolveMatrix <- function(input = NA, order = 3,
                              kernelMatrix = matrix(),
                              divisor = 1, bias = 0,
                              targetX = 1, targetY = 1,
@@ -585,12 +605,17 @@ feConvolveMatrix <- function(input = "SourceGraphic", order = 3,
     if (length(kernelMatrix) != (order[1] * order[2]))
         stop("Invalid number of entries for 'kernelMatrix'")
 
-    x <- fe("in" = input, order = order, kernelMatrix = kernelMatrix,
+    x <- fe(order = order, kernelMatrix = kernelMatrix,
             divisor = divisor, bias = bias, targetX = targetX,
             targetY = targetY, edgeMode = match.arg(edgeMode),
             preserveAlpha = preserveAlpha, ...)
-    if (! is.na(kernelUnitLength))
+    if (! is.na(input))
+        x$`in` <- input
+    if (! is.na(kernelUnitLength)) {
+        if (length(kernelUnitLength) == 1)
+            kernelUnitLength <- rep(kernelUnitLength, 2)
         x$kernelUnitLength <- kernelUnitLength
+    }
     class(x) <- c("fe.convolve.matrix", class(x))
     x
 }
@@ -602,6 +627,11 @@ flatten.fe.diffuse.lighting <- function(x, coords = TRUE) {
 
 filterSVG.fe.diffuse.lighting <- function(x, dev) {
     svgdev <- dev@dev
+
+    if (! is.null(x$kernelUnitLength))
+        x$kernelUnitLength <- paste0(round(x$kernelUnitLength, 2),
+                                     collapse = " ")
+
     fedl <- newXMLNode("feDiffuseLighting",
                        attrs = roundAttribs(x),
                        parent = svgDevParent(svgdev))
@@ -610,16 +640,23 @@ filterSVG.fe.diffuse.lighting <- function(x, dev) {
     svgDevChangeParent(xmlParent(fedl), svgdev)
 }
 
-feDiffuseLighting <- function(input = "SourceGraphic", surfaceScale = 1,
+feDiffuseLighting <- function(input = NA, surfaceScale = 1,
                               diffuseConstant = 1, kernelUnitLength = NA,
                               col = "white", lightSource = NULL, ...) {
     if (is.null(lightSource))
         stop("A light source must be provided")
-    x <- fe("in" = input, surfaceScale = surfaceScale,
-            diffuseConstant = diffuseConstant, "lighting-color" = c(col2rgb(col)),
-            lightSource = lightSource, ...)
-    if (! is.na(kernelUnitLength))
+    if (diffuseConstant < 0)
+        stop("'diffuseConstant' must be non-negative")
+    x <- fe(surfaceScale = surfaceScale, diffuseConstant = diffuseConstant,
+            "lighting-color" = c(col2rgb(col)), lightSource = lightSource,
+            ...)
+    if (! is.na(input))
+        x$`in` <- input
+    if (! is.na(kernelUnitLength)) {
+        if (length(kernelUnitLength) == 1)
+            kernelUnitLength <- rep(kernelUnitLength, 2)
         x$kernelUnitLength <- kernelUnitLength
+    }
     class(x) <- c("fe.diffuse.lighting", class(x))
     x
 }
@@ -631,13 +668,17 @@ filterSVG.fe.displacement.map <- function(x, dev) {
                parent = svgDevParent(svgdev))
 }
 
-feDisplacementMap <- function(input = "SourceGraphic", input2 = "SourceGraphic",
-                              scale = 0,
-                              xChannelSelector = c("R", "G", "B", "A"),
-                              yChannelSelector = c("R", "G", "B", "A"), ...) {
-    x <- fe("in" = input, in2 = input2, scale = scale,
+feDisplacementMap <- function(input1 = NA, input2 = NA, scale = 0,
+                              xChannelSelector = c("A", "R", "G", "B"),
+                              yChannelSelector = c("A", "R", "G", "B"),
+                              ...) {
+    x <- fe(scale = scale,
             xChannelSelector = match.arg(xChannelSelector),
             yChannelSelector = match.arg(yChannelSelector), ...)
+    if (! is.na(input1))
+        x$`in` <- input1
+    if (! is.na(input2))
+        x$in2 <- input2
     class(x) <- c("fe.displacement.map", class(x))
     x
 }
@@ -659,13 +700,17 @@ feFlood <- function(col = "black", ...) {
 
 filterSVG.fe.gaussian.blur <- function(x, dev) {
     svgdev <- dev@dev
+    if (length(x$stdDeviation) > 1)
+        x$sd <- paste0(round(x$stdDeviation, 2), collapse = " ")
     newXMLNode("feGaussianBlur",
                attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
 }
 
-feGaussianBlur <- function(input = "SourceGraphic", sd = 0, ...) {
-    x <- fe("in" = input, stdDeviation = sd, ...)
+feGaussianBlur <- function(input = NA, sd = 0, ...) {
+    x <- fe(stdDeviation = sd, ...)
+    if (! is.na(input))
+        x$`in` <- input
     class(x) <- c("fe.gaussian.blur", class(x))
     x
 }
@@ -716,8 +761,9 @@ filterSVG.fe.merge.node <- function(x, dev) {
     newXMLNode("feMergeNode", attrs = x, parent = svgDevParent(svgdev))
 }
 
-feMergeNode <- function(input = "SourceGraphic") {
-    x <- list("in" = input)
+feMergeNode <- function(input = NA) {
+    x <- if (! is.na(input)) list("in" = input)
+         else list()
     class(x) <- "fe.merge.node"
     x
 }
@@ -763,22 +809,26 @@ flatten.fe.morphology <- function(x, coords = TRUE) {
     NextMethod()
 }
 
-feMorphology <- function(input = "SourceGraphic",
+feMorphology <- function(input = NA,
                          operator = c("erode", "dilate"),
-                         radius = 0, ...) {
-    x <- fe("in" = input, operator = match.arg(operator),
-            radius = radius, ...)
+                         radius = unit(0, "npc"),
+                         default.units = "npc", ...) {
+    if (! is.unit(radius))
+        radius <- unit(radius, default.units)
+    x <- fe(operator = match.arg(operator), radius = radius, ...)
+    if (! is.na(input))
+        x$`in` <- input
     class(x) <- c("fe.morphology", class(x))
     x
 }
 
 flatten.fe.offset <- function(x, coords = TRUE) {
     if (coords) {
-        x$dx <- convertX(x$dx, "inches")
-        x$dy <- convertY(x$dy, "inches")
+        x$dx <- convertWidth(x$dx, "inches")
+        x$dy <- convertHeight(x$dy, "inches")
     } else {
-        x$dx <- convertX(x$dx, "npc", valueOnly = TRUE)
-        x$dy <- convertY(x$dy, "npc", valueOnly = TRUE)
+        x$dx <- convertWidth(x$dx, "npc", valueOnly = TRUE)
+        x$dy <- convertHeight(x$dy, "npc", valueOnly = TRUE)
     }
 
     NextMethod()
@@ -792,14 +842,16 @@ filterSVG.fe.offset <- function(x, dev) {
                parent = svgDevParent(svgdev))
 }
 
-feOffset <- function(input = "SourceGraphic",
+feOffset <- function(input = NA,
                      dx = unit(0, "npc"), dy = unit(0, "npc"),
                      default.units = "npc", ...) {
     if (! is.unit(dx))
         dx <- unit(dx, default.units)
     if (! is.unit(dy))
         dy <- unit(dy, default.units)
-    x <- fe("in" = input, dx = dx, dy = dy, ...)
+    x <- fe(dx = dx, dy = dy, ...)
+    if (! is.na(input))
+        x$`in` <- input
     class(x) <- c("fe.offset", class(x))
     x
 }
@@ -811,6 +863,9 @@ flatten.fe.specular.lighting <- function(x, coords = TRUE) {
 
 filterSVG.fe.specular.lighting <- function(x, dev) {
     svgdev <- dev@dev
+    if (! is.null(x$kernelUnitLength))
+        x$kernelUnitLength <- paste0(round(x$kernelUnitLength, 2),
+                                     collapse = " ")
     fesl <- newXMLNode("feSpecularLighting",
                        attrs = roundAttribs(x),
                        parent = svgDevParent(svgdev))
@@ -819,16 +874,30 @@ filterSVG.fe.specular.lighting <- function(x, dev) {
     svgDevChangeParent(xmlParent(fesl), svgdev)
 }
 
-feSpecularLighting <- function(input = "SourceGraphic", surfaceScale = 1,
+feSpecularLighting <- function(input = NA, surfaceScale = 1,
                                specularConstant = 1, specularExponent = 1,
                                kernelUnitLength = NA, lightSource = NULL, ...) {
     if (is.null(lightSource))
         stop("A light source must be provided")
-    x <- fe(input = input, surfaceScale = surfaceScale,
+    if (specularConstant < 0)
+        stop("'specularConstant' must be non-negative")
+    if (specularExponent < 1) {
+        warning("exponent less than 1, increasing to 1")
+        specularExponent <- 1
+    } else if (specularExponent > 128) {
+        warning("exponent larger than 128, reducing to 128")
+        specularExponent <- 128
+    }
+    x <- fe(surfaceScale = surfaceScale,
             specularConstant = specularConstant, specularExponent = specularExponent,
             "lighting-color" = c(col2rgb(col)), lightSource = lightSource, ...)
-    if (! is.na(kernelUnitLength))
+    if (! is.na(input))
+        x$`in` <- input
+    if (! is.na(kernelUnitLength)) {
+        if (length(kernelUnitLength) == 1)
+            kernelUnitLength <- rep(kernelUnitLength, 2)
         x$kernelUnitLength <- kernelUnitLength
+    }
     class(x) <- c("fe.specular.lighting", class(x))
     x
 }
@@ -839,21 +908,26 @@ filterSVG.fe.tile <- function(x, dev) {
                parent = svgDevParent(svgdev))
 }
 
-feTile <- function(input = "SourceGraphic", ...) {
-    x <- fe("in" = input, ...)
+feTile <- function(input = NA, ...) {
+    x <- fe(...)
+    if (! is.na(input))
+        x$`in` <- input
     class(x) <- c("fe.tile", class(x))
     x
 }
 
 filterSVG.fe.turbulence <- function(x, dev) {
     svgdev <- dev@dev
+    if (length(x$baseFrequency) > 1)
+        x$baseFrequency <- paste0(round(x$baseFrequency, 2),
+                                  collapse = " ")
     newXMLNode("feTurbulence", attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
 }
 
 feTurbulence <- function(baseFrequency = 0, numOctaves = 1, seed = 1,
                          stitchTiles = FALSE,
-                         type = c("fractalNoise", "turbulence"), ...) {
+                         type = c("turbulence", "fractalNoise"), ...) {
     stitchTiles <- if (stitchTiles) "stitch" else "noStitch"
     x <- fe(baseFrequency = baseFrequency, numOctaves = numOctaves, seed = seed,
             stitchTiles = stitchTiles, type = match.arg(type), ...)
