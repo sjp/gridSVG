@@ -100,6 +100,8 @@ grid.clipPath <- function(path, clippath = NULL, label = NULL,
                                     label = label, group = group),
                  redraw = redraw)
     }, strict = strict, grep = grep, global = global)
+
+    invisible()
 }
 
 clipPathGrob <- function(x, clippath = NULL, label = NULL, group = TRUE) {
@@ -116,9 +118,8 @@ clipPathGrob <- function(x, clippath = NULL, label = NULL, group = TRUE) {
     }
 
     x$referenceLabel <- c(x$referenceLabel, label)
-    label <- getLabelID(label)
-    x <- garnishGrob(x, "clip-path" = paste0("url(#", prefixName(label), ")"),
-                     group = group)
+    x$clipPathLabel <- label
+    x$clipPathGroup <- group
     class(x) <- unique(c("pathClipped.grob", class(x)))
     x
 }
@@ -147,6 +148,19 @@ registerClipPath <- function(label, clippath) {
     invisible()  
 }
 
+primToDev.pathClipped.grob <- function(x, dev) {
+    setLabelUsed(x$referenceLabel)
+    label <- getLabelID(x$clipPathLabel)
+    pcg <- garnishGrob(x, "clip-path" = paste0("url(#", label, ")"),
+                       group = x$clipPathGroup)
+    # Now need to remove all clip path appearances in the class list.
+    # This is safe because repeated clipping just clobbers existing
+    # attributes.
+    cl <- class(cpg)
+    class(cpg) <- cl[cl != "masked.grob"]
+    primToDev(cpg, dev)
+}
+
 drawDef.clipPathDef <- function(x, dev) {
     grob <- x$grob
     # This is always going to be true because we basically assume that
@@ -164,16 +178,17 @@ drawDef.clipPathDef <- function(x, dev) {
 }
 
 primToDev.clipPath <- function(x, dev) {
+    setLabelUsed(x$referenceLabel)
     devStartClipPathGroup(devGrob(x, dev), NULL, dev)
 }
 
 devGrob.clipPath <- function(x, dev) {
-    list(name = getID(x$name, "grob"), cp = getLabelID(x$label))
+    list(name = getID(x$name, "grob"), cp = x$referenceLabel)
 }
 
 svgStartGrobClipPathGroup <- function(id = NULL, cp = NULL,
                                   svgdev = svgDevice()) {
-    clipPathID <- paste0("url(#", prefixName(cp), ")")
+    clipPathID <- paste0("url(#", getLabelID(cp), ")")
     cp <- newXMLNode("g", attrs = list(id = prefixName(id),
                                        "clip-path" = clipPathID),
                      parent = svgDevParent(svgdev))
@@ -181,7 +196,7 @@ svgStartGrobClipPathGroup <- function(id = NULL, cp = NULL,
 }
 
 svgStartGrobClipPath <- function(id = NULL, svgdev = svgDevice()) {
-    cp <- newXMLNode("clipPath", attrs = list(id = prefixName(id)),
+    cp <- newXMLNode("clipPath", attrs = list(id = id),
                      parent = svgDevParent(svgdev))
     svgDevChangeParent(cp, svgdev)
 }
@@ -282,6 +297,8 @@ grid.mask <- function(path, mask = NULL, label = NULL,
                                 label = label, group = group),
                  redraw = redraw)
     }, strict = strict, grep = grep, global = global)
+
+    invisible()
 }
 
 maskGrob <- function(x, mask = NULL, label = NULL, group = TRUE) {
@@ -298,9 +315,11 @@ maskGrob <- function(x, mask = NULL, label = NULL, group = TRUE) {
     }
 
     x$referenceLabel <- c(x$referenceLabel, label)
-    label <- getLabelID(label)
-    x <- garnishGrob(x, "mask" = paste0("url(#", prefixName(label), ")"),
-                     group = group)
+    # Attribs to be garnished *at draw time*. In particular needs to be
+    # done because the label ID is not known until then, because of things
+    # like prefixes and separators.
+    x$maskLabel <- label
+    x$maskGroup <- group
     class(x) <- unique(c("masked.grob", class(x)))
     x
 }
@@ -370,9 +389,23 @@ registerMask <- function(label, mask = NULL, ...) {
     invisible()
 }
 
+primToDev.masked.grob <- function(x, dev) {
+    setLabelUsed(x$referenceLabel)
+    label <- getLabelID(x$maskLabel)
+    mg <- garnishGrob(x, "mask" = paste0("url(#", label, ")"),
+                      group = x$maskGroup)
+    # Now need to remove all mask appearances in the class list.
+    # This is safe because repeated masking just clobbers existing
+    # attributes.
+    cl <- class(mg)
+    class(mg) <- cl[cl != "masked.grob"]
+    primToDev(mg, dev)
+}
+
 primToDev.mask <- function(x, dev) {
+    setLabelUsed(x$referenceLabel)
     devStartMaskGroup(list(name = getID(x$name, "grob"),
-                           mask = getLabelID(x$label)), NULL, dev)
+                           mask = x$referenceLabel), NULL, dev)
 }
 
 drawDef.maskDef <- function(x, dev) {
@@ -402,7 +435,7 @@ devGrob.maskDef <- function(x, dev) {
 
 svgStartMaskGroup <- function(id = NULL, mask = NULL,
                               svgdev = svgDevice()) {
-    maskID <- paste0("url(#", prefixName(mask), ")")
+    maskID <- paste0("url(#", getLabelID(mask), ")")
     m <- newXMLNode("g", attrs = list(id = prefixName(id),
                                       mask = maskID),
                      parent = svgDevParent(svgdev))
@@ -411,7 +444,7 @@ svgStartMaskGroup <- function(id = NULL, mask = NULL,
 
 svgStartMask <- function(id = NULL, x=0, y=0, width=0, height=0,
                          svgdev = svgDevice()) {
-    mask <- newXMLNode("mask", attrs = list(id = prefixName(id),
+    mask <- newXMLNode("mask", attrs = list(id = id,
                                             x = round(x, 2), y = round(y, 2),
                                             width = round(width, 2),
                                             height = round(height, 2),

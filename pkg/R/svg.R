@@ -187,16 +187,16 @@ svgClipPath <- function(id, vpx, vpy, vpw,
 
 svgClipAttr <- function(id, clip) {
   if (clip)
-    list("clip-path" = prefixName(paste0("url(#", id,
-                                         getSVGoption("id.sep"), "clipPath)")))
+    list("clip-path" = paste0("url(#", prefixName(id),
+                              getSVGoption("id.sep"), "clipPath)"))
   else
     list()
 }
 
 svgMaskAttr <- function(id, mask) {
   if (mask)
-    list("mask" = prefixName(paste0("url(#", id,
-                                    getSVGoption("id.sep"), "mask)")))
+    list("mask" = paste0("url(#", prefixName(id),
+                         getSVGoption("id.sep"), "mask)"))
   else
     list()
 }

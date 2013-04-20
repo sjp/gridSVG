@@ -21,6 +21,8 @@ grid.gradientFill <- function(path, gradient = NULL, label = NULL,
                                         group = group),
                  redraw = redraw)
     }, strict = strict, grep = grep, global = global)
+
+    invisible()
 }
 
 gradientFillGrob <- function(x, gradient = NULL, label = NULL,
@@ -38,14 +40,9 @@ gradientFillGrob <- function(x, gradient = NULL, label = NULL,
     }
 
     x$referenceLabel <- c(x$referenceLabel, label)
-    label <- getLabelID(label)
-    # Allowing fill-opacity to be set by a garnish because
-    # grid only knows about a colour and its opacity. If we use a
-    # reference instead of a then nothing is known about the opacity.
-    # We want to ensure that we can still set it, so use the garnish
-    # to overwrite it.
-    x <- garnishGrob(x, fill = paste0("url(#", label, ")"),
-                     "fill-opacity" = alpha, group = group)
+    x$gradientFillLabel <- label
+    x$gradientFillAlpha <- alpha
+    x$gradientFillGroup <- group
     class(x) <- unique(c("gradientFilled.grob", class(x)))
     x
 }
@@ -324,6 +321,25 @@ svgRadialGradient <- function(def, dev) {
                      spreadMethod = def$spreadMethod))
 
     svgDevChangeParent(gradient, svgdev)
+}
+
+primToDev.gradientFilled.grob <- function(x, dev) {
+    setLabelUsed(x$referenceLabel)
+    label <- getLabelID(x$gradientFillLabel)
+    # Allowing fill-opacity to be set by a garnish because
+    # grid only knows about a colour and its opacity. If we use a
+    # reference instead of a then nothing is known about the opacity.
+    # We want to ensure that we can still set it, so use the garnish
+    # to overwrite it.
+    gf <- garnishGrob(x, fill = paste0("url(#", label, ")"),
+                      "fill-opacity" = x$gradientFillAlpha,
+                      group = x$gradientFillGroup)
+    # Now need to remove all gradient fill appearances in the class list.
+    # This is safe because repeated gradient filling just clobbers existing
+    # attributes.
+    cl <- class(gf)
+    class(gf) <- cl[cl != "gradientFilled.grob"]
+    primToDev(gf, dev)
 }
 
 drawDef.gradientDef <- function(def, dev) {

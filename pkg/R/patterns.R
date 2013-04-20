@@ -20,6 +20,8 @@ grid.patternFill <- function(path, pattern = NULL, label = NULL,
                                        group = group),
                  redraw = redraw)
     }, strict = strict, grep = grep, global = global)
+
+    invisible()
 }
 
 patternFillGrob <- function(x, pattern = NULL, label = NULL,
@@ -37,14 +39,12 @@ patternFillGrob <- function(x, pattern = NULL, label = NULL,
     }
 
     x$referenceLabel <- c(x$referenceLabel, label)
-    label <- getLabelID(label)
-    # Allowing fill-opacity to be set by a garnish because
-    # grid only knows about a colour and its opacity. If we use a
-    # reference instead of a then nothing is known about the opacity.
-    # We want to ensure that we can still set it, so use the garnish
-    # to overwrite it.
-    x <- garnishGrob(x, fill = paste0("url(#", label, ")"),
-                     "fill-opacity" = alpha, group = group)
+    # Attribs to be garnished *at draw time*. In particular needs to be
+    # done because the label ID is not known until then, because of things
+    # like prefixes and separators.
+    x$patternFillLabel <- label
+    x$patternFillAlpha <- alpha
+    x$patternFillGroup <- group
     class(x) <- unique(c("patternFilled.grob", class(x)))
     x
 }
@@ -169,6 +169,25 @@ registerPatternFillRef <- function(label, refLabel, pattern = NULL, ...) {
     invisible()
 }
 
+primToDev.patternFilled.grob <- function(x, dev) {
+    setLabelUsed(x$referenceLabel)
+    label <- getLabelID(x$patternFillLabel)
+    # Allowing fill-opacity to be set by a garnish because
+    # grid only knows about a colour and its opacity. If we use a
+    # reference instead of a then nothing is known about the opacity.
+    # We want to ensure that we can still set it, so use the garnish
+    # to overwrite it.
+    pg <- garnishGrob(x, fill = paste0("url(#", label, ")"),
+                      "fill-opacity" = x$patternFillAlpha,
+                      group = x$patternFillGroup)
+    # Now need to remove all pattern fill appearances in the class list.
+    # This is safe because repeated pattern filling just clobbers existing
+    # attributes.
+    cl <- class(pg)
+    class(pg) <- cl[cl != "patternFilled.grob"]
+    primToDev(pg, dev)
+}
+
 drawDef.patternFillDef <- function(def, dev) {
     svgdev <- dev@dev
 
@@ -211,7 +230,7 @@ drawDef.patternFillDef <- function(def, dev) {
 
     # Creating the pattern element
     pattern <- newXMLNode("pattern",
-                          attrs = list(id = prefixName(def$id), x = x, y = y,
+                          attrs = list(id = def$id, x = x, y = y,
                                        width = width, height = height,
                                        viewBox = viewBox,
                                        patternUnits = "userSpaceOnUse"),
@@ -231,7 +250,7 @@ drawDef.patternFillRefDef <- function(def, dev) {
 
     # Creating the pattern element
     pattern <- newXMLNode("pattern",
-        attrs = list(id = prefixName(def$id), x = x, y = y,
+        attrs = list(id = def$id, x = x, y = y,
                      width = width, height = height,
                      "xlink:href" =
                        paste0("#", getLabelID(def$refLabel))),

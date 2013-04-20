@@ -54,7 +54,7 @@ flushDefinitions <- function(dev) {
     # Begin creating definitions
     # First ensure we're under #gridSVG
     rootID <- prefixName("gridSVG")
-    gridSVGNode <- getNodeSet(svgDevParent(svgdev),
+    gridSVGNode <- getNodeSet(xmlRoot(svgDevParent(svgdev)),
                               paste0("//*[@id='", rootID, "']"))[[1]]
     svgDevChangeParent(gridSVGNode, svgdev)
     defs <- newXMLNode("defs", parent = svgDevParent(svgdev))
@@ -161,6 +161,14 @@ labelsUsed.gTree <- function(x) {
 isLabelUsed <- function(label) {
     rut <- get("refUsageTable", envir = .gridSVGEnv)
     rut[rut$label == label, "used"]
+}
+
+setLabelUsed <- function(label) {
+    if (! is.null(label)) {
+        rut <- get("refUsageTable", envir = .gridSVGEnv)
+        rut[rut$label %in% label, "used"] <- TRUE
+        assign("refUsageTable", rut, envir = .gridSVGEnv)
+    }
 }
 
 # Convenience function to list all referenced content definitions

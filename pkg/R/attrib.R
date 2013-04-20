@@ -48,6 +48,7 @@ grid.garnish <- function(path, ..., group=TRUE, redraw = FALSE,
         grid.set(path, garnishGrob(grid.get(path), ..., group=group),
                  redraw = redraw)
     }, strict = strict, grep = grep, global = global)
+    invisible()
 }
 
 garnish <- function(x, ...) {

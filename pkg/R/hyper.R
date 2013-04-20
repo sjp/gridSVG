@@ -21,6 +21,7 @@ grid.hyperlink <- function(path, href, show=NULL, group=TRUE, redraw=FALSE,
         grid.set(path, hyperlinkGrob(grid.get(path), href, show, group),
                  redraw = redraw)
     }, strict = strict, grep = grep, global = global)
+    invisible()
 }
 
 link <- function(x) {

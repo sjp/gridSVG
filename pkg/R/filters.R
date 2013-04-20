@@ -20,6 +20,8 @@ grid.filter <- function(path, filter = NULL, label = NULL,
                                   label = label, group = group),
                  redraw = redraw)
     }, strict = strict, grep = grep, global = global)
+
+    invisible()
 }
 
 filterGrob <- function(x, filter = NULL, label = NULL, group = TRUE) {
@@ -36,11 +38,26 @@ filterGrob <- function(x, filter = NULL, label = NULL, group = TRUE) {
     }
 
     x$referenceLabel <- c(x$referenceLabel, label)
-    label <- getLabelID(label)
-    x <- garnishGrob(x, filter = paste0("url(#", prefixName(label), ")"),
-                     group = group)
+    # Attribs to be garnished *at draw time*. In particular needs to be
+    # done because the label ID is not known until then, because of things
+    # like prefixes and separators.
+    x$filterLabel <- label
+    x$filterGroup <- group
     class(x) <- unique(c("filtered.grob", class(x)))
     x
+}
+
+primToDev.filtered.grob <- function(x, dev) {
+    setLabelUsed(x$referenceLabel)
+    label <- getLabelID(x$filterLabel)
+    fg <- garnishGrob(x, filter = paste0("url(#", label, ")"),
+                      group = x$filterGroup)
+    # Now need to remove all filter appearances in the class list.
+    # This is safe because repeated filtering just clobbers existing
+    # attributes.
+    cl <- class(fg)
+    class(fg) <- cl[cl != "filtered.grob"]
+    primToDev(fg, dev)
 }
 
 filterEffect <- function(filterUnits = c("coords", "bbox"),
@@ -188,7 +205,7 @@ svgFilter <- function(def, dev) {
     }
 
     filter <- newXMLNode("filter",
-                         attrs = list(id = prefixName(def$id),
+                         attrs = list(id = def$id,
                                       x = round(def$x, 2),
                                       y = round(def$y, 2),
                                       width = round(def$width, 2),

@@ -111,6 +111,12 @@ S3method("primToDev", "element.grob")
 S3method("primToDev", "clipPath")
 S3method("primToDev", "mask")
 
+S3method("primToDev", "patternFilled.grob")
+S3method("primToDev", "gradientFilled.grob")
+S3method("primToDev", "pathClipped.grob")
+S3method("primToDev", "masked.grob")
+S3method("primToDev", "filtered.grob")
+
 export("listSVGDefinitions")
 
 S3method("labelsUsed", "patternFillDef")
