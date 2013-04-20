@@ -26,11 +26,10 @@ maskGrob(x, mask = NULL, label = NULL, group = TRUE)
     A \code{mask} object, provided by the \code{\link{mask}} function.
     Provides the definition of an opacity mask that will be applied to
     \code{x} or \code{path}.
-
   }
   \item{label}{
-    A label that is associated with a definition of an opacity mask This
-    is the label used to create an opacity mask definition with
+    A label that is associated with a definition of an opacity mask.
+    This is the label used to create an opacity mask definition with
     \code{registerMask}.
   }
   \item{group}{
