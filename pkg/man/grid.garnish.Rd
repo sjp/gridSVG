@@ -10,7 +10,8 @@
 }
 \usage{
 garnishGrob(x, ..., group=TRUE)
-grid.garnish(path, ..., group=TRUE, grep=FALSE, redraw=FALSE)
+grid.garnish(path, ..., group=TRUE, redraw=FALSE,
+             strict = FALSE, grep=FALSE, global=FALSE)
 }
 \arguments{
   \item{x}{A grob.}
@@ -19,9 +20,21 @@ grid.garnish(path, ..., group=TRUE, grep=FALSE, redraw=FALSE)
   \item{group}{ A logical indicating whether the SVG attributes
     should be attached to the overall parent group for the
     relevant SVG element, or to individual SVG elements. }
-  \item{grep}{A logical indicating whether to treat the \code{path}
-    as a regular expression.}
-  \item{redraw}{A logical indicating whether to redraw the current page.}
+  \item{redraw}{
+    A logical value to indicate whether to redraw the grob.
+  }
+  \item{strict}{
+    A boolean indicating whether the \code{path} must be matched
+    exactly.
+  }
+  \item{grep}{
+    Whether the \code{path} should be treated as a regular expression.
+  }
+  \item{global}{
+    A boolean indicating whether the function should affect just the
+    first match of the \code{path}, or whether all matches should be
+    affected.
+  }
 }
 \details{
   The SVG attribute settings can be vectors (in the case of garnishing

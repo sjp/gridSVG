@@ -80,7 +80,8 @@ pushClipPath <- function(clippath = NULL, label = NULL,
 
 # High level functions for applying clipping paths to existing grobs
 grid.clipPath <- function(path, clippath = NULL, label = NULL,
-                          group = TRUE, grep = FALSE) {
+                          group = TRUE, redraw = FALSE,
+                          strict = FALSE, grep = FALSE, global = FALSE) {
     if (is.null(label) & is.null(clippath)) {
         stop("At least one of 'label' or 'clippath' must be supplied")
     } else if (is.null(label)) {
@@ -94,16 +95,11 @@ grid.clipPath <- function(path, clippath = NULL, label = NULL,
         clippath <- NULL # use the ref from now on
     }
 
-    if (any(grep)) {
-        grobApply(path, function(path) {
-            grid.set(path, clipPathGrob(grid.get(path), clippath = clippath,
-                                        label = label, group = group))
-        }, grep = grep)
-    } else {
-        grid.set(path,
-                 clipPathGrob(grid.get(path), clippath = clippath,
-                              label = label, group = group))
-    }
+    grobApply(path, function(path) {
+        grid.set(path, clipPathGrob(grid.get(path), clippath = clippath,
+                                    label = label, group = group),
+                 redraw = redraw)
+    }, strict = strict, grep = grep, global = global)
 }
 
 clipPathGrob <- function(x, clippath = NULL, label = NULL, group = TRUE) {
@@ -266,7 +262,8 @@ pushMask <- function(mask = NULL, label = NULL, name = NULL, draw = TRUE) {
 
 # High level functions for applying opacity masks to grobs
 grid.mask <- function(path, mask = NULL, label = NULL,
-                      group = TRUE, grep = FALSE) {
+                      group = TRUE, redraw = FALSE,
+                      strict = FALSE, grep = FALSE, global = FALSE) {
     if (is.null(label) & is.null(mask)) {
         stop("At least one of 'label' or 'mask' must be supplied")
     } else if (is.null(label)) {
@@ -280,16 +277,11 @@ grid.mask <- function(path, mask = NULL, label = NULL,
         mask <- NULL # use the ref from now on
     }
 
-    if (any(grep)) {
-        grobApply(path, function(path) {
-            grid.set(path, maskGrob(grid.get(path), mask = mask,
-                                    label = label, group = group))
-        }, grep = grep)
-    } else {
-        grid.set(path,
-                 maskGrob(grid.get(path), mask = mask,
-                          label = label, group = group))
-    }
+    grobApply(path, function(path) {
+        grid.set(path, maskGrob(grid.get(path), mask = mask,
+                                label = label, group = group),
+                 redraw = redraw)
+    }, strict = strict, grep = grep, global = global)
 }
 
 maskGrob <- function(x, mask = NULL, label = NULL, group = TRUE) {

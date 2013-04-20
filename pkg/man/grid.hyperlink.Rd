@@ -1,7 +1,6 @@
 \name{grid.hyperlink}
 \alias{grid.hyperlink}
 \alias{hyperlinkGrob}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Associate a hyperlink with a grid grob }
 \description{
   Creates a linked.grob object which is a normal grid grob,
@@ -10,7 +9,8 @@
   hyperlinked graphical elements.
 }
 \usage{
-grid.hyperlink(path, href, show=NULL, group=TRUE, grep=FALSE)
+grid.hyperlink(path, href, show=NULL, group=TRUE, redraw=FALSE,
+               strict=FALSE, grep=FALSE, global=FALSE)
 hyperlinkGrob(x, href, show=NULL, group=TRUE)
 }
 \arguments{
@@ -28,8 +28,21 @@ hyperlinkGrob(x, href, show=NULL, group=TRUE)
   \item{group}{ A logical indicating whether the hyperlinks
     should be attached to the overall parent group for the
     relevant SVG element, or to individual SVG elements. }
-  \item{grep}{ Whether the \code{path} should be treated as a regular
-    expression. }
+  \item{redraw}{
+    A logical value to indicate whether to redraw the grob.
+  }
+  \item{strict}{
+    A boolean indicating whether the \code{path} must be matched
+    exactly.
+  }
+  \item{grep}{
+    Whether the \code{path} should be treated as a regular expression.
+  }
+  \item{global}{
+    A boolean indicating whether the function should affect just the
+    first match of the \code{path}, or whether all matches should be
+    affected.
+  }
 }
 \value{
   A linked.grob object.
@@ -37,4 +50,3 @@ hyperlinkGrob(x, href, show=NULL, group=TRUE)
 \author{ Paul Murrell }
 \seealso{ \code{\link{gridToSVG}} }
 \keyword{ dplot }% at least one, from doc/KEYWORDS
-

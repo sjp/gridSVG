@@ -113,6 +113,15 @@ S3method("primToDev", "mask")
 
 export("listSVGDefinitions")
 
+S3method("labelsUsed", "patternFillDef")
+S3method("labelsUsed", "patternFillRefDef")
+S3method("labelsUsed", "filterDef")
+S3method("labelsUsed", "gradientDef")
+S3method("labelsUsed", "maskDef")
+S3method("labelsUsed", "clipPathDef")
+S3method("labelsUsed", "grob")
+S3method("labelsUsed", "gTree")
+
 # Context popping
 export("popContext")
 S3method("primToDev", "popContext")

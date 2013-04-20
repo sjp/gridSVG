@@ -1,6 +1,7 @@
 # High level functions for applying filters to grobs
 grid.filter <- function(path, filter = NULL, label = NULL,
-                        group = TRUE, grep = FALSE) {
+                        group = TRUE, redraw = FALSE,
+                        strict = FALSE, grep = FALSE, global = FALSE) {
     if (is.null(filter) & is.null(label)) {
         stop("At least one of 'filter' or 'label' must be supplied")
     } else if (is.null(label)) {
@@ -14,16 +15,11 @@ grid.filter <- function(path, filter = NULL, label = NULL,
         filter <- NULL # use the ref from now on
     }
 
-    if (any(grep)) {
-        grobApply(path, function(path) {
-            grid.set(path, filterGrob(grid.get(path), filter = filter,
-                                      label = label, group = group))
-        }, grep = grep)
-    } else {
-        grid.set(path,
-                 filterGrob(grid.get(path), filter = filter,
-                            label = label, group = group))
-    }
+    grobApply(path, function(path) {
+        grid.set(path, filterGrob(grid.get(path), filter = filter,
+                                  label = label, group = group),
+                 redraw = redraw)
+    }, strict = strict, grep = grep, global = global)
 }
 
 filterGrob <- function(x, filter = NULL, label = NULL, group = TRUE) {

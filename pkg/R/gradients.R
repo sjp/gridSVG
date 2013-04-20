@@ -1,6 +1,7 @@
 # High level functions for applying gradients as fills to grobs
 grid.gradientFill <- function(path, gradient = NULL, label = NULL,
-                              alpha = 1, group = TRUE, grep = FALSE) {
+                              alpha = 1, group = TRUE, redraw = FALSE,
+                              strict = FALSE, grep = FALSE, global = FALSE) {
     if (is.null(gradient) & is.null(label)) {
         stop("At least one of 'gradient' or 'label' must be supplied")
     } else if (is.null(label)) {
@@ -14,18 +15,12 @@ grid.gradientFill <- function(path, gradient = NULL, label = NULL,
         gradient <- NULL # use the ref from now on
     }
 
-    if (any(grep)) {
-        grobApply(path, function(path) {
-            grid.set(path, gradientFillGrob(grid.get(path), label = label,
-                                            gradient = gradient, alpha = alpha,
-                                            group = group))
-        }, grep = grep)
-    } else {
-        grid.set(path,
-                 gradientFillGrob(grid.get(path), label = label,
-                                  gradient = gradient, alpha = alpha,
-                                  group = group))
-    }
+    grobApply(path, function(path) {
+        grid.set(path, gradientFillGrob(grid.get(path), gradient = gradient,
+                                        label = label, alpha = alpha,
+                                        group = group),
+                 redraw = redraw)
+    }, strict = strict, grep = grep, global = global)
 }
 
 gradientFillGrob <- function(x, gradient = NULL, label = NULL,

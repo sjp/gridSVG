@@ -11,7 +11,8 @@
   elements with masked content.
 }
 \usage{
-grid.mask(path, mask = NULL, label = NULL, group = TRUE, grep = FALSE)
+grid.mask(path, mask = NULL, label = NULL, group = TRUE, redraw = FALSE,
+          strict = FALSE, grep = FALSE, global = FALSE)
 maskGrob(x, mask = NULL, label = NULL, group = TRUE)
 }
 \arguments{
@@ -37,8 +38,20 @@ maskGrob(x, mask = NULL, label = NULL, group = TRUE)
     applied to the overall parent group for the relevant SVG element, or
     to individual SVG elements.
   }
+  \item{redraw}{
+    A logical value to indicate whether to redraw the grob.
+  }
+  \item{strict}{
+    A boolean indicating whether the \code{path} must be matched
+    exactly.
+  }
   \item{grep}{
     Whether the \code{path} should be treated as a regular expression.
+  }
+  \item{global}{
+    A boolean indicating whether the function should affect just the
+    first match of the \code{path}, or whether all matches should be
+    affected.
   }
 }
 \details{

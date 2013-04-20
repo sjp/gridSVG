@@ -12,7 +12,8 @@
 }
 \usage{
 grid.gradientFill(path, gradient = NULL, label = NULL,
-                  alpha = 1, group = TRUE, grep = FALSE)
+                  alpha = 1, group = TRUE, redraw = FALSE,
+                  strict = FALSE, grep = FALSE, global = FALSE)
 gradientFillGrob(x, gradient = NULL, label = NULL,
                  alpha = 1, group = TRUE)
 }
@@ -41,8 +42,20 @@ gradientFillGrob(x, gradient = NULL, label = NULL,
     should be applied to the overall parent group for the
     relevant SVG element, or to individual SVG elements.
   }
+  \item{redraw}{
+    A logical value to indicate whether to redraw the grob.
+  }
+  \item{strict}{
+    A boolean indicating whether the \code{path} must be matched
+    exactly.
+  }
   \item{grep}{
     Whether the \code{path} should be treated as a regular expression.
+  }
+  \item{global}{
+    A boolean indicating whether the function should affect just the
+    first match of the \code{path}, or whether all matches should be
+    affected.
   }
 }
 \details{

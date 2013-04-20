@@ -1,5 +1,6 @@
 grid.patternFill <- function(path, pattern = NULL, label = NULL,
-                             alpha = 1, group = TRUE, grep = FALSE) {
+                             alpha = 1, group = TRUE, redraw = FALSE,
+                             strict = FALSE, grep = FALSE, global = FALSE) {
     if (is.null(label) & is.null(pattern)) {
         stop("At least one of 'label' or 'pattern' must be supplied")
     } else if (is.null(label)) {
@@ -13,17 +14,12 @@ grid.patternFill <- function(path, pattern = NULL, label = NULL,
         pattern <- NULL # use the ref from now on
     }
 
-    if (any(grep)) {
-        grobApply(path, function(path) {
-            grid.set(path, patternFillGrob(grid.get(path), pattern = pattern,
-                                           label = label, alpha = alpha,
-                                           group = group))
-        }, grep = grep)
-    } else {
-        grid.set(path,
-                 patternFillGrob(grid.get(path), pattern = pattern, label = label,
-                                 alpha = alpha, group = group))
-    }
+    grobApply(path, function(path) {
+        grid.set(path, patternFillGrob(grid.get(path), pattern = pattern,
+                                       label = label, alpha = alpha,
+                                       group = group),
+                 redraw = redraw)
+    }, strict = strict, grep = grep, global = global)
 }
 
 patternFillGrob <- function(x, pattern = NULL, label = NULL,
