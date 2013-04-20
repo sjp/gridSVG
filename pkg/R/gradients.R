@@ -42,7 +42,7 @@ gradientFillGrob <- function(x, gradient = NULL, label = NULL,
         registerGradientFill(label, gradient)
     }
 
-    x$label <- label
+    x$referenceLabel <- c(x$referenceLabel, label)
     label <- getLabelID(label)
     # Allowing fill-opacity to be set by a garnish because
     # grid only knows about a colour and its opacity. If we use a
@@ -51,7 +51,7 @@ gradientFillGrob <- function(x, gradient = NULL, label = NULL,
     # to overwrite it.
     x <- garnishGrob(x, fill = paste0("url(#", label, ")"),
                      "fill-opacity" = alpha, group = group)
-    class(x) <- unique(c("gradientFilled.grob", "referring.grob", class(x)))
+    class(x) <- unique(c("gradientFilled.grob", class(x)))
     x
 }
 

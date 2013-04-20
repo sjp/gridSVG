@@ -71,8 +71,8 @@ pushClipPath <- function(clippath = NULL, label = NULL,
         registerClipPath(label, clippath)
         clippath <- NULL # use the ref from now on
     }
-    cp <- grid::grob(label = label, name = name, cl = "clipPath")
-    class(cp) <- c("pushClipPath", "referring.grob", class(cp))
+    cp <- grid::grob(referenceLabel = label, name = name, cl = "clipPath")
+    class(cp) <- unique(c("pushClipPath", class(cp)))
     if (draw)
         grid.draw(cp)
     invisible(cp)
@@ -119,11 +119,11 @@ clipPathGrob <- function(x, clippath = NULL, label = NULL, group = TRUE) {
         registerClipPath(label, clippath)
     }
 
-    x$label <- label
+    x$referenceLabel <- c(x$referenceLabel, label)
     label <- getLabelID(label)
     x <- garnishGrob(x, "clip-path" = paste0("url(#", prefixName(label), ")"),
                      group = group)
-    class(x) <- unique(c("pathClipped.grob", "referring.grob", class(x)))
+    class(x) <- unique(c("pathClipped.grob", class(x)))
     x
 }
 
@@ -257,8 +257,8 @@ pushMask <- function(mask = NULL, label = NULL, name = NULL, draw = TRUE) {
         registerMask(label, mask)
         mask <- NULL # use the ref from now on
     }
-    m <- grid::grob(label = label, name = name, cl = "mask")
-    class(m) <- c("pushMask", "referring.grob", class(m))
+    m <- grid::grob(referenceLabel = label, name = name, cl = "mask")
+    class(m) <- unique(c("pushMask", class(m)))
     if (draw)
         grid.draw(m)
     invisible(m)
@@ -305,11 +305,11 @@ maskGrob <- function(x, mask = NULL, label = NULL, group = TRUE) {
         registerMask(label, mask)
     }
 
-    x$label <- label
+    x$referenceLabel <- c(x$referenceLabel, label)
     label <- getLabelID(label)
     x <- garnishGrob(x, "mask" = paste0("url(#", prefixName(label), ")"),
                      group = group)
-    class(x) <- unique(c("masked.grob", "referring.grob", class(x)))
+    class(x) <- unique(c("masked.grob", class(x)))
     x
 }
 
@@ -398,6 +398,7 @@ drawDef.maskDef <- function(x, dev) {
     # Close mask
     devEndMask(devGrob(x, dev), NULL, dev)
 }
+
 
 devGrob.maskDef <- function(x, dev) {
     list(x=cx(x$x, dev),

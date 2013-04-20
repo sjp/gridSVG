@@ -108,7 +108,6 @@ S3method("primToDev", "animated.grob")
 S3method("primToDev", "comment.grob")
 S3method("primToDev", "garnished.grob")
 S3method("primToDev", "element.grob")
-S3method("primToDev", "referring.grob")
 S3method("primToDev", "clipPath")
 S3method("primToDev", "mask")
 

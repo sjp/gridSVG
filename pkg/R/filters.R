@@ -16,18 +16,17 @@ grid.filter <- function(path, filter = NULL, label = NULL,
 
     if (any(grep)) {
         grobApply(path, function(path) {
-            grid.set(path, filterGrob(grid.get(path), label = label,
-                                      filter = filter, group = group))
+            grid.set(path, filterGrob(grid.get(path), filter = filter,
+                                      label = label, group = group))
         }, grep = grep)
     } else {
         grid.set(path,
-                 filterGrob(grid.get(path), label = label,
-                            filter = filter, group = group))
+                 filterGrob(grid.get(path), filter = filter,
+                            label = label, group = group))
     }
 }
 
-filterGrob <- function(x, filter = NULL, label = NULL,
-                       alpha = 1, group = TRUE) {
+filterGrob <- function(x, filter = NULL, label = NULL, group = TRUE) {
     if (is.null(filter) & is.null(label)) {
         stop("At least one of 'filter' or 'label' must be supplied")
     } else if (is.null(label)) {
@@ -40,11 +39,11 @@ filterGrob <- function(x, filter = NULL, label = NULL,
         registerFilter(label, filter)
     }
 
-    x$label <- label
+    x$referenceLabel <- c(x$referenceLabel, label)
     label <- getLabelID(label)
-    x <- garnishGrob(x, filter = paste0("url(#", label, ")"),
+    x <- garnishGrob(x, filter = paste0("url(#", prefixName(label), ")"),
                      group = group)
-    class(x) <- unique(c("filtered.grob", "referring.grob", class(x)))
+    class(x) <- unique(c("filtered.grob", class(x)))
     x
 }
 

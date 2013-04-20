@@ -259,17 +259,29 @@ flushDefinitions <- function(dev) {
     # Check whether we have any dependent references, e.g. have a pattern
     # fill by reference in use but not the pattern itself. We need to ensure
     # that both are written out.
+    n <- length(refDefinitions)
     rut <- get("refUsageTable", envir = .gridSVGEnv)
-    for (i in 1:length(refDefinitions)) {
+    for (i in 1:n) {
         def <- refDefinitions[[i]]
         if (isLabelUsed(def$label) &&
             ! is.null(def$refLabel) && ! isLabelUsed(def$refLabel))
             rut[rut$label == def$refLabel, "used"] <- TRUE
-    }    
+    }
+
+    # Now trying to find out if there are trees of referenced content.
+    for (i in 1:n) {
+        used <- labelsUsed(refDefinitions[[i]])
+        if (is.null(used))
+            next
+        flaggedLabels <- used %in% rut$label
+        if (any(flaggedLabels))
+            rut[flaggedLabels, "used"] <- TRUE
+    }
+
     assign("refUsageTable", rut, envir = .gridSVGEnv) 
 
     # Now try drawing
-    for (i in 1:length(refDefinitions)) {
+    for (i in 1:n) {
         def <- refDefinitions[[i]]
         if (isLabelUsed(def$label))
             drawDef(def, dev)
@@ -295,6 +307,47 @@ flushDefinitions <- function(dev) {
 anyRefsDefined <- function() {
     ut <- get("usageTable", envir = .gridSVGEnv)
     nrow(ut) > 0 && any(ut$type == "ref")
+}
+
+# Methods used for grabbing the list of references used by a definition.
+# Particularly useful in the case of patterns where it could contain
+# content which also references other content. In other words, it allows
+# us to be able to get a tree of dependencies, rather than just a flat
+# list.
+labelsUsed <- function(x) {
+    UseMethod("labelsUsed")
+}
+
+labelsUsed.patternFillRefDef <- function(x) {
+    NULL
+}
+
+labelsUsed.filterDef <- function(x) {
+    NULL
+}
+
+labelsUsed.gradientDef <- function(x) {
+    NULL
+}
+
+labelsUsed.patternFillDef <- function(x) {
+    labelsUsed(x$grob)
+}
+
+labelsUsed.maskDef <- function(x) {
+    labelsUsed(x$grob)
+}
+
+labelsUsed.clipPathDef <- function(x) {
+    labelsUsed(x$grob)
+}
+
+labelsUsed.grob <- function(x) {
+    x$referenceLabel
+}
+
+labelsUsed.gTree <- function(x) {
+    unlist(lapply(x$children, labelsUsed))
 }
 
 # Used for knowing whether to write out a definition.
@@ -348,7 +401,7 @@ patternFillGrob <- function(x, pattern = NULL, label = NULL,
         registerPatternFill(label, pattern)
     }
 
-    x$label <- label
+    x$referenceLabel <- c(x$referenceLabel, label)
     label <- getLabelID(label)
     # Allowing fill-opacity to be set by a garnish because
     # grid only knows about a colour and its opacity. If we use a
@@ -357,17 +410,8 @@ patternFillGrob <- function(x, pattern = NULL, label = NULL,
     # to overwrite it.
     x <- garnishGrob(x, fill = paste0("url(#", label, ")"),
                      "fill-opacity" = alpha, group = group)
-    class(x) <- unique(c("patternFilled.grob", "referring.grob", class(x)))
+    class(x) <- unique(c("patternFilled.grob", class(x)))
     x
-}
-
-primToDev.referring.grob <- function(x, dev) {
-    # Now that we know a reference is being used, ensure that it can be
-    # written out later
-    rut <- get("refUsageTable", envir = .gridSVGEnv)
-    rut[rut$label == x$label, "used"] <- TRUE
-    assign("refUsageTable", rut, envir = .gridSVGEnv)
-    NextMethod()
 }
 
 # Convenience function to list all referenced content definitions
