@@ -32,10 +32,6 @@ assignRefIDs <- function() {
 flushDefinitions <- function(dev) {
     svgdev <- dev@dev
 
-    refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
-    if (! length(refDefinitions))
-        return()
-
     # Keep copies of old tables because they will be modified when
     # we draw any children
     usageTable <- get("usageTable", envir = .gridSVGEnv)
@@ -57,6 +53,9 @@ flushDefinitions <- function(dev) {
     gridSVGNode <- getNodeSet(xmlRoot(svgDevParent(svgdev)),
                               paste0("//*[@id='", rootID, "']"))[[1]]
     svgDevChangeParent(gridSVGNode, svgdev)
+    refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
+    if (! length(refDefinitions))
+        return()
     defs <- newXMLNode("defs", parent = svgDevParent(svgdev))
     svgDevChangeParent(defs, svgdev)
 
