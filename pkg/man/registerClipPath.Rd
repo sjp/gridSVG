@@ -1,4 +1,5 @@
 \name{Clipping Paths}
+\alias{clipPath}
 \alias{registerClipPath}
 \title{
   Create the definition of a non-rectangular clipping path.
@@ -11,15 +12,20 @@
   \code{\link{popContext}}) is popped.
 }
 \usage{
+clipPath(grob)
 registerClipPath(label, clippath)
 }
 \arguments{
+  \item{grob}{
+    A grid grob.
+  }
   \item{label}{
     A character identifier that will be used to reference this
     definition.
   }
   \item{clippath}{
-    A grob that defines a clipping path region.
+    A \code{clipPath} object produced by \code{\link{clipPath}} that
+    defines a clipping path region.
   }
 }
 \details{

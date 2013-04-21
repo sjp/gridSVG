@@ -124,16 +124,24 @@ clipPathGrob <- function(x, clippath = NULL, label = NULL, group = TRUE) {
     x
 }
 
+clipPath <- function(grob) {
+    if (! is.grob(grob))
+        stop("'grob' must be a grid grob")
+    cp <- list(grob = grob)
+    class(cp) <- "clipPath"
+    cp
+}
+
 registerClipPath <- function(label, clippath) {
     checkExistingDefinition(label)
     refDefinitions <- get("refDefinitions", envir = .gridSVGEnv)
     
-    if (! is.grob(clippath))
-        stop("'clippath' must be a 'grob' object")
+    if (! inherits(clippath, "clipPath"))
+        stop("'clippath' must be a 'clipPath' object")
 
     defList <- list(label = label,
                     id = getID(label, "ref"),
-                    grob = clippath)
+                    grob = clippath$grob)
     class(defList) <- "clipPathDef"
     refDefinitions[[label]] <- defList
     assign("refDefinitions", refDefinitions, envir = .gridSVGEnv)

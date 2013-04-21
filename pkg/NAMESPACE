@@ -135,6 +135,7 @@ S3method("primToDev", "popContext")
 # Clipping
 export("grid.clipPath",
        "clipPathGrob",
+       "clipPath",
        "registerClipPath",
        "pushClipPath",
        "popClipPath")
