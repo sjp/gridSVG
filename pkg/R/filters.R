@@ -7,6 +7,7 @@ grid.filter <- function(path, filter = NULL, label = NULL,
     } else if (is.null(label)) {
         label <- getNewLabel("gridSVG.filter")
         registerFilter(label, filter)
+        filter <- NULL # use the ref from now on
     } else if (is.null(filter)) {
         checkForDefinition(label)
     } else {

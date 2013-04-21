@@ -6,6 +6,7 @@ grid.patternFill <- function(path, pattern = NULL, label = NULL,
     } else if (is.null(label)) {
         label <- getNewLabel("gridSVG.patternFill")
         registerPatternFill(label, pattern)
+        pattern <- NULL # use the ref from now on
     } else if (is.null(pattern)) {
         checkForDefinition(label)
     } else {

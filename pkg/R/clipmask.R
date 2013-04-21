@@ -69,7 +69,6 @@ pushClipPath <- function(clippath = NULL, label = NULL,
     } else {
         checkExistingDefinition(label)
         registerClipPath(label, clippath)
-        clippath <- NULL # use the ref from now on
     }
     cp <- grid::grob(referenceLabel = label, name = name, cl = "clipPath")
     class(cp) <- unique(c("pushClipPath", class(cp)))
@@ -87,6 +86,7 @@ grid.clipPath <- function(path, clippath = NULL, label = NULL,
     } else if (is.null(label)) {
         label <- getNewLabel("gridSVG.clipPath")
         registerClipPath(label, clippath)
+        clippath <- NULL # use the ref from now on
     } else if (is.null(clippath)) {
         checkForDefinition(label)
     } else {
@@ -266,7 +266,6 @@ pushMask <- function(mask = NULL, label = NULL, name = NULL, draw = TRUE) {
     } else {
         checkExistingDefinition(label)
         registerMask(label, mask)
-        mask <- NULL # use the ref from now on
     }
     m <- grid::grob(referenceLabel = label, name = name, cl = "mask")
     class(m) <- unique(c("pushMask", class(m)))
@@ -284,6 +283,7 @@ grid.mask <- function(path, mask = NULL, label = NULL,
     } else if (is.null(label)) {
         label <- getNewLabel("gridSVG.mask")
         registerMask(label, mask)
+        mask <- NULL # use the ref from now on
     } else if (is.null(mask)) {
         checkForDefinition(label)
     } else {

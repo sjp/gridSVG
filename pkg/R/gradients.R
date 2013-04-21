@@ -7,6 +7,7 @@ grid.gradientFill <- function(path, gradient = NULL, label = NULL,
     } else if (is.null(label)) {
         label <- getNewLabel("gridSVG.gradientFill")
         registerGradientFill(label, gradient)
+        gradient <- NULL # use the ref from now on
     } else if (is.null(gradient)) {
         checkForDefinition(label)
     } else {
