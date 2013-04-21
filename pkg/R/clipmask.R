@@ -159,13 +159,13 @@ registerClipPath <- function(label, clippath) {
 primToDev.pathClipped.grob <- function(x, dev) {
     setLabelUsed(x$referenceLabel)
     label <- getLabelID(x$clipPathLabel)
-    pcg <- garnishGrob(x, "clip-path" = paste0("url(#", label, ")"),
+    cpg <- garnishGrob(x, "clip-path" = paste0("url(#", label, ")"),
                        group = x$clipPathGroup)
     # Now need to remove all clip path appearances in the class list.
     # This is safe because repeated clipping just clobbers existing
     # attributes.
     cl <- class(cpg)
-    class(cpg) <- cl[cl != "masked.grob"]
+    class(cpg) <- cl[cl != "pathClipped.grob"]
     primToDev(cpg, dev)
 }
 
