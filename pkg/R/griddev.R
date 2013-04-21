@@ -203,6 +203,7 @@ changedGPar <- function(startGP, endGP) {
 startGroup <- function(vp, depth, dev) {
     if (depth > 1)
         startGroup(vp$parent, depth - 1, dev)
+    vp$classes <- class(vp)
     devStartGroup(devGrob(vp, dev), gparToDevPars(vp$gp), dev)
 }
 enforceVP <- function(vp, dev) {
@@ -239,6 +240,7 @@ grobToDev.default <- function(x, dev) {
 
 grobToDev.grob <- function(x, dev) {
   depth <- enforceVP(x$vp, dev)
+  x$classes <- class(x)
   primToDev(x, dev)
   unwindVP(x$vp, depth, dev)
 }
@@ -251,7 +253,7 @@ devGrob <- function(x, dev) {
 }
 
 devGrob.default <- function(x, dev) {
-  list(name=x$name)
+  list(name=x$name, classes=x$classes)
 }
 
 moveToGen <- function() {
@@ -275,10 +277,12 @@ moveToGen <- function() {
             result <- list(x=c(curx, cx(loc$x, dev)),
                            y=c(cury, cy(loc$y, dev)),
                            arrow=list(ends = ends),
+                           classes=x$classes,
                            name=x$name)
         } else {
             result <- list(x=c(curx, cx(loc$x, dev)),
                            y=c(cury, cy(loc$y, dev)),
+                           classes=x$classes,
                            name=x$name)
         }
         curx <<- cx(loc$x, dev)
@@ -308,10 +312,12 @@ devGrob.lines <- function(x, dev) {
       list(x=cx(loc$x, dev),
            y=cy(loc$y, dev),
            arrow=list(ends = ends),
+           classes=x$classes,
            name=x$name)
   } else {
       list(x=cx(loc$x, dev),
            y=cy(loc$y, dev),
+           classes=x$classes,
            name=x$name)
   }
 }
@@ -322,6 +328,7 @@ devGrob.points <- function(x, dev) {
        x = cx(loc$x, dev),
        y = cy(loc$y, dev),
        size = cd(dToInches(x$size), dev),
+       classes = x$classes,
        pch = x$pch)
 }
 
@@ -329,6 +336,7 @@ devGrob.polygon <- function(x, dev) {
   loc <- locToInches(x$x, x$y, dev)
   list(x=cx(loc$x, dev),
        y=cy(loc$y, dev),
+       classes=x$classes,
        name=x$name)
 }
 
@@ -341,6 +349,7 @@ devGrob.pathgrob <- function(x, dev) {
         list(x=cx(loc$x, dev),
              y=cy(loc$y, dev),
              rule=x$rule,
+             classes=x$classes,
              name=x$name)
     } else {
         if (is.null(x$id)) {
@@ -359,6 +368,7 @@ devGrob.pathgrob <- function(x, dev) {
              y=lapply(listLoc,
                function(loc, dev) { cy(loc$y, dev) }, dev),
              rule=x$rule,
+             classes=x$classes,
              name=x$name)
     }
 }
@@ -372,6 +382,7 @@ devGrob.rastergrob <- function(x, dev) {
        width=cw(dim$w, dev),
        height=ch(dim$h, dev),
        datauri=x$datauri,
+       classes=x$classes,
        name=x$name)
 }
 
@@ -382,6 +393,7 @@ devGrob.rect <- function(x, dev) {
        y=cy(lb$y, dev),
        width=cw(dim$w, dev),
        height=ch(dim$h, dev),
+       classes=x$classes,
        name=x$name)
 }
 
@@ -449,6 +461,7 @@ devGrob.text <- function(x, dev) {
        fontfamily=gp$fontfamily,
        fontface=switch(gp$font,
          "plain", "bold", "italic", "bold.italic"),
+       classes=x$classes,
        name=x$name)  
 }
 
@@ -457,6 +470,7 @@ devGrob.circle <- function(x, dev) {
   list(x=cx(loc$x, dev),
        y=cy(loc$y, dev),
        r=cd(dToInches(x$r), dev),
+       classes=x$classes,
        name=x$name)
 }
 
@@ -543,15 +557,18 @@ devGrob.viewport <- function(x, dev) {
 
   if (is.null(vp$clip)) {
       clip <- FALSE
-      list(name=getID(vpname, "vp"), clip=clip, coords=coords)
+      list(name=getID(vpname, "vp"), clip=clip,
+           coords=coords, classes=x$classes)
   } else if (is.na(vp$clip)) {
       # Clipping has been turned OFF
       # FIXME:  CANNOT do this in SVG (enlarge the clip path)
       clip <- FALSE
-      list(name=getID(vpname, "vp"), clip=clip, coords=coords)
+      list(name=getID(vpname, "vp"), clip=clip,
+           coords=coords, classes=x$classes)
   } else if (! vp$clip) {
       clip <- FALSE
-      list(name=getID(vpname, "vp"), clip=clip, coords=coords)
+      list(name=getID(vpname, "vp"), clip=clip,
+           coords=coords, classes=x$classes)
   } else {
       clip <- TRUE
       list(vpx=coords$x,
@@ -560,6 +577,7 @@ devGrob.viewport <- function(x, dev) {
            vph=coords$height,
            name=getID(vpname, "vp"),
            clip=clip,
+           classes=x$classes,
            coords=coords)
   }
 }
@@ -569,15 +587,15 @@ devGrob.vpPath <- function(x, dev) {
   tm <- current.transform()
   if (is.null(vp$clip)) {
       clip <- FALSE
-      list(name=getID(vp$name, "vp"), clip=clip)
+      list(name=getID(vp$name, "vp"), clip=clip, classes=x$classes)
   } else if (is.na(vp$clip)) {
       # Clipping has been turned OFF
       # FIXME:  CANNOT do this in SVG (enlarge the clip path)
       clip <- FALSE
-      list(name=getID(vp$name, "vp"), clip=clip)
+      list(name=getID(vp$name, "vp"), clip=clip, classes=x$classes)
   } else if (! vp$clip) {
       clip <- FALSE
-      list(name=getID(vp$name, "vp"), clip=clip)
+      list(name=getID(vp$name, "vp"), clip=clip, classes=x$classes)
   } else {
       clip <- TRUE
 
@@ -589,6 +607,7 @@ devGrob.vpPath <- function(x, dev) {
            vpw=cw(unit(1, "npc"), dev),
            vph=ch(unit(1, "npc"), dev),
            name=getID(vp$name, "vp"),
+           classes=x$classes,
            clip=clip)
   }  
 }
@@ -601,6 +620,7 @@ devGrob.clip <- function(x, dev) {
        y=cy(lb$y, dev),
        width=cw(dim$w, dev),
        height=ch(dim$h, dev),
+       classes=x$classes,
        name=getID(x$name, "grob"))
 }
 
@@ -1207,8 +1227,10 @@ grobToDev.gTree <- function(x, dev) {
 }
 
 primToDev.gTree <- function(x, dev) {
-    if (x$name != "gridSVG")
+    if (x$name != "gridSVG") {
         x$name <- getID(x$name, "grob")
+        x$classes <- class(x)
+    }
     devStartGroup(devGrob(x, dev), gparToDevPars(x$gp), dev)
     lapply(x$children, function(child) {
         # 'gridSVG' is a special case because it is just a wrapping gTree.
@@ -1216,6 +1238,7 @@ primToDev.gTree <- function(x, dev) {
         # only the path *after* 'gridSVG'
         if (get("use.gPaths", envir = .gridSVGEnv) && x$name != "gridSVG")
             child$name <- paste(x$name, child$name, sep = getSVGoption("gPath.sep"))
+        child$classes <- class(child)
         grobToDev(child, dev)
     })
     devEndGroup(x$name, FALSE, dev)

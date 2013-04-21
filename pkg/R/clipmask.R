@@ -191,14 +191,20 @@ primToDev.clipPath <- function(x, dev) {
 }
 
 devGrob.clipPath <- function(x, dev) {
-    list(name = getID(x$name, "grob"), cp = x$referenceLabel)
+    list(name = getID(x$name, "grob"),
+         cp = x$referenceLabel,
+         classes = x$classes)
 }
 
 svgStartGrobClipPathGroup <- function(id = NULL, cp = NULL,
-                                  svgdev = svgDevice()) {
+                                      classes = NULL,
+                                      svgdev = svgDevice()) {
     clipPathID <- paste0("url(#", getLabelID(cp), ")")
-    cp <- newXMLNode("g", attrs = list(id = prefixName(id),
-                                       "clip-path" = clipPathID),
+    attrs <- list(id = prefixName(id),
+                  svgClassList(classes),
+                  "clip-path" = clipPathID)
+    attrs <- attrList(attrs)
+    cp <- newXMLNode("g", attrs = attrs,
                      parent = svgDevParent(svgdev))
     svgDevChangeParent(cp, svgdev)
 }
@@ -413,7 +419,8 @@ primToDev.masked.grob <- function(x, dev) {
 primToDev.mask <- function(x, dev) {
     setLabelUsed(x$referenceLabel)
     devStartMaskGroup(list(name = getID(x$name, "grob"),
-                           mask = x$referenceLabel), NULL, dev)
+                           mask = x$referenceLabel,
+                           classes = x$classes), NULL, dev)
 }
 
 drawDef.maskDef <- function(x, dev) {
@@ -442,10 +449,13 @@ devGrob.maskDef <- function(x, dev) {
 }
 
 svgStartMaskGroup <- function(id = NULL, mask = NULL,
+                              classes = NULL,
                               svgdev = svgDevice()) {
     maskID <- paste0("url(#", getLabelID(mask), ")")
-    m <- newXMLNode("g", attrs = list(id = prefixName(id),
-                                      mask = maskID),
+    attrs <- attrList(list(id = prefixName(id),
+                           svgClassList(classes),
+                           mask = maskID))
+    m <- newXMLNode("g", attrs = attrs,
                      parent = svgDevParent(svgdev))
     svgDevChangeParent(m, svgdev)
 }

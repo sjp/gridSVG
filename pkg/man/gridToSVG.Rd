@@ -11,6 +11,7 @@ gridToSVG(name = "Rplots.svg",
           export.js = c("none", "inline", "file"),
           res = NULL,
           prefix = "",
+          addClasses = FALSE,
           indent = TRUE,
           htmlWrapper = FALSE,
           usePaths = c("vpPaths", "gPaths", "none", "both"),
@@ -60,6 +61,14 @@ gridToSVG(name = "Rplots.svg",
     A prefix to apply to all generated SVG ID attributes. Useful for
     ensuring unique IDs when many SVG images exist within the same HTML
     document.
+  }
+  \item{addClasses}{
+    If \code{TRUE}, adds an SVG class attribute to all grobs and
+    viewports which holds the value of the class of the grob or
+    viewport. If the class attribute already exists (via
+    \code{\link{grid.garnish}} or \code{\link{grid.element}}), the
+    resulting SVG class attribute will be the union of the existing
+    class attribute and the grob/viewport classes.
   }
   \item{indent}{
     Determines whether the resulting SVG document will be exported with

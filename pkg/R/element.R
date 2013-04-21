@@ -30,6 +30,7 @@ devGrob.element.grob <- function(x, dev) {
   list(id = if (x$asis) x$origname
             else getID(x$name, "grob"),
        name = x$el,
+       classes = x$classes,
        attrs = x$attrs)
 }
 

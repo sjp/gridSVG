@@ -12,6 +12,7 @@ grobToDev.gTableChild <- function(x, dev) {
 
 grobToDev.gTableParent <- function(x, dev) {
   depth <- enforceVP(x$layoutvp, dev)
+  x$classes <- class(x)
   primToDev(x, dev)
   unwindVP(x$layoutvp, depth, dev)
 }

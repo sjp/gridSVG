@@ -201,7 +201,7 @@ svgMaskAttr <- function(id, mask) {
     list()
 }
 
-svgStartElement <- function(id = NULL, element = NULL, attrs = NULL,
+svgStartElement <- function(id = NULL, classes = NULL, element = NULL, attrs = NULL,
                             attributes=svgAttrib(), links=NULL, show = NULL,
                             svgdev = svgDevice()) {
   has.link <- hasLink(links[id])
@@ -212,6 +212,20 @@ svgStartElement <- function(id = NULL, element = NULL, attrs = NULL,
   # If garnishing, clobber any existing attrs
   for (name in names(attributes))
       attrs[[name]] <- attributes[[name]]
+
+  # Avoid clobbering "class" attribute if it exists
+  # Instead, add to the list of classes available
+  if (! is.null(attrs$class) && get("addClasses", envir = .gridSVGEnv)) {
+      cls <- strsplit(attrs$class, "\\s")[[1]]
+      cls <- cls[nzchar(cls)] # Get rid of whitespace
+      classList <- svgClassList(unique(c(cls, classes)))
+      attrs$class <- classList$class
+  } else {
+      classList <- svgClassList(classes)
+      if (length(classList))
+          attrs$class <- classList$class
+  }
+
   attrs <- attrList(attrs)
   element <- newXMLNode(element, attrs = attrs,
                         parent = svgDevParent(svgdev))
@@ -231,7 +245,8 @@ svgEndElement <- function(id=NULL, links=NULL, svgdev=svgDevice()) {
 
 svgStartGroup <- function(id=NULL, clip=FALSE, mask=FALSE,
                           attributes=svgAttrib(), links=NULL, show=NULL,
-                          style=svgStyle(), coords=NULL, svgdev=svgDevice()) {
+                          style=svgStyle(), coords=NULL, classes = NULL,
+                          svgdev=svgDevice()) {
   # If this is a viewport that we're starting a group for
   # we will have coordinate information, otherwise don't bother.
   if (! is.null(coords)) {
@@ -251,6 +266,20 @@ svgStartGroup <- function(id=NULL, clip=FALSE, mask=FALSE,
                    svgMaskAttr(id, mask),
                    svgStyleAttributes(style))
   attrlist <- attrList(attrlist)
+
+  # Avoid clobbering "class" attribute if it exists
+  # Instead, add to the list of classes available
+  if (! is.null(attrlist$class) && get("addClasses", envir = .gridSVGEnv)) {
+      cls <- strsplit(attrlist$class, "\\s")[[1]]
+      cls <- cls[nzchar(cls)] # Get rid of whitespace
+      classList <- svgClassList(unique(c(cls, classes)))
+      attrlist$class <- classList$class
+  } else {
+      classList <- svgClassList(classes)
+      if (length(classList))
+          attrlist$class <- classList$class
+  }
+
   newparent <- newXMLNode("g", parent = svgDevParent(svgdev),
                           attrs = attrlist)
   svgDevChangeParent(newparent, svgdev)
@@ -1403,6 +1432,13 @@ listToSVGAttrib <- function(alist) {
 
 emptyAttrib <- function(attributes) {
   length(attributes) == 0
+}
+
+svgClassList <- function(classes) {
+    if (is.null(classes) || ! get("addClasses", envir = .gridSVGEnv))
+        list()
+    else
+        list(class = paste0(unique(classes), collapse = " "))
 }
 
 # Only use the attributes that are for this 'id'

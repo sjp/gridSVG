@@ -416,6 +416,7 @@ setMethod("devStartElement", signature(device="svgDevice"),
           function(element, gp, device) {
             # Ignore gp, complicates output
             svgStartElement(id = element$id,
+                            classes = element$classes,
                             element = element$name,
                             attrs = element$attrs,
                             attributes = device@attrs,
@@ -452,6 +453,7 @@ setMethod("devStartClip", signature(device="svgDevice"),
                           show=device@show,
                           style=devParToSVGStyle(gp, device),
                           coords = NULL,
+                          classes = clip$classes,
                           svgdev=device@dev)
           })
 
@@ -467,7 +469,8 @@ setMethod("devEndClipPath", signature(device="svgDevice"),
 
 setMethod("devStartClipPathGroup", signature(device="svgDevice"),
           function(clippath, gp, device) {
-            svgStartGrobClipPathGroup(clippath$name, clippath$cp, device@dev)
+            svgStartGrobClipPathGroup(clippath$name, clippath$cp,
+                                      clippath$classes, device@dev)
 
             # Because of the fact that we never stop clipping until
             # we pop our current viewport, we need to store information
@@ -497,7 +500,8 @@ setMethod("devEndMask", signature(device="svgDevice"),
 
 setMethod("devStartMaskGroup", signature(device="svgDevice"),
           function(mask, gp, device) {
-            svgStartMaskGroup(mask$name, mask$mask, device@dev)
+            svgStartMaskGroup(mask$name, mask$mask,
+                              mask$classes, device@dev)
 
             # Because of the fact that we never stop clipping until
             # we pop our current viewport, we need to store information
@@ -541,6 +545,7 @@ setMethod("devStartGroup", signature(device="svgDevice"),
                           show=device@show,
                           style=devParToSVGStyle(gp, device),
                           coords = group$coords,
+                          classes = group$classes,
                           svgdev=device@dev)
           })
 
