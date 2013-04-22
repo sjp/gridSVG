@@ -10,16 +10,16 @@
   produce a gradient.
 }
 \usage{
-gradientStop(offset = 0, col)
+gradientStop(col, offset = 0)
 addGradientStop(gradient, gradientStop, after = NA)
 }
 \arguments{
+  \item{col}{
+    The colour used for the gradient stop.
+  }
   \item{offset}{
     Numeric. The point at which the colour \code{col} starts within the
     gradient. Must be between 0 and 1 (equivalent to \code{npc} units).
-  }
-  \item{col}{
-    The colour used for the gradient stop.
   }
   \item{gradient}{
     A gradient object to add a gradient stop to.

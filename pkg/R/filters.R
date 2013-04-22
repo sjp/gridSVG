@@ -320,6 +320,7 @@ fe <- function(..., x = unit(0.5, "npc"), y = unit(0.5, "npc"),
 
 filterSVG.fe.distant.light <- function(x, dev) {
     svgdev <- dev@dev
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feDistantLight",
                attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
@@ -348,8 +349,7 @@ filterSVG.fe.point.light <- function(x, dev) {
     svgdev <- dev@dev
     if (x$coords)
         x$z <- if (x$zdim == "x") cw(x$z, dev) else cy(x$z, dev)
-    x <- cleanAttrs(x, "coords")
-    attrList <- cleanAttrs(x, "zdim")
+    attrList <- cleanAttrs(x, c("coords", "zdim"))
     newXMLNode("fePointLight",
                attrs = roundAttribs(attrList),
                parent = svgDevParent(svgdev))
@@ -394,8 +394,7 @@ filterSVG.fe.spot.light <- function(x, dev) {
         x$pointsAtX <- cx(x$x, dev)
         x$pointsAtY <- cy(x$pointsAtY, dev)
     }
-    x <- cleanAttrs(x, "coords")
-    attrList <- cleanAttrs(x, "zdim")
+    attrList <- cleanAttrs(x, c("coords", "zdim"))
     newXMLNode("feSpotLight",
                attrs = roundAttribs(attrList),
                parent = svgDevParent(svgdev))
@@ -429,6 +428,7 @@ feSpotLight <- function(x = unit(0, "npc"), y = unit(0, "npc"), z = unit(0, "npc
 
 filterSVG.fe.blend <- function(x, dev) {
     svgdev <- dev@dev
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feBlend",
                attrs = roundAttribs(x), parent = svgDevParent(svgdev))
 }
@@ -457,6 +457,7 @@ filterSVG.fe.color.matrix <- function(x, dev) {
         x$values <- paste0(rows, collapse = " ")
     }
 
+    attrList <- cleanAttrs(attrList, "coords")
     newXMLNode("feColorMatrix",
                attrs = roundAttribs(attrList),
                parent = svgDevParent(svgdev))
@@ -493,7 +494,7 @@ feColorMatrix <- function(input = NA,
 filterSVG.fe.component.transfer <- function(x, dev) {
     svgdev <- dev@dev
 
-    parentAttrs <- cleanAttrs(x, "transfers")
+    parentAttrs <- cleanAttrs(x, c("coords", "transfers"))
     children <- x$transfers
 
     cm <- newXMLNode("feColorMatrix",
@@ -540,6 +541,7 @@ filterSVG.transfer.function <- function(x, dev) {
     if (x$type == "table" | x$type == "discrete")
         x$tableValues <- paste0(round(x$tableValues, 2), collapse = " ")
 
+    x <- cleanAttrs(x, "coords")
     newXMLNode(paste0("feFunc", x$channel),
                attrs = roundAttribs(x), parent = svgDevParent(svgdev))
 }
@@ -569,6 +571,7 @@ transferFunction <- function(type = c("identity", "table", "discrete", "linear",
 
 filterSVG.fe.composite <- function(x, dev) {
     svgdev <- dev@dev
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feComposite",
                attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
@@ -606,6 +609,7 @@ filterSVG.fe.convolve.matrix <- function(x, dev) {
         paste0(round(x, 2), collapse = " ")
     }), collapse = " ")
 
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feConvolveMatrix",
                attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
@@ -653,10 +657,9 @@ filterSVG.fe.diffuse.lighting <- function(x, dev) {
     if (! is.null(x$kernelUnitLength))
         x$kernelUnitLength <- paste0(round(x$kernelUnitLength, 2),
                                      collapse = " ")
-    x <- cleanAttrs(x, "coords")
-
+    diffl <- cleanAttrs(x, c("coords", "lightSource"))
     fedl <- newXMLNode("feDiffuseLighting",
-                       attrs = roundAttribs(x),
+                       attrs = roundAttribs(diffl),
                        parent = svgDevParent(svgdev))
     svgDevChangeParent(fedl, svgdev)
     filterSVG(x$lightSource, dev)
@@ -686,6 +689,7 @@ feDiffuseLighting <- function(input = NA, surfaceScale = 1,
 
 filterSVG.fe.displacement.map <- function(x, dev) {
     svgdev <- dev@dev
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feDisplacementMap",
                attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
@@ -708,6 +712,7 @@ feDisplacementMap <- function(input1 = NA, input2 = NA, scale = 0,
 
 filterSVG.fe.flood <- function(x, dev) {
     svgdev <- dev@dev
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feFlood",
                attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
@@ -725,6 +730,7 @@ filterSVG.fe.gaussian.blur <- function(x, dev) {
     svgdev <- dev@dev
     if (length(x$stdDeviation) > 1)
         x$sd <- paste0(round(x$stdDeviation, 2), collapse = " ")
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feGaussianBlur",
                attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
@@ -740,6 +746,7 @@ feGaussianBlur <- function(input = NA, sd = 0, ...) {
 
 filterSVG.fe.image <- function(x, dev) {
     svgdev <- dev@dev
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feImage",
                attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
@@ -757,7 +764,7 @@ feImage <- function(preserveAspectRatio = "xMidYMid meet", href = "", ...) {
 filterSVG.fe.merge <- function(x, dev) {
     svgdev <- dev@dev
     children <- x$mergeNodes
-    par <- cleanAttrs(x, "mergeNodes")
+    par <- cleanAttrs(x, c("coords", "mergeNodes"))
     merge <- newXMLNode("feMerge",
                         attrs = roundAttribs(par),
                         parent = svgDevParent(svgdev))
@@ -781,6 +788,7 @@ feMerge <- function(mergeNodes = NULL, ...) {
 
 filterSVG.fe.merge.node <- function(x, dev) {
     svgdev <- dev@dev
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feMergeNode", attrs = x, parent = svgDevParent(svgdev))
 }
 
@@ -900,8 +908,9 @@ filterSVG.fe.specular.lighting <- function(x, dev) {
     if (! is.null(x$kernelUnitLength))
         x$kernelUnitLength <- paste0(round(x$kernelUnitLength, 2),
                                      collapse = " ")
+    specl <- cleanAttrs(x, c("coords", "lightSource"))
     fesl <- newXMLNode("feSpecularLighting",
-                       attrs = roundAttribs(x),
+                       attrs = roundAttribs(specl),
                        parent = svgDevParent(svgdev))
     svgDevChangeParent(fesl, svgdev)
     filterSVG(x$lightSource, dev)
@@ -939,6 +948,7 @@ feSpecularLighting <- function(input = NA, surfaceScale = 1,
 
 filterSVG.fe.tile <- function(x, dev) {
     svgdev <- dev@dev
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feTile", attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
 }
@@ -956,6 +966,7 @@ filterSVG.fe.turbulence <- function(x, dev) {
     if (length(x$baseFrequency) > 1)
         x$baseFrequency <- paste0(round(x$baseFrequency, 2),
                                   collapse = " ")
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feTurbulence", attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
 }

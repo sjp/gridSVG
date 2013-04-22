@@ -214,7 +214,7 @@ addGradientStop <- function(gradient, gradientStop, after = NA) {
     gradient
 }
 
-gradientStop <- function(offset = 0, col) {
+gradientStop <- function(col, offset = 0) {
     rgba <- col2rgb(col, alpha = TRUE)[, 1]
     x <- list(offset = round(offset, 2),
               "stop-color" = devColToSVG(col),
