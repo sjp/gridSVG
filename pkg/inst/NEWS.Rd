@@ -10,6 +10,10 @@
     function. This reduces the need for special methods in this package
     to draw custom grobs.
 
+    \item Renamed 'gridToSVG' to 'grid.export'. 'gridToSVG' is now
+    deprecated and will produce a warning but will still work.
+    'grid.export' should be used from now on. (Simon)
+
     \item Bumped R version dependency to R >= 3.0.0 because
     \code{gridToSVG()} now calls \code{grid.force()} before export
 
@@ -33,10 +37,22 @@
     \item Add a graphics device-like interface to gridSVG. Use 'gridsvg'
     to open a gridSVG device, and 'dev.off' to close it. (Simon)
 
-    \item Now allowing for a prefix to be applied to each SVG ID
-    attribute. Particularly useful when including multiple gridSVG
+    \item Added new 'gridSVG.newpage' function. It will clear all
+    definitions of referenced content as well as calling
+    'grid.newpage'. (Simon)
+
+    \item Now allowing for a prefix to be applied to all SVG ID
+    attributes. Particularly useful when including multiple gridSVG
     images in the same document as it ensures uniqueness of IDs between
-    documents. (Simon)
+    documents. This can be used by specifying the 'prefix' argument to
+    'grid.export'. (Simon)
+
+    \item New optional parameter to 'grid.export', 'addClasses'. If this
+    argument is 'TRUE', then gridSVG will add an SVG class attribute to
+    each grob or viewport it draws. The value of this attribute is what
+    is produced by calling 'class' on the object. This is useful for
+    allowing a convenient way of selecting more than one type of grob
+    (e.g. the '.axis' CSS selector will select all axis grobs). (Simon)
 
     \item Added implementation of gradient fills for grobs. See
     'linearGradient', 'radialGradient', 'gradientStop' and
@@ -50,9 +66,9 @@
     \item Added support for non-rectangular clipping paths. Use
     'grid.clipPath' and 'clipPathGrob' for applying clipping paths to
     grobs. Use 'pushClipPath' for applying to the current viewport,
-    which behaves similarly to 'grid.clip'. Uses a grob as the
-    definition for the clipping path as defined by
-    'registerClipPath'. (Simon)
+    which behaves similarly to 'grid.clip'. Uses an object produced by
+    'clipPath' as the definition for the clipping path and is registered
+    by calling 'registerClipPath'. (Simon)
 
     \item Added support for opacity masks. Use 'grid.mask' and
     'maskGrob' to apply opacity masks to grobs. Use 'pushMask' for
@@ -65,6 +81,13 @@
 
     \item Bug fix for 'clipGrob's. Now unwinds only when a viewport is
     popped and just not any grouped content. (Simon)
+
+    \item Added support for SVG filter effects. Create a filter effect
+    by calling 'filterEffect' and adding as its children some of the
+    various filter effect primitives by calling 'fe*' functions. Some of
+    these filter effects are quite complicated so reading the function
+    documentation and the SVG specification is required. Apply filter
+    effects to grobs using 'grid.filter' and 'filterGrob'. (Simon)
 
   }
 }
