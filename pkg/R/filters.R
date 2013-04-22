@@ -291,6 +291,7 @@ flatten.filter.effect <- function(x, coords = TRUE) {
         x$width <- convertWidth(x$width, "npc", valueOnly = TRUE)
         x$height <- convertHeight(x$height, "npc", valueOnly = TRUE)
     }
+    x$coords <- coords
     x
 }
 
@@ -338,13 +339,16 @@ flatten.fe.point.light <- function(x, coords = TRUE) {
         x$z <- if (x$dzim == "x") convertX(x$z, "npc", valueOnly = TRUE)
                else convertY(x$z, "npc", valueOnly = TRUE)
     }
+    x$coords <- coords
 
     NextMethod()
 }
 
 filterSVG.fe.point.light <- function(x, dev) {
     svgdev <- dev@dev
-    x$z <- if (x$zdim == "x") cw(x$z, dev) else cy(x$z, dev)
+    if (x$coords)
+        x$z <- if (x$zdim == "x") cw(x$z, dev) else cy(x$z, dev)
+    x <- cleanAttrs(x, "coords")
     attrList <- cleanAttrs(x, "zdim")
     newXMLNode("fePointLight",
                attrs = roundAttribs(attrList),
@@ -376,17 +380,21 @@ flatten.fe.spot.light <- function(x, coords = TRUE) {
         x$pointsAtX <- convertX(x$pointsAtX, "npc", valueOnly = TRUE)
         x$pointsAtY <- convertY(x$pointsAtY, "npc", valueOnly = TRUE)
     }
+    x$coords <- coords
 
     NextMethod()
 }
 
 filterSVG.fe.spot.light <- function(x, dev) {
     svgdev <- dev@dev
-    x$z <- if (x$zdim == "x") cw(x$z, dev) else cy(x$z, dev)
-    x$pointsAtZ <- if (x$zdim == "x") cw(x$pointsAtZ, dev)
-                   else cy(x$pointsAtZ, dev)
-    x$pointsAtX <- cx(x$x, dev)
-    x$pointsAtY <- cy(x$pointsAtY, dev)
+    if (x$coords) {
+        x$z <- if (x$zdim == "x") cw(x$z, dev) else cy(x$z, dev)
+        x$pointsAtZ <- if (x$zdim == "x") cw(x$pointsAtZ, dev)
+                       else cy(x$pointsAtZ, dev)
+        x$pointsAtX <- cx(x$x, dev)
+        x$pointsAtY <- cy(x$pointsAtY, dev)
+    }
+    x <- cleanAttrs(x, "coords")
     attrList <- cleanAttrs(x, "zdim")
     newXMLNode("feSpotLight",
                attrs = roundAttribs(attrList),
@@ -635,6 +643,7 @@ feConvolveMatrix <- function(input = NA, order = 3,
 
 flatten.fe.diffuse.lighting <- function(x, coords = TRUE) {
     x$lightSource <- flatten(x$lightSource, coords)
+    x$coords <- coords
     NextMethod()
 }
 
@@ -644,6 +653,7 @@ filterSVG.fe.diffuse.lighting <- function(x, dev) {
     if (! is.null(x$kernelUnitLength))
         x$kernelUnitLength <- paste0(round(x$kernelUnitLength, 2),
                                      collapse = " ")
+    x <- cleanAttrs(x, "coords")
 
     fedl <- newXMLNode("feDiffuseLighting",
                        attrs = roundAttribs(x),
@@ -794,7 +804,14 @@ addMergeNode <- function(fe, mergeNode, after = NA) {
 
 filterSVG.fe.morphology <- function(x, dev) {
     svgdev <- dev@dev
-    x$radius <- paste0(round(x$radius, 2), collapse = " ")
+    if (x$coords) {
+        if (length(x$radius) > 1)
+            x$radius <- c(cx(x$radius[1], dev), cy(x$radius[2]))
+        else
+            x$radius <- cd(x$radius, dev)
+        x$radius <- paste0(round(x$radius, 2), collapse = " ")
+    }
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feMorphology", attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
 }
@@ -819,6 +836,7 @@ flatten.fe.morphology <- function(x, coords = TRUE) {
                                  valueOnly = TRUE)
         }
     }
+    x$coords <- coords
     NextMethod()
 }
 
@@ -843,14 +861,17 @@ flatten.fe.offset <- function(x, coords = TRUE) {
         x$dx <- convertWidth(x$dx, "npc", valueOnly = TRUE)
         x$dy <- convertHeight(x$dy, "npc", valueOnly = TRUE)
     }
-
+    x$coords <- coords
     NextMethod()
 }
 
 filterSVG.fe.offset <- function(x, dev) {
     svgdev <- dev@dev
-    x$dx <- cx(x$dx, dev)
-    x$dy <- cy(x$dy, dev)
+    if (x$coords) {
+        x$dx <- cx(x$dx, dev)
+        x$dy <- cy(x$dy, dev)
+    }
+    x <- cleanAttrs(x, "coords")
     newXMLNode("feOffset", attrs = roundAttribs(x),
                parent = svgDevParent(svgdev))
 }
@@ -889,7 +910,8 @@ filterSVG.fe.specular.lighting <- function(x, dev) {
 
 feSpecularLighting <- function(input = NA, surfaceScale = 1,
                                specularConstant = 1, specularExponent = 1,
-                               kernelUnitLength = NA, lightSource = NULL, ...) {
+                               kernelUnitLength = NA, col = "white",
+                               lightSource = NULL, ...) {
     if (is.null(lightSource))
         stop("A light source must be provided")
     if (specularConstant < 0)

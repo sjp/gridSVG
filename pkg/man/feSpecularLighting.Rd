@@ -24,7 +24,7 @@
 feSpecularLighting(input = NA,
                    surfaceScale = 1, specularConstant = 1,
                    specularExponent = 1, kernelUnitLength = NA,
-                   lightSource = NULL, ...)
+                   col = "white", lightSource = NULL, ...)
 }
 \arguments{
   \item{input}{
@@ -56,6 +56,9 @@ feSpecularLighting(input = NA,
     implemented in some cases as one pixel in the intermediate image
     offscreen bitmap, which is a pixel-based coordinate system, and thus
     potentially not scalable.
+  }
+  \item{col}{
+    The colour to apply to the light from \code{lightSource}.
   }
   \item{lightSource}{
     A light source object, produced by one of
