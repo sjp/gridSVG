@@ -10,5 +10,5 @@ grid.circle(r=4:1/8, name="circgrob")
 grid.rect(name="rectgrob")
 popViewport()
 
-gridToSVG()
+grid.export()
 dev.off()

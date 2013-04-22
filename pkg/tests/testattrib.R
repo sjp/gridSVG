@@ -14,7 +14,7 @@ grid.circle(r=0.1, gp=gpar(fill="red"), name="circgrob")
 grid.garnish("circgrob", onclick="circle_click(evt)")
 popViewport()
 
-gridToSVG()
+grid.export()
 dev.off()
 
 
@@ -22,7 +22,7 @@ dev.off()
 grid.newpage()
 grid.circle(r=.1, gp=gpar(fill="black"), name="c")
 grid.garnish("c", onmousedown="alert('ouch')")
-gridToSVG("testattrcircle.svg")
+grid.export("testattrcircle.svg")
 
 # Multiple attribute values on single grob
 grid.newpage()
@@ -33,7 +33,7 @@ grid.garnish("p",
                "alert('pch=10')",
                "alert('pch=16')"),
              group=FALSE)
-gridToSVG("testattrpoints.svg")
+grid.export("testattrpoints.svg")
 
 # Multiple garnishes (one with single value, one with multiple values)
 grid.newpage()
@@ -43,5 +43,5 @@ grid.garnish("c",
              group=FALSE)
 grid.garnish("c",
              onmousedown="alert('click me!')")
-gridToSVG("testmultattr.svg")
+grid.export("testmultattr.svg")
              

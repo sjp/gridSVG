@@ -5,14 +5,14 @@
 \description{
   Creates an animated.grob object.
   Useful in conjunction with
-  \code{gridToSVG}, to produce an SVG document with
+  \code{grid.export}, to produce an SVG document with
   animated graphical elements.
 }
 \usage{
 animateGrob(grob, ...,
-            duration=1, 
+            duration=1,
             rep=FALSE, revert=FALSE,
-            begin=0, interpolate="linear", group=FALSE) 
+            begin=0, interpolate="linear", group=FALSE)
 grid.animate(path, ...)
 }
 \arguments{
@@ -36,5 +36,5 @@ grid.animate(path, ...)
   An animated.grob object.
 }
 \author{ Paul Murrell }
-\seealso{ \code{\link{gridToSVG}} }                           
-\keyword{ dplot }% at least one, from doc/KEYWORDS
+\seealso{ \code{\link{grid.export}} }
+\keyword{ dplot }

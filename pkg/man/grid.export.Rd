@@ -1,23 +1,24 @@
-\name{gridToSVG}
+\name{grid.export}
+\alias{grid.export}
 \alias{gridToSVG}
 \title{ Generate SVG output from a grid graphic }
 \description{
   Produces an SVG version of the current grid page.
 }
 \usage{
-gridToSVG(name = "Rplots.svg",
-          export.coords = c("none", "inline", "file"),
-          export.mappings = c("none", "inline", "file"),
-          export.js = c("none", "inline", "file"),
-          res = NULL,
-          prefix = "",
-          addClasses = FALSE,
-          indent = TRUE,
-          htmlWrapper = FALSE,
-          usePaths = c("vpPaths", "gPaths", "none", "both"),
-          uniqueNames = TRUE,
-          annotate = TRUE,
-          xmldecl = xmlDecl())
+grid.export(name = "Rplots.svg",
+            export.coords = c("none", "inline", "file"),
+            export.mappings = c("none", "inline", "file"),
+            export.js = c("none", "inline", "file"),
+            res = NULL,
+            prefix = "",
+            addClasses = FALSE,
+            indent = TRUE,
+            htmlWrapper = FALSE,
+            usePaths = c("vpPaths", "gPaths", "none", "both"),
+            uniqueNames = TRUE,
+            annotate = TRUE,
+            xmldecl = xmlDecl())
 }
 \arguments{
   \item{name}{
@@ -105,7 +106,7 @@ gridToSVG(name = "Rplots.svg",
     If \code{TRUE}, an SVG metadata element will be introduced directly
     below the root \code{<svg>} element. This element contains XML that
     describes the information that gridSVG used to draw the image
-    (mostly arguments to \code{gridToSVG}). This output may be useful
+    (mostly arguments to \code{grid.export}). This output may be useful
     for debugging purposes.
   }
   \item{xmldecl}{

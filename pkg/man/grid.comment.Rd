@@ -5,7 +5,7 @@
 \description{
   Creates a \code{comment.grob} object which is a grid
   \code{\link{nullGrob}}, with a comment attached. Useful in conjunction
-  with \code{gridToSVG}, to produce an SVG document with comments
+  with \code{grid.export}, to produce an SVG document with comments
   inserted at the point where the grob is \dQuote{drawn}.
 }
 \usage{
@@ -24,6 +24,5 @@ commentGrob(comment, name = NULL, vp = NULL)
   A \code{comment.grob} object.
 }
 \author{ Simon Potter }
-\seealso{ \code{\link{gridToSVG}} }
+\seealso{ \code{\link{grid.export}} }
 \keyword{ dplot }
-

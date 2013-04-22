@@ -1,12 +1,11 @@
 \name{grid.script}
 \alias{grid.script}
 \alias{scriptGrob}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Create a grid grob containing an SVG script}
 \description{
   Creates a script object which is a normal grid grob
   containing an SVG script. Useful in conjunction with
-  \code{gridToSVG}, to produce an SVG document with
+  \code{grid.export}, to produce an SVG document with
   script elements.
 }
 \usage{
@@ -27,6 +26,5 @@ grid.script(...)
   A script.grob object.
 }
 \author{ Paul Murrell }
-\seealso{ \code{\link{gridToSVG}} }                           
-\keyword{ dplot }% at least one, from doc/KEYWORDS
-
+\seealso{ \code{\link{grid.export}} }
+\keyword{ dplot }

@@ -5,7 +5,7 @@
 \description{
   Creates an svg.grob object which is a normal grid grob,
   with SVG attributes attached.  Useful in conjunction with
-  \code{gridToSVG}, to produce an SVG document with
+  \code{grid.export}, to produce an SVG document with
   attributes that have no corresponding concept in grid graphics.
 }
 \usage{
@@ -46,5 +46,5 @@ grid.garnish(path, ..., group=TRUE, redraw=FALSE,
   A garnished.grob object.
 }
 \author{ Paul Murrell }
-\seealso{ \code{\link{gridToSVG}} }
-\keyword{ dplot }% at least one, from doc/KEYWORDS
+\seealso{ \code{\link{grid.export}} }
+\keyword{ dplot }

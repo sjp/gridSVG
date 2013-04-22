@@ -13,13 +13,13 @@ gridSVGCoords(newcoords = NULL)
 \arguments{
   \item{newcoords}{
     A named list (names are viewport names) of coordinate information,
-    produced by \code{\link{gridToSVG}}.
+    produced by \code{\link{grid.export}}.
   }
 }
 \details{
   In order to translate between SVG coordinates and the coordinate
   system that \code{grid} understands, we first need to import the
-  coordinate information exported from \code{\link{gridToSVG}}. We can
+  coordinate information exported from \code{\link{grid.export}}. We can
   then take the JSON representation of this coordinate information and
   import it as a named list via \code{fromJSON}. This can then
   initialise a coordinate system by passing that named list into

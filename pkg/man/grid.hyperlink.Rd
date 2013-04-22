@@ -5,7 +5,7 @@
 \description{
   Creates a linked.grob object which is a normal grid grob,
   with a hyperlink attached.  Useful in conjunction with
-  \code{gridToSVG}, to produce an SVG document with
+  \code{grid.export}, to produce an SVG document with
   hyperlinked graphical elements.
 }
 \usage{
@@ -48,5 +48,5 @@ hyperlinkGrob(x, href, show=NULL, group=TRUE)
   A linked.grob object.
 }
 \author{ Paul Murrell }
-\seealso{ \code{\link{gridToSVG}} }
-\keyword{ dplot }% at least one, from doc/KEYWORDS
+\seealso{ \code{\link{grid.export}} }
+\keyword{ dplot }

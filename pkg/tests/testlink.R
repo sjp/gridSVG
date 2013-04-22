@@ -10,7 +10,7 @@ grid.text("Click me", name="txtgrob")
 grid.hyperlink("txtgrob", href="http://cran.stat.auckland.ac.nz")
 popViewport()
 
-gridToSVG()
+grid.export()
 dev.off()
 
 # A scatterplot and two dot plots designed to be
@@ -42,7 +42,7 @@ grid.points(iris$Sepal.Length[iris$Species == "virginica"],
 grid.text("Sepal Length", y=unit(-3, "lines"))
 grid.text("Sepal Width", x=unit(-3, "lines"), rot=90)
 popViewport(3)
-gridToSVG("linkscatter.svg")
+grid.export("linkscatter.svg")
 dev.off()
 
 # A dot plot of x
@@ -72,7 +72,7 @@ grid.text(name="returnlink",
           gp=gpar(col="grey"))
 grid.hyperlink("returnlink", "linkscatter.svg.html")
 popViewport(3)
-gridToSVG("linkdotx.svg")
+grid.export("linkdotx.svg")
 dev.off()
 
 # A dot plot of y
@@ -102,7 +102,7 @@ grid.text(name="returnlink",
           gp=gpar(col="grey"))
 grid.hyperlink("returnlink", "linkscatter.svg.html")
 popViewport(3)
-gridToSVG("linkdoty.svg")
+grid.export("linkdoty.svg")
 dev.off()
 
 
@@ -111,12 +111,12 @@ dev.off()
 grid.newpage()
 grid.draw(hyperlinkGrob(linesGrob(gp=gpar(lwd=20)),
                         href="http://www.stat.auckland.ac.nz"))
-gridToSVG("testGroupOfOneHyperlink.svg")
+grid.export("testGroupOfOneHyperlink.svg")
 
 grid.newpage()
 grid.draw(hyperlinkGrob(segmentsGrob(1:3/4, gp=gpar(lwd=20)),
                         href="http://www.stat.auckland.ac.nz"))
-gridToSVG("testGroupOfManyHyperlink.svg")
+grid.export("testGroupOfManyHyperlink.svg")
 
 # Test *individual* hrefs
 
@@ -124,13 +124,13 @@ grid.newpage()
 grid.draw(hyperlinkGrob(linesGrob(gp=gpar(lwd=20)),
                         href="http://www.stat.auckland.ac.nz",
                         group=FALSE))
-gridToSVG("testIndividualOneHyperlink.svg")
+grid.export("testIndividualOneHyperlink.svg")
 
 grid.newpage()
 grid.draw(hyperlinkGrob(segmentsGrob(1:3/4, gp=gpar(lwd=20)),
                         href="http://www.stat.auckland.ac.nz",
                         group=FALSE))
-gridToSVG("testIndividualManyHyperlink.svg")
+grid.export("testIndividualManyHyperlink.svg")
 
 grid.newpage()
 grid.draw(hyperlinkGrob(segmentsGrob(1:3/4, gp=gpar(lwd=20)),
@@ -138,4 +138,4 @@ grid.draw(hyperlinkGrob(segmentsGrob(1:3/4, gp=gpar(lwd=20)),
                           "http://slashdot.org",
                           "http://soccernet.com"),
                         group=FALSE))
-gridToSVG("testIndividualManyHyperlinks.svg")
+grid.export("testIndividualManyHyperlinks.svg")

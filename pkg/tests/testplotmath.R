@@ -8,7 +8,7 @@ library(gridSVG)
 grid.newpage()
 grid.rect(x=.4, width=.4, height=.8, gp=gpar(fill="grey", col=NA))
 grid.text(expression((a + b)^2), x=.4, y=.6)
-gridToSVG("test2.svg")
+grid.export("test2.svg")
 
 test <- function(e, file, cex=1) {
     require(grid)
@@ -31,7 +31,7 @@ test <- function(e, file, cex=1) {
         grid.draw(tg)
         popViewport()
     }
-    gridToSVG(file)
+    grid.export(file)
     grid.refresh()
 }
 

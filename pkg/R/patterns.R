@@ -205,8 +205,8 @@ drawDef.patternFillDef <- function(def, dev) {
     prefix <- paste0("gridSVG.patternFill.", def$id)
 
     # There is a little bit of replication going on from
-    # 'gridToSVG' but it avoids some problems.
-    # We could use 'gridToSVG' recursively but we lose the ability to
+    # 'grid.export' but it avoids some problems.
+    # We could use 'grid.export' recursively but we lose the ability to
     # definitely generate unique names if that is the case because usage
     # tables would be wiped.
     # A viewport and gTree are forced to ensure everything is unique because

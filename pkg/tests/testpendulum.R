@@ -70,6 +70,6 @@ popViewport(2)
 
 popViewport()
 
-gridToSVG("pendulum.svg")
+grid.export("pendulum.svg")
 
 dev.off()

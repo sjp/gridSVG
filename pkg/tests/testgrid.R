@@ -58,5 +58,5 @@ popViewport()
 
 popViewport()
 
-gridToSVG("grid.svg")
+grid.export("grid.svg")
 dev.off()

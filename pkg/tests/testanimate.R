@@ -54,7 +54,7 @@ grid.animate("text2",
 
 popViewport()
 
-gridToSVG("animate.svg")
+grid.export("animate.svg")
 
 
 # Animating rectangles
@@ -72,7 +72,7 @@ grid.text("One rectangle moves across",
 grid.rect()
 grid.rect(x=.2, y=.2, width=.1, height=.1, name="rect")
 grid.animate("rect", x=c(.2, .8), duration=3)
-gridToSVG("anim-rect-simple.svg")
+grid.export("anim-rect-simple.svg")
 
 # Complex case
 # (multiple rects, anim x/y/width/height, anim values are matrices and lists)
@@ -92,7 +92,7 @@ grid.animate("rect",
                unit(c(.1, 1), c("npc", "cm")),
                unit(.1, "npc")),             
              duration=3)
-gridToSVG("anim-rect-complex.svg")
+grid.export("anim-rect-complex.svg")
 
 # Animating circles
 
@@ -111,7 +111,7 @@ grid.animate("circle",
                unit(c(.1, 1), c("npc", "cm")),
                unit(.1, "npc")),             
              duration=3)
-gridToSVG("anim-circle-complex.svg")
+grid.export("anim-circle-complex.svg")
 
 # Animating points
 
@@ -131,7 +131,7 @@ grid.animate("points",
                unit(c(2, .1), c("mm", "npc")),
                unit(2, "mm")),             
              duration=3)
-gridToSVG("anim-points-complex.svg")
+grid.export("anim-points-complex.svg")
 
 # Animating text
 
@@ -147,7 +147,7 @@ grid.animate("text",
              x=cbind(c(.2, .8), c(.2, .8), .2),
              y=cbind(.2, c(.2, .8), c(.2, .8)),             
              duration=3)
-gridToSVG("anim-text-complex.svg")
+grid.export("anim-text-complex.svg")
 
 # Animating lines
 
@@ -161,7 +161,7 @@ grid.lines(c(.1, .9), c(.1, .9), name="lines")
 grid.animate("lines",
              x=cbind(c(.1, .9), c(.5, .5)),
              duration=3)
-gridToSVG("anim-lines-simple.svg")
+grid.export("anim-lines-simple.svg")
 
 # Complex case
 # (line has many points, animation has three points, only animate y)
@@ -176,7 +176,7 @@ grid.lines(x, y, default.units="native", name="lines")
 grid.animate("lines",
              y=cbind(y, 0, -y),
              duration=3)
-gridToSVG("anim-lines-complex.svg")
+grid.export("anim-lines-complex.svg")
 
 # Animating polylines
 
@@ -196,7 +196,7 @@ grid.animate("polyline",
                            id=rep(rep(1:2, each=2), 2),
                            timeid=rep(1:2, each=4)),
              duration=3)
-gridToSVG("anim-polyline-simple.svg")
+grid.export("anim-polyline-simple.svg")
 
 # Complex case
 # (line only has many points, animation only has many points, animate x and y)
@@ -223,7 +223,7 @@ grid.animate("polyline",
                         id=rep(1:2, each=sum(2:n)),
                         timeid=rep(1:(n - 1), 2:n)),
              duration=10)
-gridToSVG("anim-polyline-complex.svg")
+grid.export("anim-polyline-complex.svg")
 
 # Animating segments
 
@@ -237,7 +237,7 @@ grid.segments(.1, .1, .9, .9, name="segments")
 grid.animate("segments",
              x0=c(.1, .9),
              duration=3)
-gridToSVG("anim-segments-simple.svg")
+grid.export("anim-segments-simple.svg")
 
 # Complex case
 # (multiple segments, animation has three values, animate x0 and y0)
@@ -250,7 +250,7 @@ grid.animate("segments",
              x0=cbind(c(.1, .9, .9), c(.9, .1, .1)),
              y0=c(.1, .1, .5),
              duration=3)
-gridToSVG("anim-segments-complex.svg")
+grid.export("anim-segments-complex.svg")
 
 # Animating polygons
 
@@ -269,7 +269,7 @@ grid.animate("polygon",
                              unit="npc"),
                         timeid=rep(1:2, each=3)),
              duration=3)
-gridToSVG("anim-polygon-simple.svg")
+grid.export("anim-polygon-simple.svg")
 
 # Complex case
 # (two polygons, animation has many points, animate x and y)
@@ -303,7 +303,7 @@ grid.animate("polygon",
                         id=rep(1:2, each=9),
                         timeid=rep(rep(1:3, each=3), 2)),
              duration=5)
-gridToSVG("anim-polygon-complex.svg")
+grid.export("anim-polygon-complex.svg")
 
 # Animating paths
 
@@ -324,7 +324,7 @@ grid.animate("path",
                              unit="npc"),
                         timeid=rep(1:2, each=3)),
              duration=3)
-gridToSVG("anim-path-simple.svg")
+grid.export("anim-path-simple.svg")
 
 # Complex case
 # (two polygons, animation has many points, animate x and y)
@@ -364,7 +364,7 @@ grid.animate("path",
                         id=rep(rep(1:2, each=4), 3),
                         timeid=rep(1:3, each=8)),               
              duration=3)
-gridToSVG("anim-path-complex.svg")
+grid.export("anim-path-complex.svg")
 
 # Simple case
 # (single raster, anim only x, anim values are just numeric)
@@ -374,7 +374,7 @@ grid.text("One raster moves across",
 grid.rect()
 grid.raster(1:10/11, x=.2, y=.2, width=.1, height=.1, name="raster")
 grid.animate("raster", x=c(.2, .8), duration=3)
-gridToSVG("anim-raster-simple.svg")
+grid.export("anim-raster-simple.svg")
 
 # Complex case
 # (multiple rasters, anim x/y/width/height, anim values are matrices and lists)
@@ -394,7 +394,7 @@ grid.animate("raster",
                unit(c(.1, 1), c("npc", "cm")),
                unit(.1, "npc")),             
              duration=3)
-gridToSVG("anim-raster-complex.svg")
+grid.export("anim-raster-complex.svg")
 
 # Simple case
 # (single xspline, anim only x, anim values are just numeric)
@@ -421,7 +421,7 @@ grid.animate("xspline-2",
              x=cbind(c(.3, .1, .5),
                      c(.7, .5, .9)),
              duration=3)
-gridToSVG("anim-xspline-simple.svg")
+grid.export("anim-xspline-simple.svg")
 
 # Complex case
 # (four xsplines, animation has many points, animate x and y)
@@ -486,7 +486,7 @@ grid.animate("xspline-closed",
                         id=rep(1:2, each=9),
                         timeid=rep(rep(1:3, each=3), 2)),
              duration=5)
-gridToSVG("anim-xspline-complex.svg")
+grid.export("anim-xspline-complex.svg")
 
 
 ############################################
@@ -496,11 +496,11 @@ grid.newpage()
 grid.rect(x=.1, y=.1, width=.1, height=.1, name="r")
 grid.animate("r", x=c(.1, .9))
 grid.animate("r", x=c(.9, .1), begin=3)
-gridToSVG("anim-rect-multi.svg")
+grid.export("anim-rect-multi.svg")
  
 # Animate group
 grid.newpage()
 grid.rect(x=.1, y=.1, width=.1, height=.1, name="r")
 grid.animate("r", visibility=c("visible", "hidden"), group=TRUE)
-gridToSVG("anim-group.svg")
+grid.export("anim-group.svg")
 

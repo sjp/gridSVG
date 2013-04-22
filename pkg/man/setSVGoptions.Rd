@@ -37,5 +37,5 @@ setSVGoptions(...)
   for the options that were changed.
 }
 \author{ Paul Murrell }
-\seealso{ \code{\link{gridToSVG}} }
+\seealso{ \code{\link{grid.export}} }
 \keyword{ dplot }

@@ -5,7 +5,7 @@
 \description{
   Creates a \code{element.grob} object which is a grid
   \code{\link{gTree}}, representing an SVG element. Useful in
-  conjunction with \code{gridToSVG}, to produce an SVG document with
+  conjunction with \code{grid.export}, to produce an SVG document with
   elements inserted at particular points. The element (and its children)
   are inserted at the point where the grob is \dQuote{drawn}.
 }
@@ -43,5 +43,5 @@ elementGrob(el, name = NULL, attrs = NULL, children = NULL,
   An \code{element.grob} object.
 }
 \author{ Simon Potter }
-\seealso{ \code{\link{gridToSVG}} }
+\seealso{ \code{\link{grid.export}} }
 \keyword{ dplot }

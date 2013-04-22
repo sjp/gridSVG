@@ -8,5 +8,5 @@ grid.element("testParent",
                               rectGrob(),
                               elementGrob("thirdChild",
                                           attrs = list(anAttrib = "value"))))
-gridToSVG("element-test.svg")
+grid.export("element-test.svg")
 dev.off()

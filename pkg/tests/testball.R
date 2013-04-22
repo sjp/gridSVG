@@ -73,6 +73,6 @@ print(xyplot(y ~ x | g, subscripts=TRUE,
 
 popViewport()
 
-gridToSVG("ball.svg")
+grid.export("ball.svg")
 
 dev.off()

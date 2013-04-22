@@ -48,5 +48,5 @@ popViewport(2)
 
 popViewport()
 
-gridToSVG("transparency.svg")
+grid.export("transparency.svg")
 dev.off()

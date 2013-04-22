@@ -6,4 +6,4 @@ require(gridSVG)
                   id.lengths=rep(4, 5),
                   gp=gpar(col=1:5, lwd=3))
   
-gridToSVG("polyline.svg")
+grid.export("polyline.svg")

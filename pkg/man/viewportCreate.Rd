@@ -54,14 +54,14 @@ viewportCreate(vpname, newname = NULL,
                         xscale = c(0, 20), yscale = c(0, 10),
                         name = "testVP"))
   grid.rect()
-  gridToSVG("create-test.svg")
+  grid.export("create-test.svg", export.coords = "file")
 
   # Importing coordinate information
-  gridSVGCoords(fromJSON(readCoordsJS("create-test.svg.coords.js")))
+  gridSVGCoords(readCoordsJS("create-test.svg.coords.js"))
 
   # This should appear to be the same rect
   grid.newpage()
-  pushViewport(viewportCreate("testVP"))
+  pushViewport(viewportCreate("testVP.1"))
   grid.rect()
 
   # Let's see if the scales are accurate, should be:

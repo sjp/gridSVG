@@ -25,7 +25,7 @@ dev.off(which = dev.cur())
 \arguments{
   \item{name, export.coords, export.mappings, export.js, res, indent,
     htmlWrapper, usePaths, uniqueNames, annotate, xmldecl}{
-    These parameters are passed onto \code{\link{gridToSVG}}.
+    These parameters are passed onto \code{\link{grid.export}}.
   }
   \item{\dots}{
     Further parameters that are passed onto a \code{NULL}
@@ -38,7 +38,7 @@ dev.off(which = dev.cur())
 }
 \details{
   These functions provide a more familiar and perhaps convenient
-  interface to gridSVG than \code{\link{gridToSVG}}. It uses a PDF
+  interface to gridSVG than \code{\link{grid.export}}. It uses a PDF
   device as drawing occurs, but when the device needs to be written out
   (via \code{dev.off}) then it will save an SVG image instead.
 
@@ -51,12 +51,12 @@ dev.off(which = dev.cur())
   \code{gridsvg} returns nothing.
 
   \code{dev.off} will return in the same manner as
-  \code{\link{gridToSVG}}. A list is always returned, but invisibly when
-  an invalid filename is given.
+  \code{\link{grid.export}}. A list is always returned, but invisibly
+  when an invalid filename is given.
 }
 \author{
   Simon Potter
 }
 \seealso{
-  \code{\link{pdf}} and \code{\link{gridToSVG}}.
+  \code{\link{pdf}} and \code{\link{grid.export}}.
 }

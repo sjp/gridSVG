@@ -13,7 +13,7 @@ gridSVGMappings(newmappings = NULL)
 \arguments{
   \item{newmappings}{
     A named list mapping information, produced by
-    \code{\link{gridToSVG}}.
+    \code{\link{grid.export}}.
   }
 }
 \details{

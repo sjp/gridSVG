@@ -2,21 +2,26 @@
 # Functions to take a grid grob and call appropriate
 # functions from svg.R to produce SVG output
 
+gridToSVG <- function(...) {
+    .Deprecated("grid.export", "gridSVG",
+                "'gridToSVG' is deprecated. Use 'grid.export' in future.'")
+    grid.export(...)
+}
 
 # User function
-gridToSVG <- function(name="Rplots.svg",
-                      export.coords=c("none", "inline", "file"),
-                      export.mappings=c("none", "inline", "file"),
-                      export.js=c("none", "inline", "file"),
-                      res = NULL,
-                      prefix = "",
-                      addClasses = FALSE,
-                      indent = TRUE,
-                      htmlWrapper = FALSE,
-                      usePaths = c("vpPaths", "gPaths", "none", "both"),
-                      uniqueNames = TRUE,
-                      annotate = TRUE,
-                      xmldecl = xmlDecl()) {
+grid.export <- function(name="Rplots.svg",
+                        export.coords=c("none", "inline", "file"),
+                        export.mappings=c("none", "inline", "file"),
+                        export.js=c("none", "inline", "file"),
+                        res = NULL,
+                        prefix = "",
+                        addClasses = FALSE,
+                        indent = TRUE,
+                        htmlWrapper = FALSE,
+                        usePaths = c("vpPaths", "gPaths", "none", "both"),
+                        uniqueNames = TRUE,
+                        annotate = TRUE,
+                        xmldecl = xmlDecl()) {
     # 'XML' can sometimes give us namespace warnings, despite producing
     # valid SVG. Silence any warnings that 'XML' might give us.
     if (! is.null(getOption("gridSVGWarnings")) &&
@@ -173,7 +178,7 @@ gridToSVG <- function(name="Rplots.svg",
                    utils = jsutils)
 
     if (! testUniqueMappings(svgroot))
-        warning("Not all element IDs are unique. Consider running 'gridToSVG' with 'uniqueNames = TRUE'.")
+        warning("Not all element IDs are unique. Consider running 'grid.export' with 'uniqueNames = TRUE'.")
 
     # Return SVG list when an inadequate filename is supplied
     if (is.null(name) || ! nzchar(name))
@@ -231,12 +236,12 @@ gridsvg <- function(name="Rplots.svg",
     devind <- which(names(callargs) == "...")
     gridsvg.args <- if (length(devind)) callargs[-devind]
                     else callargs
-    if (exists("gridToSVGArgs", envir = .gridSVGEnv))
-        gridToSVGArgs <- get("gridToSVGArgs", envir = .gridSVGEnv)
+    if (exists("gridSVGArgs", envir = .gridSVGEnv))
+        gridSVGArgs <- get("gridSVGArgs", envir = .gridSVGEnv)
     else
-        gridToSVGArgs <- list()
-    gridToSVGArgs[[dev.cur()]] <- gridsvg.args
-    assign("gridToSVGArgs", gridToSVGArgs, envir = .gridSVGEnv)
+        gridSVGArgs <- list()
+    gridSVGArgs[[dev.cur()]] <- gridsvg.args
+    assign("gridSVGArgs", gridSVGArgs, envir = .gridSVGEnv)
     # HACK!
     # This renames the pdf device to "gridsvg" purely for convenience.
     devs <- .Devices
@@ -253,9 +258,9 @@ dev.off <- function(which = dev.cur()) {
             warning("No grid image was drawn so no SVG was created")
             return(invisible())
         }
-        gridsvg.args <- get("gridToSVGArgs", envir = .gridSVGEnv)[[which]]
+        gridsvg.args <- get("gridSVGArgs", envir = .gridSVGEnv)[[which]]
         name <- gridsvg.args$name
-        image <- do.call("gridToSVG", gridsvg.args)
+        image <- do.call("grid.export", gridsvg.args)
         grDevices::dev.off(which)
         if (is.null(name) || ! nzchar(name))
             image

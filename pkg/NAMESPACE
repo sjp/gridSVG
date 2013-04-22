@@ -47,6 +47,7 @@ export("grid.hyperlink",
        "grid.element",
        "elementGrob",
        "gridToSVG",
+       "grid.export",
        "gridSVG.newpage",
        "gridsvg",
        "dev.off"
