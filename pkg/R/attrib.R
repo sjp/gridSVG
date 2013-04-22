@@ -116,6 +116,8 @@ grobApply <- function(path, FUN, ...,
             path$name
 
     dl <- grid.ls(print = FALSE)
+    if (! length(dl$name))
+        stop("Nothing on the display list")
     # Limit our search only to grobs whose depth matches ours
     # For not strict, we're only looking at the grob names, so all
     # depths apply.
