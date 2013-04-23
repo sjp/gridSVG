@@ -1390,15 +1390,17 @@ incID <- function(svgdev, n=1) {
 svgHeader <- function(width, height, svgdev=svgDevice()) {
     # This header tested on standalone SVG file in Firefox 3
     # FIXME:  add default xmlns for animation and scripts too?
+    attrs <- list(width = paste0(round(width, 2), "px"),
+                  height = paste0(round(height, 2), "px"),
+                  viewBox = paste(0, 0, round(width, 2), round(height, 2)),
+                  version = "1.1")
+    # Give the <svg> element an ID only if there is a prefix
+    if (nzchar(get("prefix", envir = .gridSVGEnv)))
+        attrs <- c(list(id = get("prefix", envir = .gridSVGEnv)), attrs)
     svgdoc <-
-        newXMLNode("svg",
+        newXMLNode("svg", attrs = attrs,
                    namespaceDefinitions = list("http://www.w3.org/2000/svg",
-                       xlink = "http://www.w3.org/1999/xlink"),
-                   attrs = list(width = paste0(round(width, 2), "px"),
-                       height = paste0(round(height, 2), "px"),
-                       viewBox = paste(0, 0,
-                           round(width, 2), round(height, 2)),
-                       version = "1.1"))
+                       xlink = "http://www.w3.org/1999/xlink"))
     # Invert the y-axis so that y and height values measure "up"
     rootg <- newXMLNode("g",
                         parent = svgdoc,

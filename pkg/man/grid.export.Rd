@@ -62,6 +62,9 @@ grid.export(name = "Rplots.svg",
     A prefix to apply to all generated SVG ID attributes. Useful for
     ensuring unique IDs when many SVG images exist within the same HTML
     document.
+
+    If a valid prefix has been given, the root \code{<svg>} element will
+    be given an ID attribute with the prefix as its value.
   }
   \item{addClasses}{
     If \code{TRUE}, adds an SVG class attribute to all grobs and
