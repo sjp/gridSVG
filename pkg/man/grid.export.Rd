@@ -7,9 +7,9 @@
 }
 \usage{
 grid.export(name = "Rplots.svg",
-            export.coords = c("none", "inline", "file"),
-            export.mappings = c("none", "inline", "file"),
-            export.js = c("none", "inline", "file"),
+            exportCoords = c("none", "inline", "file"),
+            exportMappings = c("none", "inline", "file"),
+            exportJS = c("none", "inline", "file"),
             res = NULL,
             prefix = "",
             addClasses = FALSE,
@@ -28,21 +28,21 @@ grid.export(name = "Rplots.svg",
     containing the SVG document, coordinate information, and JavaScript
     utility functions are returned.
   }
-  \item{export.coords}{
+  \item{exportCoords}{
     If this parameter is not \code{none} a coordinates file is exported.
 
     If this parameter is \code{file}, the coordinates information is
     written to a file, while \code{inline} will include the contents
     within the SVG document.
   }
-  \item{export.mappings}{
+  \item{exportMappings}{
     If this parameter is not \code{none} a mapping file is exported.
 
     If this parameter is \code{file}, the mapping information is written
     to a file, while \code{inline} will include the contents within the
     SVG document.
   }
-  \item{export.js}{
+  \item{exportJS}{
     If this parameter is not \code{none} a JavaScript file is written out.
     This contains useful functions for manipulating gridSVG plots in the
     browser, including unit conversion functions.

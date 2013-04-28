@@ -39,12 +39,12 @@ svgClose <- function(svgdev) {
   return(xmlRoot(svgDevParent(svgdev)))
 }
 
-svgJSUtils <- function(export.js, svgfile, svgroot) {
+svgJSUtils <- function(exportJS, svgfile, svgroot) {
   utilsFn <- paste0(svgfile, ".utils.js")
   utilsFile <- file(system.file("js/utils.js", package = "gridSVG"))
   utilsLines <- readLines(utilsFile)
   close(utilsFile)
-  if (export.js == "file") {
+  if (exportJS == "file") {
     destFile <- file(utilsFn)
     writeLines(utilsLines, destFile)
     close(destFile)
@@ -53,7 +53,7 @@ svgJSUtils <- function(export.js, svgfile, svgroot) {
                                    "xlink:href" = utilsFn))
   }
 
-  if (export.js == "inline") {
+  if (exportJS == "inline") {
     newXMLNode("script", parent = svgroot,
                attrs = list(type = "application/ecmascript"),
                newXMLCDataNode(paste0(c("", utilsLines, ""), collapse = "\n")))
@@ -64,11 +64,11 @@ svgJSUtils <- function(export.js, svgfile, svgroot) {
   invisible(paste(utilsLines, collapse = "\n"))
 }
 
-svgCoords <- function(export.coords, svgfile, svgroot) {
+svgCoords <- function(exportCoords, svgfile, svgroot) {
   coordsJSON <- toJSON(get("vpCoords", envir = .gridSVGEnv))
   coordsJSON <- paste("var gridSVGCoords = ", coordsJSON, ";", sep = "")
 
-  if (export.coords == "file") {
+  if (exportCoords == "file") {
     coordsFn <- paste0(svgfile, ".coords.js")
     coordsFile <- file(coordsFn, "w")
     cat(coordsJSON, "\n", file = coordsFile, sep = "")
@@ -78,7 +78,7 @@ svgCoords <- function(export.coords, svgfile, svgroot) {
                             "xlink:href" = coordsFn))
   }
 
-  if (export.coords == "inline") {
+  if (exportCoords == "inline") {
     newXMLNode("script", parent = svgroot,
                attrs = list(type = "application/ecmascript"),
                newXMLCDataNode(paste0(c("", coordsJSON, ""), collapse = "\n")))
@@ -89,10 +89,10 @@ svgCoords <- function(export.coords, svgfile, svgroot) {
   invisible(get("vpCoords", envir = .gridSVGEnv))
 }
 
-svgMappings <- function(export.mappings, svgfile, svgroot) {
+svgMappings <- function(exportMappings, svgfile, svgroot) {
   usageTable <- get("usageTable", envir = .gridSVGEnv)
 
-  if (export.mappings == "file") {
+  if (exportMappings == "file") {
     mappingsFn <- paste0(svgfile, ".mappings.js")
     mappingsFile <- file(mappingsFn, "w")
     cat(exportMappings(usageTable), file = mappingsFile)
@@ -102,7 +102,7 @@ svgMappings <- function(export.mappings, svgfile, svgroot) {
                             "xlink:href" = mappingsFn))
   }
 
-  if (export.mappings == "inline") {
+  if (exportMappings == "inline") {
     newXMLNode("script", parent = svgroot,
                attrs = list(type = "application/ecmascript"),
                newXMLCDataNode(exportMappings(usageTable)))

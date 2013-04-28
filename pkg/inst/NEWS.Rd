@@ -14,6 +14,11 @@
     deprecated and will produce a warning but will still work.
     'grid.export' should be used from now on. (Simon)
 
+    \item Renamed 'grid.export' arguments for
+    consistency. 'export.coords', 'export.mappings', and 'export.js' are
+    now camelCased to 'exportCoords', 'exportMappings', 'exportJS'
+    respectively. (Simon)
+
     \item Bumped R version dependency to R >= 3.0.0 because
     \code{gridToSVG()} now calls \code{grid.force()} before export
 

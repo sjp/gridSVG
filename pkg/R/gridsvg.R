@@ -9,10 +9,10 @@ gridToSVG <- function(...) {
 }
 
 # User function
-grid.export <- function(name="Rplots.svg",
-                        export.coords=c("none", "inline", "file"),
-                        export.mappings=c("none", "inline", "file"),
-                        export.js=c("none", "inline", "file"),
+grid.export <- function(name = "Rplots.svg",
+                        exportCoords = c("none", "inline", "file"),
+                        exportMappings = c("none", "inline", "file"),
+                        exportJS = c("none", "inline", "file"),
                         res = NULL,
                         prefix = "",
                         addClasses = FALSE,
@@ -49,29 +49,29 @@ grid.export <- function(name="Rplots.svg",
     assign("addClasses", addClasses, envir = .gridSVGEnv)
 
     # Saving how to export
-    export.coords <- match.arg(export.coords)
-    export.mappings <- match.arg(export.mappings)
-    export.js <- match.arg(export.js)
+    exportCoords <- match.arg(exportCoords)
+    exportMappings <- match.arg(exportMappings)
+    exportJS <- match.arg(exportJS)
     # If we are exporting js but returning a character
     # vector we need to save the contents inline, because
     # we don't want to touch the disk
     if (is.null(name) || ! nzchar(name)) {
-        if (export.coords == "file") {
-            export.coords <- "inline"
-            warning('export.coords changed from "file" to "inline"')
+        if (exportCoords == "file") {
+            exportCoords <- "inline"
+            warning('exportCoords changed from "file" to "inline"')
         }
-        if (export.mappings == "file") {
-            export.mappings <- "inline"
-            warning('export.mappings changed from "file" to "inline"')
+        if (exportMappings == "file") {
+            exportMappings <- "inline"
+            warning('exportMappings changed from "file" to "inline"')
         }
-        if (export.js == "file") {
-            export.js <- "inline"
-            warning('export.js changed from "file" to "inline"')
+        if (exportJS == "file") {
+            exportJS <- "inline"
+            warning('exportJS changed from "file" to "inline"')
         }
     }
-    assign("export.coords", export.coords, envir = .gridSVGEnv)
-    assign("export.mappings", export.mappings, envir = .gridSVGEnv)
-    assign("export.js", export.js, envir = .gridSVGEnv)
+    assign("exportCoords", exportCoords, envir = .gridSVGEnv)
+    assign("exportMappings", exportMappings, envir = .gridSVGEnv)
+    assign("exportJS", exportJS, envir = .gridSVGEnv)
 
     # Ensure contexts work correctly
     assign("contextNames", character(0), envir = .gridSVGEnv)
@@ -128,9 +128,9 @@ grid.export <- function(name="Rplots.svg",
     svgroot <- devClose(svgdev)
     # Adding in JS if necessary, always write utils *last*.
     # Not strictly necessary but may avoid potential issues in JS.
-    coords <- svgCoords(export.coords, name, svgroot)
-    mappings <- svgMappings(export.mappings, name, svgroot)
-    jsutils <- svgJSUtils(export.js, name, svgroot)
+    coords <- svgCoords(exportCoords, name, svgroot)
+    mappings <- svgMappings(exportMappings, name, svgroot)
+    jsutils <- svgJSUtils(exportJS, name, svgroot)
     # If we're annotating output with gridSVG call info
     if (annotate) {
         # Realise true values for some arguments
@@ -143,9 +143,9 @@ grid.export <- function(name="Rplots.svg",
         # output directly.
         callAttrs <- list(
             name = name,
-            export.coords = export.coords,
-            export.mappings = export.mappings,
-            export.js = export.js,
+            exportCoords = exportCoords,
+            exportMappings = exportMappings,
+            exportJS = exportJS,
             res = res,
             prefix = prefix,
             addClasses = addClasses,
@@ -214,10 +214,10 @@ gridSVG.newpage <- function(wipeRefs = TRUE, recording = TRUE) {
     grid.newpage(recording = recording)
 }
 
-gridsvg <- function(name="Rplots.svg",
-                    export.coords=c("none", "inline", "file"),
-                    export.mappings=c("none", "inline", "file"),
-                    export.js=c("none", "inline", "file"),
+gridsvg <- function(name = "Rplots.svg",
+                    exportCoords = c("none", "inline", "file"),
+                    exportMappings = c("none", "inline", "file"),
+                    exportJS = c("none", "inline", "file"),
                     res = NULL,
                     indent = TRUE,
                     htmlWrapper = FALSE,

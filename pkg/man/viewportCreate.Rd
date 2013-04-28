@@ -15,7 +15,6 @@ viewportCreate(vpname, newname = NULL,
                vpPath.sep = getSVGoption("vpPath.sep"))
 }
 \arguments{
-
   \item{vpname}{
     The name of the viewport to be recreated, as stored in
     coordinate information. This is most likely a viewport path.
@@ -29,7 +28,6 @@ viewportCreate(vpname, newname = NULL,
   \item{vpPath.sep}{
     The viewport path separator that was used for \code{vpname}.
   }
-
 }
 \details{
   In order to use this function, coordinate information must be
@@ -54,7 +52,7 @@ viewportCreate(vpname, newname = NULL,
                         xscale = c(0, 20), yscale = c(0, 10),
                         name = "testVP"))
   grid.rect()
-  grid.export("create-test.svg", export.coords = "file")
+  grid.export("create-test.svg", exportCoords = "file")
 
   # Importing coordinate information
   gridSVGCoords(readCoordsJS("create-test.svg.coords.js"))
