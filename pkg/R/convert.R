@@ -29,17 +29,21 @@ viewportCreate <- function(vpname, newname = NULL,
 
 viewportConvertX <- function(vpname, x, from, to = "svg") {
   currCoords <- validCoordsInfo(vpname)
-  offset <- viewportConvertWidth(vpname, currCoords[[vpname]]$x,
-                                 "svg", to)
+  if (from == "svg")
+    x <- x - currCoords[[vpname]]$x
   width <- viewportConvertWidth(vpname, x, from, to)
-  offset + width
+  if (to == "svg")
+    width <- width + currCoords[[vpname]]$x
+  width
 }
 
 viewportConvertY <- function(vpname, x, from, to = "svg") {
   currCoords <- validCoordsInfo(vpname)
-  offset <- viewportConvertHeight(vpname, currCoords[[vpname]]$y,
-                                  "svg", to)
+  if (from == "svg")
+    x <- x - currCoords[[vpname]]$y
   height <- viewportConvertHeight(vpname, x, from, to)
+  if (to == "svg")
+    height <- height + currCoords[[vpname]]$y
   offset + height
 }
 

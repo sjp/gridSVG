@@ -94,6 +94,9 @@
     documentation and the SVG specification is required. Apply filter
     effects to grobs using 'grid.filter' and 'filterGrob'. (Simon)
 
+    \item Bugfix for unit conversion functions. "svg" was not being
+    handled correctly. (Simon)
+
   }
 }
 

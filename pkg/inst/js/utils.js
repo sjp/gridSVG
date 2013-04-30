@@ -17,10 +17,12 @@
 var viewportConvertX = function(vpname, x, from, to) {
     if (!to)
         to = "svg";
-    var offset = viewportConvertWidth(vpname, gridSVGCoords[vpname].x,
-                                      "svg", to);
+    if (from === "svg")
+        x -= gridSVGCoords[vpname].x;
     var width = viewportConvertWidth(vpname, x, from, to);
-    return roundNumber(offset + width, 2);
+    if (to === "svg")
+        width += gridSVGCoords[vpname].x;
+    return roundNumber(width, 2);
 };
 
 /**
@@ -35,10 +37,12 @@ var viewportConvertX = function(vpname, x, from, to) {
 var viewportConvertY = function(vpname, x, from, to) {
     if (!to)
         to = "svg";
-    var offset = viewportConvertHeight(vpname, gridSVGCoords[vpname].y,
-                                       "svg", to);
+    if (from == "svg")
+        x -= gridSVGCoords[vpname].y;
     var height = viewportConvertHeight(vpname, x, from, to);
-    return roundNumber(offset + height, 2);
+    if (to === "svg")
+        height += gridSVGCoords[vpname].y;
+    return roundNumber(height, 2);
 };
 
 /**
