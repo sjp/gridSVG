@@ -3,16 +3,14 @@ library(gridSVG)
 pdf(file = NULL)
 
 # Define a linear gradient
-lg <- linearGradient(stops = list(gradientStop("blue"),
-                                  gradientStop("red", 1)))
+lg <- linearGradient(col = c("blue", "red"))
 # Register it 
 registerGradientFill("lingrad", lg)
 
 # Do the same thing for radial gradient but also set the focus for the
 # radial fill to be off-centre
 rg <- radialGradient(fx = 0.3, fy = 0.3,
-                     stops = list(gradientStop("white"),
-                                  gradientStop("black", 2)))
+                     col = c("white", "black"), stops = c(0, 2))
 registerGradientFill("radgrad", rg)
 
 # Create rects that we are going to be gradient filling

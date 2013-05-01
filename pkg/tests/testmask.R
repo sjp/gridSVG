@@ -4,8 +4,7 @@ pdf(file = NULL)
 
 # Create the definition of an opacity mask, in this case
 # it will just be a circle with a gradient fill.
-rg <- radialGradient(stops = list(gradientStop("white"),
-                                  gradientStop("black", 1)))
+rg <- radialGradient(col = c("white", "black"))
 m <- mask(gradientFillGrob(circleGrob(), gradient = rg))
 
 # Register the opacity mask so that we can refer to it and apply it.
@@ -36,8 +35,7 @@ gridSVG.newpage()
 
 # Create the definition of an opacity mask, in this case
 # it will just be a circle with a gradient fill.
-rg <- radialGradient(stops = list(gradientStop("white"),
-                                  gradientStop("black", 1)))
+rg <- radialGradient(col = c("white", "black"))
 m <- mask(gradientFillGrob(circleGrob(), gradient = rg))
 
 # Create a new masking context for this viewport

@@ -60,10 +60,9 @@
     (e.g. the '.axis' CSS selector will select all axis grobs). (Simon)
 
     \item Added implementation of gradient fills for grobs. See
-    'linearGradient', 'radialGradient', 'gradientStop' and
-    'registerGradientFill' for defining gradients. Use
-    'grid.gradientFill' and 'gradientFillGrob' to apply gradient fills
-    to grobs. (Simon)
+    'linearGradient', 'radialGradient', and 'registerGradientFill' for
+    defining gradients. Use 'grid.gradientFill' and 'gradientFillGrob'
+    to apply gradient fills to grobs. (Simon)
 
     \item Bug fix for pointsGrobs. 'size' units were unnecessarily being
     manipulated. (Simon & Paul)

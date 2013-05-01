@@ -152,17 +152,10 @@ export("grid.mask",
 # Gradients
 export("linearGradient",
        "radialGradient",
-       "gradientStop",
-       "addGradientStop",
        "registerGradientFill",
        "grid.gradientFill",
        "gradientFillGrob")
-S3method("[", "gradient")
-S3method("[[", "gradient")
-S3method("[<-", "gradient")
-S3method("[[<-", "gradient")
 S3method("print", "gradient")
-S3method("print", "gradient.stop")
 
 # Patterns
 export("pattern",

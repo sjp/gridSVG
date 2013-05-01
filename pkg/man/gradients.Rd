@@ -6,26 +6,34 @@
 }
 \description{
   Create objects which describe linear and radial gradients. These
-  objects can then be used to add gradient stops. These objects can
-  later be used to apply a gradient fill to grobs, and also to define a
-  gradient so that it may be reused multiple times.
+  objects can later be used to apply a gradient fill to grobs, and also
+  to define a gradient so that it may be reused multiple times.
 }
 \usage{
-linearGradient(gradientUnits = c("bbox", "coords"),
+linearGradient(col = c("black", "white"),
+               stops = seq(0, 1, length.out = length(col)),
+               gradientUnits = c("bbox", "coords"),
                x0 = unit(0, "npc"), x1 = unit(1, "npc"),
                y0 = unit(0, "npc"), y1 = unit(1, "npc"),
                default.units = "npc",
-               spreadMethod = c("pad", "reflect", "repeat"),
-               stops = NULL)
-radialGradient(gradientUnits = c("bbox", "coords"),
+               spreadMethod = c("pad", "reflect", "repeat"))
+radialGradient(col = c("black", "white"),
+               stops = seq(0, 1, length.out = length(col)),
+               gradientUnits = c("bbox", "coords"),
                x = unit(0.5, "npc"), y = unit(0.5, "npc"),
                r = unit(0.5, "npc"),
                fx = unit(0.5, "npc"), fy = unit(0.5, "npc"),
                default.units = "npc",
-               spreadMethod = c("pad", "reflect", "repeat"),
-               stops = NULL)
+               spreadMethod = c("pad", "reflect", "repeat"))
 }
 \arguments{
+  \item{col}{
+    A vector of colours used for gradient stops.
+  }
+  \item{stops}{
+    A numeric vector of offsets (typically between 0 and 1) to place the
+    the colours (\code{col}) at.
+  }
   \item{gradientUnits}{
     If \code{"bbox"}, the gradient is positioned relative to the
     bounding box of the referring grob. All units attempt to be
@@ -77,12 +85,12 @@ radialGradient(gradientUnits = c("bbox", "coords"),
     A character vector determining when happens when a gradient begins
     or ends within its bounds. See details.
   }
-  \item{stops}{
-    If not \code{NULL}, a list of \code{gradient.stop} objects. See
-    \code{\link{gradientStop}}.
-  }
 }
 \details{
+  When defining gradient stops via \code{col} and \code{stops}, the
+  order is important. Gradient stops which are defined earlier are drawn
+  first, with later stops being drawn over the top.
+
   For \code{spreadMethod} the possible values are:
   \itemize{
     \item{pad}{

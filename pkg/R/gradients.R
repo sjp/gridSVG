@@ -48,16 +48,24 @@ gradientFillGrob <- function(x, gradient = NULL, label = NULL,
     x
 }
 
-linearGradient <- function(gradientUnits = c("bbox", "coords"),
+linearGradient <- function(col = c("black", "white"),
+                           stops = seq(0, 1, length.out = length(col)),
+                           gradientUnits = c("bbox", "coords"),
                            x0 = unit(0, "npc"), x1 = unit(1, "npc"),
                            y0 = unit(0, "npc"), y1 = unit(1, "npc"),
                            default.units = "npc",
-                           spreadMethod = c("pad", "reflect", "repeat"),
-                           stops = NULL) {
+                           spreadMethod = c("pad", "reflect", "repeat")) {
+    # Vectorising colours & stops
+    nstops <- max(length(col), length(stops))
+    col <- rep(col, length.out = nstops)
+    stops <- rep(stops, length.out = nstops)
+
+    offset <- round(stops, 2)
+    stopCol <- sapply(col, function(x) devColToSVG(x), USE.NAMES = FALSE)
+    stopOpacity <- devColAlphaToSVG(col2rgb(col, alpha = TRUE)[4, ])
+
     gradientUnits <- match.arg(gradientUnits)
     spreadMethod <- match.arg(spreadMethod)
-    if (is.null(stops))
-        stops <- list()
     
     if (! is.unit(x0))
         x0 <- unit(x0, default.units)
@@ -93,18 +101,29 @@ linearGradient <- function(gradientUnits = c("bbox", "coords"),
                  x1 = x0, x2 = x1,
                  y1 = y0, y2 = y1,
                  spreadMethod = spreadMethod,
-                 children = stops)
+                 offset = offset, stopCol = stopCol,
+                 stopOpacity = stopOpacity)
     class(grad) <- c("linear.gradient", "gradient")
     grad
 }
 
-radialGradient <- function(gradientUnits = c("bbox", "coords"),
+radialGradient <- function(col = c("black", "white"),
+                           stops = seq(0, 1, length.out = length(col)),
+                           gradientUnits = c("bbox", "coords"),
                            x = unit(0.5, "npc"), y = unit(0.5, "npc"),
                            r = unit(0.5, "npc"),
                            fx = unit(0.5, "npc"), fy = unit(0.5, "npc"),
                            default.units = "npc",
-                           spreadMethod = c("pad", "reflect", "repeat"),
-                           stops = NULL) {
+                           spreadMethod = c("pad", "reflect", "repeat")) {
+    # Vectorising colours & stops
+    nstops <- max(length(col), length(stops))
+    col <- rep(col, length.out = nstops)
+    stops <- rep(stops, length.out = nstops)
+
+    offset <- round(stops, 2)
+    stopCol <- sapply(col, function(x) devColToSVG(x), USE.NAMES = FALSE)
+    stopOpacity <- devColAlphaToSVG(col2rgb(col, alpha = TRUE)[4, ])
+
     gradientUnits <- match.arg(gradientUnits)
     spreadMethod <- match.arg(spreadMethod)
     if (is.null(stops))
@@ -152,30 +171,10 @@ radialGradient <- function(gradientUnits = c("bbox", "coords"),
                  cx = x, cy = y, r = r,
                  fx = fx, fy = fy,
                  spreadMethod = spreadMethod,
-                 children = stops)
+                 offset = offset, stopCol = stopCol,
+                 stopOpacity = stopOpacity)
     class(grad) <- c("radial.gradient", "gradient")
     grad
-}
-
-"[.gradient" <- function(x, index, ...) {
-    x$children <- x$children[index]
-    x
-}
-
-"[[.gradient" <- function(x, index, ...) {
-    x$children[[index]]
-}
-
-"[<-.gradient" <- function(x, index, ..., value) {
-    x$children[index] <- value
-    x
-}
-
-"[[<-.gradient" <- function(x, index, ..., value) {
-    if (! inherits(value, "gradient.stop"))
-        stop("Invalid value to assign")
-    x$children[[index]] <- value
-    x
 }
 
 print.gradient <- function(x, ...) {
@@ -183,44 +182,20 @@ print.gradient <- function(x, ...) {
         cat(sprintf(paste0(label, ": %s\n"), value))
     }
     prln("Type", x$element)
-    n <- length(x$children)
-    prln("Number of stops", if (! n) "none" else n)
-    if (! n)
-        return(invisible(x))
+    n <- length(x$offset)
+    prln("Number of stops", n)
     cat("\n")
     prln("Gradient stops", "")
     for (i in 1:n) {
         cat("  ")
-        print(x[[i]])
+        cat("Offset:", x$offset[i])
+        cat("  ")
+        cat("Colour:", x$stopCol[i])
+        cat("  ")
+        cat("Opacity:", x$stopOpacity[i])
+        cat("\n")
     }
     invisible(x)
-}
-
-print.gradient.stop <- function(x, ...) {
-    cat(sprintf("Offset: %s, Colour: %s, Opacity: %s\n",
-                x$offset, x$`stop-color`, x$`stop-opacity`))
-    invisible(x)
-}
-
-addGradientStop <- function(gradient, gradientStop, after = NA) {
-    if (! inherits(gradient, "gradient"))
-        stop("'gradient' is not a 'gradient.stop' object")
-    if (! inherits(gradientStop, "gradient.stop"))
-        stop("'gradientStop' is not a 'gradient.stop' object")
-    # Assume last
-    if (is.na(after))
-        after <- length(gradient$children)
-    gradient[[after + 1]] <- gradientStop
-    gradient
-}
-
-gradientStop <- function(col, offset = 0) {
-    rgba <- col2rgb(col, alpha = TRUE)[, 1]
-    x <- list(offset = round(offset, 2),
-              "stop-color" = devColToSVG(col),
-              "stop-opacity" = devColAlphaToSVG(rgba[4]))
-    class(x) <- "gradient.stop"
-    x
 }
 
 flattenLinearGradient <- function(gradient) {
@@ -248,8 +223,6 @@ flattenRadialGradient <- function(gradient) {
 
 registerGradientFill <- function(label, gradient) {
     checkExistingDefinition(label)
-    if (! length(gradient$children))
-        stop("No gradient stops exist for this gradient.")
     
     # Flattening all locations
     gradient <-
@@ -352,10 +325,12 @@ drawDef.gradientDef <- function(def, dev) {
         svgRadialGradient(def, dev)
 
     # Adding the gradient stops
-    children <- def$children
-    for (i in 1:length(children)) {
-        stpattrs <- unclass(children[[i]])
-        newXMLNode("stop", attrs = stpattrs, parent = svgDevParent(svgdev))
+    for (i in 1:length(def$offset)) {
+        newXMLNode("stop",
+                   attrs = list(offset = def$offset[i],
+                                "stop-color" = def$stopCol[i],
+                                "stop-opacity" = def$stopOpacity[i]),
+                   parent = svgDevParent(svgdev))
     }
 
     # Going back up from the stops to the parent of the gradient
