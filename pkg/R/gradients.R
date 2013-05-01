@@ -88,12 +88,6 @@ linearGradient <- function(col = c("black", "white"),
         x1 <- convertX(x1, "npc", valueOnly = TRUE)
         y0 <- convertY(y0, "npc", valueOnly = TRUE)
         y1 <- convertY(y1, "npc", valueOnly = TRUE)
-
-        # Clamp to [0,1]
-        x0 <- if (x0 < 0) 0 else if (x0 > 1) 1 else x0
-        x1 <- if (x1 < 0) 0 else if (x1 > 1) 1 else x1
-        y0 <- if (y0 < 0) 0 else if (y0 > 1) 1 else y0
-        y1 <- if (y1 < 0) 0 else if (y1 > 1) 1 else y1
     }
 
     grad <- list(element = "linearGradient",
@@ -156,14 +150,6 @@ radialGradient <- function(col = c("black", "white"),
 
         fx <- convertX(fx, "npc", valueOnly = TRUE)
         fy <- convertY(fy, "npc", valueOnly = TRUE)
-
-        # Do not clamp 'r' to be less than one, we could want a radius to
-        # fill from a corner in a square, in which case 'r' > 1 is necesary.
-        x <- if (x < 0) 0 else if (x > 1) 1 else x
-        y <- if (y < 0) 0 else if (y > 1) 1 else y
-        fx <- if (fx < 0) 0 else if (fx > 1) 1 else fx
-        fy <- if (fy < 0) 0 else if (fy > 1) 1 else fy
-        r <- if (r < 0) 0 else r
     }
 
     grad <- list(element = "radialGradient",
